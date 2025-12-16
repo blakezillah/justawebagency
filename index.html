@@ -628,7 +628,11 @@
                         </a>
                     </div>
                 </div>
-                <form class="contact-form" id="contactForm" novalidate>
+                <form class="contact-form" id="contactForm" name="contact" netlify netlify-honeypot="bot-field" novalidate>
+                    <input type="hidden" name="form-name" value="contact">
+                    <p style="display: none;">
+                        <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+                    </p>
                     <div class="form-group">
                         <label for="name">Name *</label>
                         <input type="text" id="name" name="name" required aria-required="true">
@@ -759,7 +763,11 @@
             <button class="modal-close" aria-label="Close modal" id="leadMagnetClose">×</button>
             <h2>Get your free homepage teardown</h2>
             <p>We'll analyze your homepage and send you actionable recommendations.</p>
-            <form class="lead-magnet-form" id="leadMagnetForm">
+            <form class="lead-magnet-form" id="leadMagnetForm" name="teardown" netlify netlify-honeypot="bot-field">
+                <input type="hidden" name="form-name" value="teardown">
+                <p style="display: none;">
+                    <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+                </p>
                 <div class="form-group">
                     <label for="leadName">Name *</label>
                     <input type="text" id="leadName" name="name" required>

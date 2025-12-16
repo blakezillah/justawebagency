@@ -563,37 +563,20 @@
         const isMessageValid = validateMessage();
         
         if (isNameValid && isEmailValid && isWebsiteValid && isMessageValid) {
-            // Collect form data
-            const formData = {
-                name: nameInput.value.trim(),
-                email: emailInput.value.trim(),
-                website: websiteInput.value.trim(),
-                budget: document.getElementById('budget').value,
-                timeline: document.getElementById('timeline').value,
-                message: messageInput.value.trim()
-            };
-            
-            // Create mailto link as fallback
-            const subject = encodeURIComponent('New Contact Form Submission');
-            const body = encodeURIComponent(
-                `Name: ${formData.name}\n` +
-                `Email: ${formData.email}\n` +
-                `Website: ${formData.website || 'N/A'}\n` +
-                `Budget: ${formData.budget || 'Not specified'}\n` +
-                `Timeline: ${formData.timeline || 'Not specified'}\n\n` +
-                `Message:\n${formData.message}`
-            );
-            const mailtoLink = `mailto:hello@justaweb.agency?subject=${subject}&body=${body}`;
-            
-            // Show success message
             const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
             submitBtn.textContent = 'Sending...';
             submitBtn.disabled = true;
             
-            // Simulate sending (in production, this would be an API call)
-            setTimeout(() => {
-                window.location.href = mailtoLink;
+            // Submit to Netlify
+            const formData = new FormData(form);
+            
+            fetch('/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(formData).toString()
+            })
+            .then(() => {
                 submitBtn.textContent = 'Message sent!';
                 form.reset();
                 
@@ -601,7 +584,28 @@
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
                 }, 3000);
-            }, 1000);
+            })
+            .catch((error) => {
+                console.error('Form submission error:', error);
+                submitBtn.textContent = 'Error sending message';
+                
+                // Fallback to mailto
+                const subject = encodeURIComponent('New Contact Form Submission');
+                const body = encodeURIComponent(
+                    `Name: ${nameInput.value.trim()}\n` +
+                    `Email: ${emailInput.value.trim()}\n` +
+                    `Website: ${websiteInput.value.trim() || 'N/A'}\n` +
+                    `Budget: ${document.getElementById('budget').value || 'Not specified'}\n` +
+                    `Timeline: ${document.getElementById('timeline').value || 'Not specified'}\n\n` +
+                    `Message:\n${messageInput.value.trim()}`
+                );
+                window.location.href = `mailto:hello@justaweb.agency?subject=${subject}&body=${body}`;
+                
+                setTimeout(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }, 3000);
+            });
         } else {
             // Focus first invalid field
             if (!isNameValid) nameInput.focus();
@@ -751,27 +755,20 @@
             const isWebsiteValid = validateLeadWebsite();
             
             if (isNameValid && isEmailValid && isWebsiteValid) {
-                const formData = {
-                    name: nameInput.value.trim(),
-                    email: emailInput.value.trim(),
-                    website: websiteInput.value.trim()
-                };
-                
-                const subject = encodeURIComponent('Free Homepage Teardown Request');
-                const body = encodeURIComponent(
-                    `Name: ${formData.name}\n` +
-                    `Email: ${formData.email}\n` +
-                    `Website: ${formData.website}`
-                );
-                const mailtoLink = `mailto:hello@justaweb.agency?subject=${subject}&body=${body}`;
-                
                 const submitBtn = form.querySelector('button[type="submit"]');
                 const originalText = submitBtn.textContent;
                 submitBtn.textContent = 'Submitting...';
                 submitBtn.disabled = true;
                 
-                setTimeout(() => {
-                    window.location.href = mailtoLink;
+                // Submit to Netlify
+                const formData = new FormData(form);
+                
+                fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(formData).toString()
+                })
+                .then(() => {
                     submitBtn.textContent = 'Submitted!';
                     form.reset();
                     closeModal();
@@ -780,7 +777,25 @@
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
                     }, 2000);
-                }, 1000);
+                })
+                .catch((error) => {
+                    console.error('Form submission error:', error);
+                    submitBtn.textContent = 'Error submitting';
+                    
+                    // Fallback to mailto
+                    const subject = encodeURIComponent('Free Homepage Teardown Request');
+                    const body = encodeURIComponent(
+                        `Name: ${nameInput.value.trim()}\n` +
+                        `Email: ${emailInput.value.trim()}\n` +
+                        `Website: ${websiteInput.value.trim()}`
+                    );
+                    window.location.href = `mailto:hello@justaweb.agency?subject=${subject}&body=${body}`;
+                    
+                    setTimeout(() => {
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    }, 2000);
+                });
             }
         });
     }

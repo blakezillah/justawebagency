@@ -279,6 +279,9 @@
         });
     }
     
+    // Initialize first slide
+    updateSlider();
+    
     function goToSlide(index) {
         currentIndex = index;
         if (currentIndex < 0) currentIndex = slides.length - 1;

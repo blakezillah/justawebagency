@@ -332,6 +332,7 @@ section {
     text-align: center;
     position: relative;
     overflow: hidden;
+    z-index: 1;
 }
 
 .btn::before {
@@ -342,15 +343,11 @@ section {
     width: 0;
     height: 0;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
     transform: translate(-50%, -50%);
     transition: width 0.6s, height 0.6s;
     z-index: 0;
-}
-
-.btn > * {
-    position: relative;
-    z-index: 1;
+    pointer-events: none;
 }
 
 .btn:hover::before {
@@ -361,12 +358,14 @@ section {
 .btn-primary {
     background: var(--color-accent);
     color: white;
+    z-index: 1;
 }
 
 .btn-primary:hover {
     background: var(--color-accent-hover);
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
+    color: white;
 }
 
 .btn-secondary {
@@ -1070,16 +1069,19 @@ section {
     overflow: hidden;
     border-radius: var(--radius-xl);
     width: 100%;
+    position: relative;
 }
 
 .testimonial-slide {
     min-width: 100%;
+    width: 100%;
     flex-shrink: 0;
     background: var(--color-surface);
     padding: var(--space-2xl);
     border-radius: var(--radius-xl);
     border: 1px solid var(--color-border);
-    transition: transform var(--transition-base);
+    transition: transform 0.5s ease;
+    box-sizing: border-box;
 }
 
 .testimonial-content {

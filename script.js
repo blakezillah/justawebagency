@@ -324,20 +324,24 @@
 // ============================================
 
 (function initPricingCalculator() {
+    const platformSelect = document.getElementById('calcPlatform');
     const pagesInput = document.getElementById('calcPages');
     const urgencySelect = document.getElementById('calcUrgency');
     const integrationsSelect = document.getElementById('calcIntegrations');
+    const maintenanceCheckbox = document.getElementById('calcMaintenance');
     const recommendationEl = document.getElementById('calcRecommendation');
-    const rangeEl = document.getElementById('calcRange');
+    const breakdownEl = document.getElementById('calcBreakdown');
     
     if (!pagesInput || !urgencySelect || !integrationsSelect) return;
     
     function calculatePrice() {
+        const platform = platformSelect.value;
         const pages = parseInt(pagesInput.value) || 5;
         const urgency = urgencySelect.value;
         const integrations = integrationsSelect.value;
+        const includeMaintenance = maintenanceCheckbox.checked;
         
-        // Base pricing logic
+        // Base pricing logic based on pages and integrations
         let basePrice = 0;
         let plan = 'Starter';
         
@@ -351,6 +355,15 @@
             basePrice = 25000;
             plan = 'Premium';
         }
+        
+        // Platform adjustments
+        if (platform === 'shopify') {
+            basePrice += 2000; // Shopify typically costs more
+            if (plan === 'Starter' && basePrice > 7000) plan = 'Growth';
+        } else if (platform === 'wordpress') {
+            basePrice += 1000; // WordPress slightly more than HTML
+        }
+        // HTML is base price
         
         // Adjust for urgency
         let urgencyMultiplier = 1;
@@ -367,19 +380,48 @@
         if (pages > 15 && plan !== 'Premium') {
             plan = 'Premium';
             basePrice = 25000;
+            if (platform === 'shopify') basePrice += 2000;
+            else if (platform === 'wordpress') basePrice += 1000;
         }
         
-        const finalPrice = Math.round(basePrice * urgencyMultiplier);
-        const minPrice = Math.round(finalPrice * 0.8);
-        const maxPrice = Math.round(finalPrice * 1.2);
+        // Calculate final price before discount
+        const priceBeforeDiscount = Math.round(basePrice * urgencyMultiplier);
+        const minPriceBeforeDiscount = Math.round(priceBeforeDiscount * 0.8);
+        const maxPriceBeforeDiscount = Math.round(priceBeforeDiscount * 1.2);
         
+        // Apply maintenance discount (15% discount)
+        let finalMinPrice = minPriceBeforeDiscount;
+        let finalMaxPrice = maxPriceBeforeDiscount;
+        let discountAmount = 0;
+        
+        if (includeMaintenance) {
+            discountAmount = Math.round(priceBeforeDiscount * 0.15);
+            finalMinPrice = Math.round(minPriceBeforeDiscount * 0.85);
+            finalMaxPrice = Math.round(maxPriceBeforeDiscount * 0.85);
+        }
+        
+        // Update recommendation
         recommendationEl.innerHTML = `Recommended: <strong>${plan}</strong>`;
-        rangeEl.textContent = `Estimated range: $${minPrice.toLocaleString()} - $${maxPrice.toLocaleString()}`;
+        
+        // Update pricing breakdown
+        if (includeMaintenance && discountAmount > 0) {
+            breakdownEl.innerHTML = `
+                <p class="calculator-original-price">Original: $${minPriceBeforeDiscount.toLocaleString()} - $${maxPriceBeforeDiscount.toLocaleString()}</p>
+                <p class="calculator-discount">Discount: -$${discountAmount.toLocaleString()}</p>
+                <p class="calculator-range">Estimated range: $${finalMinPrice.toLocaleString()} - $${finalMaxPrice.toLocaleString()}</p>
+            `;
+        } else {
+            breakdownEl.innerHTML = `
+                <p class="calculator-range">Estimated range: $${finalMinPrice.toLocaleString()} - $${finalMaxPrice.toLocaleString()}</p>
+            `;
+        }
     }
     
+    platformSelect.addEventListener('change', calculatePrice);
     pagesInput.addEventListener('input', calculatePrice);
     urgencySelect.addEventListener('change', calculatePrice);
     integrationsSelect.addEventListener('change', calculatePrice);
+    maintenanceCheckbox.addEventListener('change', calculatePrice);
     
     calculatePrice();
 })();

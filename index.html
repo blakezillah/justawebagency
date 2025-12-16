@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Simple, fast, powerful websites. Premium web design agency specializing in WordPress, performance, and modern web experiences.">
+    <title>justaweb.agency — Simple, Fast, Powerful Websites</title>
+    
+    <!-- Inline SVG Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='%23fff' font-family='system-ui'>j</text></svg>">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sticky Header -->
+    <header class="header" id="header">
+        <nav class="nav" role="navigation" aria-label="Main navigation">
+            <div class="nav-container">
+                <a href="#hero" class="logo" aria-label="justaweb.agency home">justaweb.agency</a>
+                <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#work" class="nav-link">Work</a></li>
+                    <li><a href="#services" class="nav-link">Services</a></li>
+                    <li><a href="#process" class="nav-link">Process</a></li>
+                    <li><a href="#pricing" class="nav-link">Pricing</a></li>
+                    <li><a href="#faq" class="nav-link">FAQ</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+                <a href="#contact" class="btn btn-primary btn-small">Book a call</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-background"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="hero-title-line">Simple, fast,</span>
+                    <span class="hero-title-line">powerful websites</span>
+                </h1>
+                <p class="hero-subtitle">Premium web design without the bloat. We build sites that look great, load fast, and convert visitors into customers.</p>
+                <div class="hero-cta">
+                    <a href="#contact" class="btn btn-primary btn-large">Start your project</a>
+                    <a href="#work" class="btn btn-secondary btn-large">View our work</a>
+                </div>
+                <div class="hero-scroll">
+                    <span>Scroll to explore</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proof / Outcomes Section -->
+    <section class="proof" id="proof">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">What you get</h2>
+                <p class="section-subtitle">Measurable results that matter</p>
+            </div>
+            <div class="proof-grid">
+                <div class="proof-card reveal">
+                    <div class="proof-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <h3>3x faster load times</h3>
+                    <p>Optimized code and assets mean your site loads in under 2 seconds, keeping visitors engaged.</p>
+                </div>
+                <div class="proof-card reveal">
+                    <div class="proof-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <h3>40% more conversions</h3>
+                    <p>Strategic design and UX improvements turn more visitors into leads and customers.</p>
+                </div>
+                <div class="proof-card reveal">
+                    <div class="proof-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <h3>100% ownership</h3>
+                    <p>You own your code, your content, and your domain. No lock-ins, no surprises.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">What we do</h2>
+                <p class="section-subtitle">Full-service web design and development</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card reveal">
+                    <div class="service-number">01</div>
+                    <h3>Web Design</h3>
+                    <p>Custom designs that reflect your brand and convert visitors. Mobile-first, accessible, and beautiful.</p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-number">02</div>
+                    <h3>WordPress Builds</h3>
+                    <p>Fast, secure WordPress sites with custom themes. Easy to manage, optimized for performance.</p>
+                </div>
+ <div class="service-card reveal">
+                    <div class="service-number">03</div>
+                    <h3>Maintenance</h3>
+                    <p>Ongoing updates, backups, and security monitoring. Keep your site running smoothly.</p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-number">04</div>
+                    <h3>Performance</h3>
+                    <p>Speed optimization, caching, and asset optimization. Make your site lightning fast.</p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-number">05</div>
+                    <h3>SEO Foundations</h3>
+                    <p>Technical SEO, structured data, and content optimization. Get found by the right people.</p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-number">06</div>
+                    <h3>Analytics</h3>
+                    <p>Setup, tracking, and reporting. Understand what's working and what needs improvement.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Work / Portfolio Section -->
+    <section class="work" id="work">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Recent work</h2>
+                <p class="section-subtitle">Sites that perform</p>
+            </div>
+            <div class="work-filters" role="tablist">
+                <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true">All</button>
+                <button class="filter-btn" data-filter="brand" role="tab" aria-selected="false">Brand</button>
+                <button class="filter-btn" data-filter="web" role="tab" aria-selected="false">Web</button>
+                <button class="filter-btn" data-filter="seo" role="tab" aria-selected="false">SEO</button>
+            </div>
+            <div class="work-grid" id="workGrid">
+                <article class="work-card reveal" data-category="web brand">
+                    <div class="work-card-image">
+                        <div class="work-card-gradient gradient-1"></div>
+                    </div>
+                    <div class="work-card-content">
+                        <span class="work-card-category">Web + Brand</span>
+                        <h3>Artisan Coffee Co.</h3>
+                        <p>Complete rebrand and e-commerce site. 60% increase in online sales, 2.1s load time.</p>
+                        <div class="work-card-metrics">
+                            <span>+60% sales</span>
+                            <span>2.1s load</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="work-card reveal" data-category="web seo">
+                    <div class="work-card-image">
+                        <div class="work-card-gradient gradient-2"></div>
+                    </div>
+                    <div class="work-card-content">
+                        <span class="work-card-category">Web + SEO</span>
+                        <h3>Tech Consulting Firm</h3>
+                        <p>Lead generation site with blog. 3x organic traffic growth, 45% conversion rate.</p>
+                        <div class="work-card-metrics">
+                            <span>3x traffic</span>
+                            <span>45% CVR</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="work-card reveal" data-category="brand">
+                    <div class="work-card-image">
+                        <div class="work-card-gradient gradient-3"></div>
+                    </div>
+                    <div class="work-card-content">
+                        <span class="work-card-category">Brand</span>
+                        <h3>Fitness Studio</h3>
+                        <p>Brand identity and website redesign. Modern, energetic design that reflects their values.</p>
+                        <div class="work-card-metrics">
+                            <span>New brand</span>
+                            <span>Modern UI</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="work-card reveal" data-category="web">
+                    <div class="work-card-image">
+                        <div class="work-card-gradient gradient-4"></div>
+                    </div>
+                    <div class="work-card-content">
+                        <span class="work-card-category">Web</span>
+                        <h3>Local Restaurant</h3>
+                        <p>Menu-focused site with online ordering. Mobile-optimized, easy to update.</p>
+                        <div class="work-card-metrics">
+                            <span>Mobile-first</span>
+                            <span>Easy CMS</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="work-card reveal" data-category="seo">
+                    <div class="work-card-image">
+                        <div class="work-card-gradient gradient-5"></div>
+                    </div>
+                    <div class="work-card-content">
+                        <span class="work-card-category">SEO</span>
+                        <h3>B2B SaaS Platform</h3>
+                        <p>Technical SEO overhaul and content strategy. Top 3 rankings for target keywords.</p>
+                        <div class="work-card-metrics">
+                            <span>Top 3 rankings</span>
+                            <span>+200% leads</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="work-card reveal" data-category="web brand">
+                    <div class="work-card-image">
+                        <div class="work-card-gradient gradient-6"></div>
+                    </div>
+                    <div class="work-card-content">
+                        <span class="work-card-category">Web + Brand</span>
+                        <h3>Creative Agency</h3>
+                        <p>Portfolio site showcasing their work. Bold design, smooth animations, fast performance.</p>
+                        <div class="work-card-metrics">
+                            <span>Bold design</span>
+                            <span>95+ score</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process" id="process">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How we work</h2>
+                <p class="section-subtitle">A clear, collaborative process</p>
+            </div>
+            <div class="process-timeline">
+                <div class="process-step reveal">
+                    <div class="process-step-number">01</div>
+                    <div class="process-step-content">
+                        <h3>Discover</h3>
+                        <p>We learn about your business, goals, and audience. Research, strategy, and planning.</p>
+                    </div>
+                </div>
+                <div class="process-step reveal">
+                    <div class="process-step-number">02</div>
+                    <div class="process-step-content">
+                        <h3>Design</h3>
+                        <p>Wireframes, mockups, and prototypes. We iterate until it's perfect.</p>
+                    </div>
+                </div>
+                <div class="process-step reveal">
+                    <div class="process-step-number">03</div>
+                    <div class="process-step-content">
+                        <h3>Build</h3>
+                        <p>Clean code, responsive layouts, and performance optimization. Quality at every step.</p>
+                    </div>
+                </div>
+                <div class="process-step reveal">
+                    <div class="process-step-number">04</div>
+                    <div class="process-step-content">
+                        <h3>Launch</h3>
+                        <p>Testing, deployment, and handoff. You're ready to go live.</p>
+                    </div>
+                </div>
+                <div class="process-step reveal">
+                    <div class="process-step-number">05</div>
+                    <div class="process-step-content">
+                        <h3>Optimize</h3>
+                        <p>Post-launch monitoring, tweaks, and improvements. We're here for the long haul.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Site Health Demo Widget -->
+    <section class="health-demo">
+        <div class="container">
+            <div class="health-demo-content">
+                <h2>See your site's health</h2>
+                <p>We analyze performance, SEO, accessibility, and uptime. Here's what we check:</p>
+                <div class="health-metrics" id="healthMetrics">
+                    <div class="health-metric">
+                        <div class="health-metric-header">
+                            <span>Performance</span>
+                            <span class="health-metric-value" data-target="94">0</span>
+                        </div>
+                        <div class="health-metric-bar">
+                            <div class="health-metric-fill" data-target="94"></div>
+                        </div>
+                        <p class="health-metric-desc">Lighthouse score: 94/100</p>
+                    </div>
+                    <div class="health-metric">
+                        <div class="health-metric-header">
+                            <span>SEO</span>
+                            <span class="health-metric-value" data-target="98">0</span>
+                        </div>
+                        <div class="health-metric-bar">
+                            <div class="health-metric-fill" data-target="98"></div>
+                        </div>
+                        <p class="health-metric-desc">Technical SEO score: 98/100</p>
+                    </div>
+                    <div class="health-metric">
+                        <div class="health-metric-header">
+                            <span>Accessibility</span>
+                            <span class="health-metric-value" data-target="96">0</span>
+                        </div>
+                        <div class="health-metric-bar">
+                            <div class="health-metric-fill" data-target="96"></div>
+                        </div>
+                        <p class="health-metric-desc">WCAG 2.1 AA compliant</p>
+                    </div>
+                    <div class="health-metric">
+                        <div class="health-metric-header">
+                            <span>Uptime</span>
+                            <span class="health-metric-value" data-target="99.9">0</span>
+                        </div>
+                        <div class="health-metric-bar">
+                            <div class="health-metric-fill" data-target="99.9"></div>
+                        </div>
+                        <p class="health-metric-desc">99.9% uptime over 12 months</p>
+                    </div>
+                </div>
+                <a href="#contact" class="btn btn-primary">Get your free audit</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Pricing</h2>
+                <p class="section-subtitle">Transparent pricing, no surprises</p>
+            </div>
+            
+            <!-- Pricing Calculator -->
+            <div class="pricing-calculator reveal">
+                <h3>Find your plan</h3>
+                <p>Answer a few questions to see which plan fits best</p>
+                <div class="calculator-inputs">
+                    <div class="calculator-input">
+                        <label for="calcPages">Number of pages</label>
+                        <input type="number" id="calcPages" min="1" max="50" value="5">
+                    </div>
+                    <div class="calculator-input">
+                        <label for="calcUrgency">Timeline</label>
+                        <select id="calcUrgency">
+                            <option value="standard">Standard (4-6 weeks)</option>
+                            <option value="rush">Rush (2-3 weeks)</option>
+                            <option value="flexible">Flexible (8+ weeks)</option>
+                        </select>
+                    </div>
+                    <div class="calculator-input">
+                        <label for="calcIntegrations">Integrations needed</label>
+                        <select id="calcIntegrations">
+                            <option value="none">None</option>
+                            <option value="basic">Basic (email, analytics)</option>
+                            <option value="advanced">Advanced (CRM, payment, API)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="calculator-result">
+                    <p class="calculator-recommendation" id="calcRecommendation">Recommended: <strong>Starter</strong></p>
+                    <p class="calculator-range" id="calcRange">Estimated range: $5,000 - $8,000</p>
+                    <p class="calculator-disclaimer">* Final pricing depends on specific requirements. This is an estimate only.</p>
+                </div>
+            </div>
+
+            <!-- Pricing Tiers -->
+            <div class="pricing-grid">
+                <div class="pricing-card reveal">
+                    <div class="pricing-card-header">
+                        <h3>Starter</h3>
+                        <div class="pricing-price">
+                            <span class="pricing-amount">$5,000</span>
+                            <span class="pricing-period">one-time</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Up to 5 pages</li>
+                        <li>Custom design</li>
+                        <li>Mobile responsive</li>
+                        <li>Basic SEO setup</li>
+                        <li>Contact form</li>
+                        <li>1 month support</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-secondary btn-block">Get started</a>
+                </div>
+                <div class="pricing-card pricing-card-featured reveal">
+                    <div class="pricing-badge">Most popular</div>
+                    <div class="pricing-card-header">
+                        <h3>Growth</h3>
+                        <div class="pricing-price">
+                            <span class="pricing-amount">$12,000</span>
+                            <span class="pricing-period">one-time</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Up to 15 pages</li>
+                        <li>Custom design + brand</li>
+                        <li>WordPress CMS</li>
+                        <li>Advanced SEO</li>
+                        <li>Analytics setup</li>
+                        <li>Performance optimization</li>
+                        <li>3 months support</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-primary btn-block">Get started</a>
+                </div>
+                <div class="pricing-card reveal">
+                    <div class="pricing-card-header">
+                        <h3>Premium</h3>
+                        <div class="pricing-price">
+                            <span class="pricing-amount">$25,000</span>
+                            <span class="pricing-period">one-time</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Unlimited pages</li>
+                        <li>Full brand identity</li>
+                        <li>Custom WordPress theme</li>
+                        <li>E-commerce ready</li>
+                        <li>Advanced integrations</li>
+                        <li>Content strategy</li>
+                        <li>6 months support</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-secondary btn-block">Get started</a>
+                </div>
+            </div>
+
+            <!-- Maintenance Add-on -->
+            <div class="pricing-maintenance reveal">
+                <h3>Ongoing maintenance</h3>
+                <p>Keep your site updated, secure, and fast</p>
+                <div class="maintenance-options">
+                    <div class="maintenance-option">
+                        <span class="maintenance-price">$200<span>/month</span></span>
+                        <span class="maintenance-desc">Basic: Updates, backups, security</span>
+                    </div>
+                    <div class="maintenance-option">
+                        <span class="maintenance-price">$500<span>/month</span></span>
+                        <span class="maintenance-desc">Pro: Everything + content updates, monitoring</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">What clients say</h2>
+                <p class="section-subtitle">Real results from real businesses</p>
+            </div>
+            <div class="testimonials-slider" id="testimonialsSlider">
+                <div class="testimonials-track" id="testimonialsTrack">
+                    <div class="testimonial-slide">
+                        <div class="testimonial-content">
+                            <p class="testimonial-quote">"Working with justaweb.agency was a game-changer. Our site loads in under 2 seconds, and we've seen a 40% increase in leads. The team understood our vision and delivered beyond expectations."</p>
+                            <div class="testimonial-author">
+                                <strong>Sarah Chen</strong>
+                                <span>CEO, Artisan Coffee Co.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-slide">
+                        <div class="testimonial-content">
+                            <p class="testimonial-quote">"Finally, a web agency that gets it. No jargon, no upsells, just great work. Our new site reflects our brand perfectly and has helped us stand out in a crowded market."</p>
+                            <div class="testimonial-author">
+                                <strong>Marcus Rodriguez</strong>
+                                <span>Founder, Tech Consulting Firm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-slide">
+                        <div class="testimonial-content">
+                            <p class="testimonial-quote">"The attention to detail is incredible. Every interaction feels intentional, and the site performs flawlessly. Best investment we've made in our online presence."</p>
+                            <div class="testimonial-author">
+                                <strong>Emily Park</strong>
+                                <span>Creative Director, Fitness Studio</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonials-controls" role="group" aria-label="Testimonial navigation">
+                    <button class="testimonial-btn testimonial-btn-prev" aria-label="Previous testimonial" id="testimonialPrev">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 18l-6-6 6-6"/>
+                        </svg>
+                    </button>
+                    <div class="testimonials-dots" id="testimonialsDots"></div>
+                    <button class="testimonial-btn testimonial-btn-next" aria-label="Next testimonial" id="testimonialNext">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 18l6-6-6-6"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lead Magnet Section -->
+    <section class="lead-magnet">
+        <div class="container">
+            <div class="lead-magnet-content reveal">
+                <h2>Free homepage teardown</h2>
+                <p>Get a detailed analysis of your homepage with actionable recommendations. No strings attached.</p>
+                <button class="btn btn-primary" id="leadMagnetBtn">Get my free teardown</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Frequently asked questions</h2>
+                <p class="section-subtitle">Everything you need to know</p>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item reveal">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>How long does a project take?</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Most projects take 4-6 weeks from kickoff to launch. Complex sites with custom features may take 8-12 weeks. We'll provide a detailed timeline during our discovery call.</p>
+                    </div>
+                </div>
+                <div class="faq-item reveal">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Do I own my website?</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes, absolutely. You own 100% of your code, content, and domain. We'll provide all source files and admin access. No lock-ins, ever.</p>
+                    </div>
+                </div>
+                <div class="faq-item reveal">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Who handles hosting?</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>You can host anywhere you like. We recommend reliable providers like WP Engine, Kinsta, or Vercel. We'll help you set it up and can manage it through our maintenance plans.</p>
+                    </div>
+                </div>
+                <div class="faq-item reveal">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Can I make edits myself?</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! We build with WordPress or provide a simple CMS so you can update content, add blog posts, and manage your site without technical knowledge.</p>
+                    </div>
+                </div>
+                <div class="faq-item reveal">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Is SEO included?</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>All plans include technical SEO setup (meta tags, sitemaps, structured data). For ongoing SEO strategy and content optimization, we offer add-on services.</p>
+                    </div>
+                </div>
+                <div class="faq-item reveal">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Is the site accessible?</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes. We build all sites to WCAG 2.1 AA standards. This means your site works for everyone, including users with disabilities, and helps with SEO too.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Let's work together</h2>
+                <p class="section-subtitle">Tell us about your project</p>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Get in touch</h3>
+                    <p>Ready to start? Fill out the form or reach out directly.</p>
+                    <div class="contact-methods">
+                        <a href="mailto:hello@justaweb.agency" class="contact-method" id="contactEmail">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            <span>hello@justaweb.agency</span>
+                            <button class="contact-copy" aria-label="Copy email" title="Copy email">Copy</button>
+                        </a>
+                    </div>
+                </div>
+                <form class="contact-form" id="contactForm" novalidate>
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" name="name" required aria-required="true">
+                        <span class="form-error" id="nameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required aria-required="true">
+                        <span class="form-error" id="emailError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="website">Website URL</label>
+                        <input type="url" id="website" name="website" placeholder="https://yoursite.com">
+                        <span class="form-error" id="websiteError"></span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="budget">Budget range</label>
+                            <select id="budget" name="budget">
+                                <option value="">Select range</option>
+                                <option value="5k-10k">$5,000 - $10,000</option>
+                                <option value="10k-20k">$10,000 - $20,000</option>
+                                <option value="20k+">$20,000+</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="timeline">Timeline</label>
+                            <select id="timeline" name="timeline">
+                                <option value="">Select timeline</option>
+                                <option value="rush">Rush (2-3 weeks)</option>
+                                <option value="standard">Standard (4-6 weeks)</option>
+                                <option value="flexible">Flexible (8+ weeks)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" rows="5" required aria-required="true"></textarea>
+                        <span class="form-error" id="messageError"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-large btn-block">Send message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="#hero" class="footer-logo">justaweb.agency</a>
+                    <p>Simple, fast, powerful websites.</p>
+                </div>
+                <nav class="footer-nav" aria-label="Footer navigation">
+                    <div class="footer-nav-group">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="#services">Web Design</a></li>
+                            <li><a href="#services">WordPress</a></li>
+                            <li><a href="#services">Maintenance</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-nav-group">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="#work">Work</a></li>
+                            <li><a href="#process">Process</a></li>
+                            <li><a href="#pricing">Pricing</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-nav-group">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#faq">FAQ</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                            <li><a href="#" class="social-link">Twitter</a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 justaweb.agency. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 15l-6-6-6 6"/>
+        </svg>
+    </button>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="theme-icon-light" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="theme-icon-dark" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+    </button>
+
+    <!-- Command Palette -->
+    <div class="command-palette" id="commandPalette" role="dialog" aria-label="Command palette" aria-hidden="true">
+        <div class="command-palette-overlay"></div>
+        <div class="command-palette-content">
+            <div class="command-palette-header">
+                <input type="text" class="command-palette-input" id="commandInput" placeholder="Type a command or search..." autocomplete="off" aria-label="Command input">
+            </div>
+            <div class="command-palette-results" id="commandResults" role="listbox"></div>
+        </div>
+    </div>
+
+    <!-- Lead Magnet Modal -->
+    <div class="modal" id="leadMagnetModal" role="dialog" aria-label="Free homepage teardown" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close modal" id="leadMagnetClose">×</button>
+            <h2>Get your free homepage teardown</h2>
+            <p>We'll analyze your homepage and send you actionable recommendations.</p>
+            <form class="lead-magnet-form" id="leadMagnetForm">
+                <div class="form-group">
+                    <label for="leadName">Name *</label>
+                    <input type="text" id="leadName" name="name" required>
+                    <span class="form-error" id="leadNameError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="leadEmail">Email *</label>
+                    <input type="email" id="leadEmail" name="email" required>
+                    <span class="form-error" id="leadEmailError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="leadWebsite">Website URL *</label>
+                    <input type="url" id="leadWebsite" name="website" placeholder="https://yoursite.com" required>
+                    <span class="form-error" id="leadWebsiteError"></span>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Get my teardown</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

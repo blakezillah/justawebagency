@@ -259,6 +259,9 @@
     
     let currentIndex = 0;
     
+    // Get container width for calculations
+    const sliderContainer = track.parentElement;
+    
     // Create dots
     slides.forEach((_, index) => {
         const dot = document.createElement('button');
@@ -272,12 +275,22 @@
     const dots = dotsContainer.querySelectorAll('.testimonial-dot');
     
     function updateSlider() {
-        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        // Each slide is 100% of container width, so move by currentIndex * 100% of container
+        const containerWidth = sliderContainer.offsetWidth;
+        const translateX = -(currentIndex * containerWidth);
+        track.style.transform = `translateX(${translateX}px)`;
         
         dots.forEach((dot, index) => {
             dot.classList.toggle('active', index === currentIndex);
         });
     }
+    
+    // Recalculate on window resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(updateSlider, 100);
+    });
     
     // Initialize first slide
     updateSlider();

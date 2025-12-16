@@ -1341,6 +1341,33 @@ section {
     transition: border-color var(--transition-fast);
 }
 
+/* Completely disable browser default validation styling */
+.form-group input:invalid,
+.form-group textarea:invalid,
+.form-group select:invalid,
+.form-group input:-moz-ui-invalid,
+.form-group textarea:-moz-ui-invalid,
+.form-group select:-moz-ui-invalid {
+    border-color: var(--color-border);
+    box-shadow: none;
+    outline: none;
+}
+
+/* Override any browser-specific validation styles */
+.form-group input:required:invalid,
+.form-group textarea:required:invalid,
+.form-group select:required:invalid {
+    border-color: var(--color-border);
+    box-shadow: none;
+}
+
+/* Only show error styling when .error class is explicitly added */
+.form-group input.error,
+.form-group textarea.error,
+.form-group select.error {
+    border-color: var(--color-error);
+}
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {

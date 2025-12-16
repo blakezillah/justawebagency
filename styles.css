@@ -1062,14 +1062,15 @@ section {
     max-width: 800px;
     margin: 0 auto;
     position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
 }
 
 .testimonials-track {
     display: flex;
-    overflow: hidden;
-    border-radius: var(--radius-xl);
     width: 100%;
     position: relative;
+    transition: transform 0.5s ease;
 }
 
 .testimonial-slide {
@@ -1080,7 +1081,6 @@ section {
     padding: var(--space-2xl);
     border-radius: var(--radius-xl);
     border: 1px solid var(--color-border);
-    transition: transform 0.5s ease;
     box-sizing: border-box;
 }
 

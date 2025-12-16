@@ -510,13 +510,16 @@
         const value = nameInput.value.trim();
         if (!value) {
             nameError.textContent = 'Name is required';
+            nameInput.classList.add('error');
             return false;
         }
         if (value.length < 2) {
             nameError.textContent = 'Name must be at least 2 characters';
+            nameInput.classList.add('error');
             return false;
         }
         nameError.textContent = '';
+        nameInput.classList.remove('error');
         return true;
     }
     
@@ -525,13 +528,16 @@
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!value) {
             emailError.textContent = 'Email is required';
+            emailInput.classList.add('error');
             return false;
         }
         if (!emailRegex.test(value)) {
             emailError.textContent = 'Please enter a valid email address';
+            emailInput.classList.add('error');
             return false;
         }
         emailError.textContent = '';
+        emailInput.classList.remove('error');
         return true;
     }
     
@@ -541,13 +547,16 @@
             try {
                 new URL(value);
                 websiteError.textContent = '';
+                websiteInput.classList.remove('error');
                 return true;
             } catch {
                 websiteError.textContent = 'Please enter a valid URL';
+                websiteInput.classList.add('error');
                 return false;
             }
         }
         websiteError.textContent = '';
+        websiteInput.classList.remove('error');
         return true;
     }
     
@@ -555,20 +564,47 @@
         const value = messageInput.value.trim();
         if (!value) {
             messageError.textContent = 'Message is required';
+            messageInput.classList.add('error');
             return false;
         }
         if (value.length < 10) {
             messageError.textContent = 'Message must be at least 10 characters';
+            messageInput.classList.add('error');
             return false;
         }
         messageError.textContent = '';
+        messageInput.classList.remove('error');
         return true;
     }
     
-    nameInput.addEventListener('blur', validateName);
-    emailInput.addEventListener('blur', validateEmail);
-    websiteInput.addEventListener('blur', validateWebsite);
-    messageInput.addEventListener('blur', validateMessage);
+    // Remove error class on input
+    nameInput.addEventListener('input', () => {
+        if (nameInput.classList.contains('error')) {
+            nameInput.classList.remove('error');
+            nameError.textContent = '';
+        }
+    });
+    
+    emailInput.addEventListener('input', () => {
+        if (emailInput.classList.contains('error')) {
+            emailInput.classList.remove('error');
+            emailError.textContent = '';
+        }
+    });
+    
+    websiteInput.addEventListener('input', () => {
+        if (websiteInput.classList.contains('error')) {
+            websiteInput.classList.remove('error');
+            websiteError.textContent = '';
+        }
+    });
+    
+    messageInput.addEventListener('input', () => {
+        if (messageInput.classList.contains('error')) {
+            messageInput.classList.remove('error');
+            messageError.textContent = '';
+        }
+    });
     
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -722,9 +758,11 @@
             const value = nameInput.value.trim();
             if (!value) {
                 nameError.textContent = 'Name is required';
+                nameInput.classList.add('error');
                 return false;
             }
             nameError.textContent = '';
+            nameInput.classList.remove('error');
             return true;
         }
         
@@ -733,13 +771,16 @@
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!value) {
                 emailError.textContent = 'Email is required';
+                emailInput.classList.add('error');
                 return false;
             }
             if (!emailRegex.test(value)) {
                 emailError.textContent = 'Please enter a valid email address';
+                emailInput.classList.add('error');
                 return false;
             }
             emailError.textContent = '';
+            emailInput.classList.remove('error');
             return true;
         }
         
@@ -747,21 +788,42 @@
             const value = websiteInput.value.trim();
             if (!value) {
                 websiteError.textContent = 'Website URL is required';
+                websiteInput.classList.add('error');
                 return false;
             }
             try {
                 new URL(value);
                 websiteError.textContent = '';
+                websiteInput.classList.remove('error');
                 return true;
             } catch {
                 websiteError.textContent = 'Please enter a valid URL';
+                websiteInput.classList.add('error');
                 return false;
             }
         }
         
-        nameInput.addEventListener('blur', validateLeadName);
-        emailInput.addEventListener('blur', validateLeadEmail);
-        websiteInput.addEventListener('blur', validateLeadWebsite);
+        // Remove error class on input
+        nameInput.addEventListener('input', () => {
+            if (nameInput.classList.contains('error')) {
+                nameInput.classList.remove('error');
+                nameError.textContent = '';
+            }
+        });
+        
+        emailInput.addEventListener('input', () => {
+            if (emailInput.classList.contains('error')) {
+                emailInput.classList.remove('error');
+                emailError.textContent = '';
+            }
+        });
+        
+        websiteInput.addEventListener('input', () => {
+            if (websiteInput.classList.contains('error')) {
+                websiteInput.classList.remove('error');
+                websiteError.textContent = '';
+            }
+        });
         
         form.addEventListener('submit', (e) => {
             e.preventDefault();

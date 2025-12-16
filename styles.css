@@ -1349,8 +1349,9 @@ section {
     box-shadow: 0 0 0 3px var(--color-accent-light);
 }
 
-.form-group input:invalid:not(:focus):not(:placeholder-shown),
-.form-group textarea:invalid:not(:focus):not(:placeholder-shown) {
+.form-group input.error,
+.form-group textarea.error,
+.form-group select.error {
     border-color: var(--color-error);
 }
 

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Website Build Intake Form - justaweb.agency">
+    <title>Website Build Intake — justaweb.agency</title>
+    <link rel="stylesheet" href="intake.css">
+</head>
+<body>
+    <!-- Access Gate -->
+    <div class="access-gate" id="accessGate">
+        <div class="gate-content">
+            <h1>Website Build Intake</h1>
+            <p>Enter passcode to continue</p>
+            <form id="gateForm" novalidate>
+                <input type="password" id="gatePasscode" placeholder="Passcode" autocomplete="off" required>
+                <span class="form-error" id="gateError"></span>
+                <button type="submit" class="btn btn-primary btn-block">Continue</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Form Container -->
+    <div class="form-container" id="formContainer" style="display: none;">
+        <!-- Header -->
+        <header class="intake-header">
+            <div class="header-content">
+                <h1>Website Build Intake</h1>
+                <button class="btn-lock" id="lockBtn" aria-label="Lock form">Lock</button>
+            </div>
+        </header>
+
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p class="progress-text" id="progressText">Step 1 of 6</p>
+        </div>
+
+        <!-- Form Steps -->
+        <form class="intake-form" id="intakeForm" novalidate>
+            <!-- Step 1: Basics -->
+            <div class="form-step active" id="step1" data-step="1">
+                <h2>Basics</h2>
+                <div class="form-group">
+                    <label for="businessName">Business Name *</label>
+                    <input type="text" id="businessName" name="businessName" required>
+                    <span class="form-error" id="businessNameError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="domain">Domain *</label>
+                    <input type="text" id="domain" name="domain" placeholder="justaweb.agency" required>
+                    <span class="form-error" id="domainError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="contactName">Primary Contact Name *</label>
+                    <input type="text" id="contactName" name="contactName" required>
+                    <span class="form-error" id="contactNameError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                    <span class="form-error" id="emailError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State</label>
+                        <input type="text" id="state" name="state">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="businessDescription">One sentence description of the business *</label>
+                    <textarea id="businessDescription" name="businessDescription" rows="3" required></textarea>
+                    <span class="form-error" id="businessDescriptionError"></span>
+                </div>
+            </div>
+
+            <!-- Step 2: Platform and Scope -->
+            <div class="form-step" id="step2" data-step="2">
+                <h2>Platform and Scope</h2>
+                <div class="form-group">
+                    <label>Platform Choice *</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="platform" value="html" required>
+                            <span>HTML</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="platform" value="wordpress" required>
+                            <span>WordPress</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="platform" value="shopify" required>
+                            <span>Shopify</span>
+                        </label>
+                    </div>
+                    <span class="form-error" id="platformError"></span>
+                </div>
+                <div class="form-group">
+                    <label>Pages *</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="pages" value="one" required>
+                            <span>One page only</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="pages" value="multi" required>
+                            <span>Multi page</span>
+                        </label>
+                    </div>
+                    <span class="form-error" id="pagesError"></span>
+                </div>
+                <div class="form-group" id="pageCountGroup" style="display: none;">
+                    <label for="pageCount">Number of pages</label>
+                    <input type="number" id="pageCount" name="pageCount" min="2" value="5">
+                </div>
+                <div class="form-group">
+                    <label for="deadline">Deadline / Urgency *</label>
+                    <select id="deadline" name="deadline" required>
+                        <option value="">Select deadline</option>
+                        <option value="flexible">Flexible</option>
+                        <option value="2weeks">2 weeks</option>
+                        <option value="1month">1 month</option>
+                        <option value="asap">ASAP</option>
+                    </select>
+                    <span class="form-error" id="deadlineError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="budget">Budget Range *</label>
+                    <select id="budget" name="budget" required>
+                        <option value="">Select range</option>
+                        <option value="5k-10k">$5,000 - $10,000</option>
+                        <option value="10k-20k">$10,000 - $20,000</option>
+                        <option value="20k+">$20,000+</option>
+                    </select>
+                    <span class="form-error" id="budgetError"></span>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="maintenance" name="maintenance">
+                        <span>Need maintenance included?</span>
+                    </label>
+                    <p class="helper-text">Including maintenance gives you a discount on the build price.</p>
+                </div>
+            </div>
+
+            <!-- Step 3: Goals and Audience -->
+            <div class="form-step" id="step3" data-step="3">
+                <h2>Goals and Audience</h2>
+                <div class="form-group">
+                    <label for="primaryGoal">Primary Goal *</label>
+                    <select id="primaryGoal" name="primaryGoal" required>
+                        <option value="">Select goal</option>
+                        <option value="leads">Leads</option>
+                        <option value="bookings">Bookings</option>
+                        <option value="ecommerce">E-commerce</option>
+                        <option value="credibility">Credibility</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <span class="form-error" id="primaryGoalError"></span>
+                </div>
+                <div class="form-group" id="primaryGoalOtherGroup" style="display: none;">
+                    <label for="primaryGoalOther">Please specify</label>
+                    <input type="text" id="primaryGoalOther" name="primaryGoalOther">
+                </div>
+                <div class="form-group">
+                    <label for="targetAudience">Target Audience Description *</label>
+                    <textarea id="targetAudience" name="targetAudience" rows="3" required></textarea>
+                    <span class="form-error" id="targetAudienceError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="topActions">Top 3 actions you want visitors to take *</label>
+                    <textarea id="topActions" name="topActions" rows="3" placeholder="1. Book a consultation&#10;2. Download guide&#10;3. Contact us" required></textarea>
+                    <span class="form-error" id="topActionsError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="competitor1">Competitor 1 URL</label>
+                    <input type="url" id="competitor1" name="competitor1" placeholder="https://example.com">
+                </div>
+                <div class="form-group">
+                    <label for="competitor2">Competitor 2 URL</label>
+                    <input type="url" id="competitor2" name="competitor2" placeholder="https://example.com">
+                </div>
+                <div class="form-group">
+                    <label for="competitor3">Competitor 3 URL</label>
+                    <input type="url" id="competitor3" name="competitor3" placeholder="https://example.com">
+                </div>
+                <div class="form-group">
+                    <label for="competitorLikes">What you like about competitor sites</label>
+                    <textarea id="competitorLikes" name="competitorLikes" rows="4"></textarea>
+                </div>
+            </div>
+
+            <!-- Step 4: Branding and Content -->
+            <div class="form-step" id="step4" data-step="4">
+                <h2>Branding and Content</h2>
+                <div class="form-group">
+                    <label>Brand Personality *</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="brandPersonality" value="modern">
+                            <span>Modern</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="brandPersonality" value="bold">
+                            <span>Bold</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="brandPersonality" value="minimal">
+                            <span>Minimal</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="brandPersonality" value="playful">
+                            <span>Playful</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="brandPersonality" value="luxury">
+                            <span>Luxury</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="brandPersonality" value="rugged">
+                            <span>Rugged</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="brandPersonality" value="friendly">
+                            <span>Friendly</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="brandPersonality" value="other">
+                            <span>Other</span>
+                        </label>
+                    </div>
+                    <span class="form-error" id="brandPersonalityError"></span>
+                </div>
+                <div class="form-group" id="brandPersonalityOtherGroup" style="display: none;">
+                    <label for="brandPersonalityOther">Please specify</label>
+                    <input type="text" id="brandPersonalityOther" name="brandPersonalityOther">
+                </div>
+                <div class="form-group">
+                    <label for="colorPreferences">Color Preferences</label>
+                    <input type="text" id="colorPreferences" name="colorPreferences" placeholder="e.g., Blue and white, or #6366f1">
+                </div>
+                <div class="form-group">
+                    <label for="typographyVibe">Typography Vibe *</label>
+                    <select id="typographyVibe" name="typographyVibe" required>
+                        <option value="">Select vibe</option>
+                        <option value="clean">Clean</option>
+                        <option value="editorial">Editorial</option>
+                        <option value="tech">Tech</option>
+                        <option value="classic">Classic</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <span class="form-error" id="typographyVibeError"></span>
+                </div>
+                <div class="form-group" id="typographyVibeOtherGroup" style="display: none;">
+                    <label for="typographyVibeOther">Please specify</label>
+                    <input type="text" id="typographyVibeOther" name="typographyVibeOther">
+                </div>
+                <div class="form-group">
+                    <label>Do you have a logo? *</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="hasLogo" value="yes" required>
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="hasLogo" value="no" required>
+                            <span>No</span>
+                        </label>
+                    </div>
+                    <span class="form-error" id="hasLogoError"></span>
+                </div>
+                <div class="form-group">
+                    <label>Do you have brand assets? *</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="hasBrandAssets" value="yes" required>
+                            <span>Yes</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="hasBrandAssets" value="no" required>
+                            <span>No</span>
+                        </label>
+                    </div>
+                    <span class="form-error" id="hasBrandAssetsError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="contentStatus">Content Status *</label>
+                    <select id="contentStatus" name="contentStatus" required>
+                        <option value="">Select status</option>
+                        <option value="ready">Ready</option>
+                        <option value="partial">Partial</option>
+                        <option value="needHelp">Need help writing</option>
+                    </select>
+                    <span class="form-error" id="contentStatusError"></span>
+                </div>
+                <div class="form-group">
+                    <label>Sections Desired *</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="sections" value="hero">
+                            <span>Hero</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="sections" value="proof">
+                            <span>Proof</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="sections" value="services">
+                            <span>Services</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="sections" value="work">
+                            <span>Work</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="sections" value="process">
+                            <span>Process</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="sections" value="pricing">
+                            <span>Pricing</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="sections" value="faq">
+                            <span>FAQ</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="sections" value="contact">
+                            <span>Contact</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="sections" value="other" id="sectionsOther">
+                            <span>Other</span>
+                        </label>
+                    </div>
+                    <span class="form-error" id="sectionsError"></span>
+                </div>
+                <div class="form-group" id="sectionsOtherGroup" style="display: none;">
+                    <label for="sectionsOtherText">Please specify other sections</label>
+                    <input type="text" id="sectionsOtherText" name="sectionsOtherText">
+                </div>
+                <div class="form-group">
+                    <label for="requiredCTAs">Required CTAs</label>
+                    <textarea id="requiredCTAs" name="requiredCTAs" rows="3" placeholder="e.g., Book a call, Download guide, Get started"></textarea>
+                </div>
+            </div>
+
+            <!-- Step 5: Features and Integrations -->
+            <div class="form-step" id="step5" data-step="5">
+                <h2>Features and Integrations</h2>
+                <div class="form-group">
+                    <label>Feature Toggles</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="features" value="themeToggle">
+                            <span>Theme toggle</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="features" value="commandPalette">
+                            <span>Command palette</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="features" value="pricingCalculator">
+                            <span>Pricing calculator</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="features" value="portfolioFilter">
+                            <span>Portfolio filter</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="features" value="testimonialsSlider">
+                            <span>Testimonials slider</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="features" value="contactForm">
+                            <span>Contact form validation</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="features" value="leadMagnet">
+                            <span>Lead magnet modal</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="features" value="siteHealth">
+                            <span>Site Health Demo widget</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- WordPress Specific -->
+                <div class="platform-specific" id="wordpressFields" style="display: none;">
+                    <h3>WordPress Specific</h3>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="wpBlog" name="wpBlog">
+                            <span>Blog needed?</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="wpFormsPlugin">Forms plugin preference</label>
+                        <input type="text" id="wpFormsPlugin" name="wpFormsPlugin" placeholder="e.g., Contact Form 7, Gravity Forms">
+                    </div>
+                    <div class="form-group">
+                        <label for="wpHosting">Hosting preference</label>
+                        <input type="text" id="wpHosting" name="wpHosting" placeholder="e.g., WP Engine, Kinsta">
+                    </div>
+                </div>
+
+                <!-- Shopify Specific -->
+                <div class="platform-specific" id="shopifyFields" style="display: none;">
+                    <h3>Shopify Specific</h3>
+                    <div class="form-group">
+                        <label for="shopifyProducts">Number of products</label>
+                        <input type="number" id="shopifyProducts" name="shopifyProducts" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="shopifyCollections">Collections complexity</label>
+                        <select id="shopifyCollections" name="shopifyCollections">
+                            <option value="">Select complexity</option>
+                            <option value="simple">Simple</option>
+                            <option value="medium">Medium</option>
+                            <option value="complex">Complex</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="shopifyApps">Apps needed</label>
+                        <input type="text" id="shopifyApps" name="shopifyApps" placeholder="e.g., Product reviews, Email marketing">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Integrations</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="integrations" value="ga4">
+                            <span>GA4</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="integrations" value="gtm">
+                            <span>GTM</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="integrations" value="mailchimp">
+                            <span>Mailchimp</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="integrations" value="hubspot">
+                            <span>HubSpot</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="integrations" value="calendly">
+                            <span>Calendly</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="integrations" value="stripe">
+                            <span>Stripe</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="integrations" value="other" id="integrationsOther">
+                            <span>Other</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group" id="integrationsOtherGroup" style="display: none;">
+                    <label for="integrationsOtherText">Please specify other integrations</label>
+                    <input type="text" id="integrationsOtherText" name="integrationsOtherText">
+                </div>
+                <div class="form-group">
+                    <label>Legal Needs</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="legalNeeds" value="privacy">
+                            <span>Privacy Policy</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="legalNeeds" value="terms">
+                            <span>Terms of Service</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="legalNeeds" value="accessibility">
+                            <span>Accessibility Note</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: Review and Export -->
+            <div class="form-step" id="step6" data-step="6">
+                <h2>Review and Export</h2>
+                <div class="review-summary" id="reviewSummary"></div>
+                <div class="export-actions">
+                    <button type="button" class="btn btn-primary" id="copyPromptBtn">Copy Cursor Prompt</button>
+                    <button type="button" class="btn btn-secondary" id="copyJsonBtn">Copy JSON</button>
+                    <button type="button" class="btn btn-secondary" id="emailBtn">Email to Me</button>
+                    <button type="button" class="btn btn-secondary" id="downloadBtn">Download as .txt</button>
+                    <button type="button" class="btn btn-secondary" id="postEndpointBtn">POST to Endpoint</button>
+                    <button type="button" class="btn btn-secondary" id="resetBtn">Reset Form</button>
+                </div>
+                <div class="export-status" id="exportStatus"></div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="form-navigation">
+                <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">Previous</button>
+                <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">Complete</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal for long email content -->
+    <div class="modal" id="emailModal" role="dialog" aria-label="Email content too long" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close modal" id="modalClose">×</button>
+            <h2>Content Too Long</h2>
+            <p>The form content is too long for email. Please use "Download as .txt" and attach it manually, or use the "Copy" buttons to copy the content.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" id="modalDownloadBtn">Download .txt</button>
+                <button type="button" class="btn btn-secondary" id="modalCloseBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="intake.js"></script>
+</body>
+</html>
+

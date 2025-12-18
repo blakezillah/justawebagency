@@ -205,6 +205,12 @@ function nextStep() {
         if (currentStep < totalSteps) {
             currentStep++;
             showStep(currentStep);
+            
+            // Re-initialize competitor fields when entering step 3
+            if (currentStep === 3) {
+                initCompetitorFields();
+            }
+            
             if (currentStep === totalSteps) {
                 generateConfirmation();
             }
@@ -317,21 +323,36 @@ function initCompetitorFields() {
     const container = document.getElementById('competitorsContainer');
     const addBtn = document.getElementById('addCompetitorBtn');
     
-    if (!container || !addBtn) return;
+    if (!container || !addBtn) {
+        return;
+    }
     
-    // Load existing competitors
-    if (formData.competitors && Array.isArray(formData.competitors)) {
-        formData.competitors.forEach((comp, index) => {
+    // Count existing competitors in DOM
+    const existingItems = container.querySelectorAll('.competitor-item');
+    competitorCount = existingItems.length;
+    
+    // If no existing competitors, load from saved data
+    if (competitorCount === 0 && formData.competitors && Array.isArray(formData.competitors) && formData.competitors.length > 0) {
+        formData.competitors.forEach((comp) => {
             addCompetitorField(comp.url, comp.likes);
         });
     }
     
-    addBtn.addEventListener('click', () => {
+    // Remove existing listener by cloning button
+    const newBtn = addBtn.cloneNode(true);
+    addBtn.parentNode.replaceChild(newBtn, addBtn);
+    
+    // Add event listener to new button
+    const freshBtn = document.getElementById('addCompetitorBtn');
+    freshBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         if (competitorCount < MAX_COMPETITORS) {
             addCompetitorField();
         } else {
             alert(`Maximum ${MAX_COMPETITORS} competitors allowed.`);
         }
+        return false;
     });
 }
 

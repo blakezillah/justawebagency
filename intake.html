@@ -184,20 +184,12 @@
                     <span class="form-error" id="topActionsError"></span>
                 </div>
                 <div class="form-group">
-                    <label for="competitor1">Competitor 1 URL</label>
-                    <input type="url" id="competitor1" name="competitor1" placeholder="https://example.com">
-                </div>
-                <div class="form-group">
-                    <label for="competitor2">Competitor 2 URL</label>
-                    <input type="url" id="competitor2" name="competitor2" placeholder="https://example.com">
-                </div>
-                <div class="form-group">
-                    <label for="competitor3">Competitor 3 URL</label>
-                    <input type="url" id="competitor3" name="competitor3" placeholder="https://example.com">
-                </div>
-                <div class="form-group">
-                    <label for="competitorLikes">What you like about competitor sites</label>
-                    <textarea id="competitorLikes" name="competitorLikes" rows="4"></textarea>
+                    <label>Competitor Sites (for inspiration reference only)</label>
+                    <p class="helper-text">Add competitor URLs as inspiration references. These are used for design inspiration only, not copied or scraped.</p>
+                    <div id="competitorsContainer">
+                        <!-- Competitor fields will be added here dynamically -->
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="addCompetitorBtn" style="margin-top: var(--space-md);">Add competitor</button>
                 </div>
             </div>
 
@@ -494,19 +486,48 @@
                 </div>
             </div>
 
-            <!-- Step 6: Review and Export -->
+            <!-- Step 6: Confirmation -->
             <div class="form-step" id="step6" data-step="6">
-                <h2>Review and Export</h2>
-                <div class="review-summary" id="reviewSummary"></div>
-                <div class="export-actions">
-                    <button type="button" class="btn btn-primary" id="copyPromptBtn">Copy Cursor Prompt</button>
-                    <button type="button" class="btn btn-secondary" id="copyJsonBtn">Copy JSON</button>
-                    <button type="button" class="btn btn-secondary" id="emailBtn">Email to Me</button>
-                    <button type="button" class="btn btn-secondary" id="downloadBtn">Download as .txt</button>
-                    <button type="button" class="btn btn-secondary" id="postEndpointBtn">POST to Endpoint</button>
-                    <button type="button" class="btn btn-secondary" id="resetBtn">Reset Form</button>
+                <div class="confirmation-content">
+                    <h2>You're all set</h2>
+                    <p class="confirmation-message">Your website build request has been prepared. We'll review it and get back to you soon.</p>
+                    
+                    <div class="summary-card" id="summaryCard">
+                        <!-- Summary will be populated here -->
+                    </div>
+
+                    <div class="privacy-note">
+                        <p><strong>Privacy note:</strong> Do not include passwords in this form. Competitor URLs are used as inspiration references only, not copied or scraped.</p>
+                    </div>
+
+                    <div class="endpoint-option">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="useEndpoint" name="useEndpoint">
+                            <span>Send securely (optional)</span>
+                        </label>
+                        <p class="helper-text" id="endpointHelper">Not available right now</p>
+                    </div>
+
+                    <div class="submit-section">
+                        <button type="submit" class="btn btn-primary btn-large" id="submitRequestBtn">Submit request</button>
+                        <div class="submit-status" id="submitStatus"></div>
+                    </div>
+
+                    <details class="advanced-section">
+                        <summary>Advanced options</summary>
+                        <div class="advanced-content">
+                            <div class="export-actions">
+                                <button type="button" class="btn btn-secondary" id="copyPromptBtn">Copy Cursor Prompt</button>
+                                <button type="button" class="btn btn-secondary" id="copyJsonBtn">Copy JSON</button>
+                                <button type="button" class="btn btn-secondary" id="downloadBtn">Download as .txt</button>
+                            </div>
+                            <div class="prompt-preview">
+                                <label>Cursor Prompt Preview</label>
+                                <textarea id="promptPreview" readonly rows="20"></textarea>
+                            </div>
+                        </div>
+                    </details>
                 </div>
-                <div class="export-status" id="exportStatus"></div>
             </div>
 
             <!-- Navigation Buttons -->
@@ -523,10 +544,12 @@
         <div class="modal-overlay"></div>
         <div class="modal-content">
             <button class="modal-close" aria-label="Close modal" id="modalClose">×</button>
-            <h2>Content Too Long</h2>
-            <p>The form content is too long for email. Please use "Download as .txt" and attach it manually, or use the "Copy" buttons to copy the content.</p>
+            <h2>Your email app cannot fit the full details</h2>
+            <p>The request details are too long for a single email. Please use one of these options:</p>
             <div class="modal-actions">
-                <button type="button" class="btn btn-primary" id="modalDownloadBtn">Download .txt</button>
+                <button type="button" class="btn btn-primary" id="modalDownloadBtn">Download intake.txt</button>
+                <button type="button" class="btn btn-secondary" id="modalCopyPromptBtn">Copy Cursor Prompt</button>
+                <button type="button" class="btn btn-secondary" id="modalCopySummaryBtn">Copy Short Summary Email</button>
                 <button type="button" class="btn btn-secondary" id="modalCloseBtn">Close</button>
             </div>
         </div>

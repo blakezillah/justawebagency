@@ -120,6 +120,9 @@ function saveFormData() {
 function populateForm() {
     // Populate all form fields from formData
     Object.keys(formData).forEach(key => {
+        // Skip competitors (handled separately)
+        if (key === 'competitors') return;
+        
         const element = document.querySelector(`[name="${key}"]`);
         if (!element) return;
 
@@ -137,9 +140,16 @@ function populateForm() {
         }
     });
 
+    // Populate competitors
+    if (formData.competitors && Array.isArray(formData.competitors)) {
+        formData.competitors.forEach(comp => {
+            addCompetitorField(comp.url, comp.likes);
+        });
+    }
+
     // Trigger change events to show/hide conditional fields
     document.querySelectorAll('input, select, textarea').forEach(el => {
-        if (el.value) {
+        if (el.value && !el.name.startsWith('competitor')) {
             el.dispatchEvent(new Event('change', { bubbles: true }));
         }
     });
@@ -169,11 +179,16 @@ function showStep(step) {
     // Update navigation buttons
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
-    const submitBtn = document.getElementById('submitBtn');
+    const formNav = document.querySelector('.form-navigation');
 
-    prevBtn.style.display = step > 1 ? 'inline-flex' : 'none';
-    nextBtn.style.display = step < totalSteps ? 'inline-flex' : 'none';
-    submitBtn.style.display = step === totalSteps ? 'inline-flex' : 'none';
+    if (step === totalSteps) {
+        // Hide navigation on final step (has its own submit button)
+        if (formNav) formNav.style.display = 'none';
+    } else {
+        if (formNav) formNav.style.display = 'flex';
+        prevBtn.style.display = step > 1 ? 'inline-flex' : 'none';
+        nextBtn.style.display = 'inline-flex';
+    }
 
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -181,11 +196,17 @@ function showStep(step) {
 
 function nextStep() {
     if (validateCurrentStep()) {
+        // Save competitor data before moving
+        if (currentStep === 3) {
+            saveCompetitorData();
+            saveFormData();
+        }
+        
         if (currentStep < totalSteps) {
             currentStep++;
             showStep(currentStep);
             if (currentStep === totalSteps) {
-                generateReview();
+                generateConfirmation();
             }
         }
     }
@@ -286,12 +307,142 @@ function isValidUrl(url) {
 }
 
 // ============================================
+// Competitor Management
+// ============================================
+
+let competitorCount = 0;
+const MAX_COMPETITORS = 5;
+
+function initCompetitorFields() {
+    const container = document.getElementById('competitorsContainer');
+    const addBtn = document.getElementById('addCompetitorBtn');
+    
+    if (!container || !addBtn) return;
+    
+    // Load existing competitors
+    if (formData.competitors && Array.isArray(formData.competitors)) {
+        formData.competitors.forEach((comp, index) => {
+            addCompetitorField(comp.url, comp.likes);
+        });
+    }
+    
+    addBtn.addEventListener('click', () => {
+        if (competitorCount < MAX_COMPETITORS) {
+            addCompetitorField();
+        } else {
+            alert(`Maximum ${MAX_COMPETITORS} competitors allowed.`);
+        }
+    });
+}
+
+function addCompetitorField(url = '', likes = '') {
+    if (competitorCount >= MAX_COMPETITORS) return;
+    
+    competitorCount++;
+    const container = document.getElementById('competitorsContainer');
+    const index = competitorCount;
+    
+    const item = document.createElement('div');
+    item.className = 'competitor-item';
+    item.dataset.index = index;
+    item.innerHTML = `
+        <div class="competitor-item-header">
+            <span class="competitor-item-number">Competitor ${index}</span>
+            <button type="button" class="competitor-remove-btn" onclick="removeCompetitor(${index})">Remove</button>
+        </div>
+        <div class="form-group competitor-url-input">
+            <label for="competitor${index}_url">URL</label>
+            <input type="url" id="competitor${index}_url" name="competitor${index}_url" placeholder="https://example.com" value="${url}">
+        </div>
+        <div class="form-group">
+            <label for="competitor${index}_likes">What you like about this site (optional)</label>
+            <textarea id="competitor${index}_likes" name="competitor${index}_likes" rows="2" placeholder="Design elements, layout, features you find inspiring">${likes}</textarea>
+        </div>
+    `;
+    
+    container.appendChild(item);
+    
+    // Add event listeners
+    const urlInput = item.querySelector(`#competitor${index}_url`);
+    const likesInput = item.querySelector(`#competitor${index}_likes`);
+    
+    urlInput.addEventListener('input', () => {
+        saveCompetitorData();
+        saveFormData();
+    });
+    
+    likesInput.addEventListener('input', () => {
+        saveCompetitorData();
+        saveFormData();
+    });
+}
+
+function removeCompetitor(index) {
+    const item = document.querySelector(`.competitor-item[data-index="${index}"]`);
+    if (item) {
+        item.remove();
+        competitorCount--;
+        saveCompetitorData();
+        saveFormData();
+        renumberCompetitors();
+    }
+}
+
+function renumberCompetitors() {
+    const items = document.querySelectorAll('.competitor-item');
+    items.forEach((item, idx) => {
+        const newIndex = idx + 1;
+        item.dataset.index = newIndex;
+        const numberEl = item.querySelector('.competitor-item-number');
+        if (numberEl) numberEl.textContent = `Competitor ${newIndex}`;
+        
+        const urlInput = item.querySelector('input[type="url"]');
+        const likesInput = item.querySelector('textarea');
+        if (urlInput) {
+            urlInput.id = `competitor${newIndex}_url`;
+            urlInput.name = `competitor${newIndex}_url`;
+        }
+        if (likesInput) {
+            likesInput.id = `competitor${newIndex}_likes`;
+            likesInput.name = `competitor${newIndex}_likes`;
+        }
+    });
+}
+
+function saveCompetitorData() {
+    const competitors = [];
+    const items = document.querySelectorAll('.competitor-item');
+    
+    items.forEach(item => {
+        const urlInput = item.querySelector('input[type="url"]');
+        const likesInput = item.querySelector('textarea');
+        const url = urlInput ? urlInput.value.trim() : '';
+        const likes = likesInput ? likesInput.value.trim() : '';
+        
+        if (url) {
+            competitors.push({ url, likes });
+        }
+    });
+    
+    formData.competitors = competitors;
+}
+
+// Make removeCompetitor available globally
+window.removeCompetitor = removeCompetitor;
+
+// ============================================
 // Form Field Handlers
 // ============================================
 
 function initFormHandlers() {
+    // Initialize competitor fields
+    initCompetitorFields();
+    
     // Auto-save on input
     document.querySelectorAll('input, select, textarea').forEach(field => {
+        // Skip competitor fields (handled separately)
+        if (field.name && field.name.startsWith('competitor')) return;
+        
         field.addEventListener('input', () => {
             saveFieldData(field);
             saveFormData();
@@ -308,18 +459,20 @@ function initFormHandlers() {
     document.getElementById('nextBtn').addEventListener('click', nextStep);
     document.getElementById('prevBtn').addEventListener('click', prevStep);
 
-    // Form submission - go to review step
+    // Form submission - submit request
     document.getElementById('intakeForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        if (currentStep === totalSteps) {
-            // Already on review step, just regenerate
-            generateReview();
-        } else if (validateCurrentStep()) {
-            currentStep = totalSteps;
-            showStep(currentStep);
-            generateReview();
-        }
+        submitRequest();
     });
+    
+    // Submit request button
+    const submitBtn = document.getElementById('submitRequestBtn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            submitRequest();
+        });
+    }
 }
 
 function saveFieldData(field) {
@@ -424,89 +577,49 @@ function handleConditionalFields(field) {
 }
 
 // ============================================
-// Review Summary Generation
+// Confirmation Page Generation
 // ============================================
 
-function generateReview() {
-    const summary = document.getElementById('reviewSummary');
+function generateConfirmation() {
+    const summaryCard = document.getElementById('summaryCard');
+    const promptPreview = document.getElementById('promptPreview');
     const data = getCompleteFormData();
 
+    // Generate summary card
     let html = '';
-
-    // Step 1: Basics
-    html += '<div class="review-section"><h3>Basics</h3>';
-    html += `<div class="review-item"><strong>Business Name:</strong> ${data.businessName || 'Not provided'}</div>`;
-    html += `<div class="review-item"><strong>Domain:</strong> ${data.domain || 'Not provided'}</div>`;
-    html += `<div class="review-item"><strong>Contact:</strong> ${data.contactName || 'Not provided'}</div>`;
-    html += `<div class="review-item"><strong>Email:</strong> ${data.email || 'Not provided'}</div>`;
-    if (data.phone) html += `<div class="review-item"><strong>Phone:</strong> ${data.phone}</div>`;
-    if (data.city || data.state) {
-        html += `<div class="review-item"><strong>Location:</strong> ${[data.city, data.state].filter(Boolean).join(', ') || 'Not provided'}</div>`;
-    }
-    html += `<div class="review-item"><strong>Description:</strong> ${data.businessDescription || 'Not provided'}</div>`;
-    html += '</div>';
-
-    // Step 2: Platform and Scope
-    html += '<div class="review-section"><h3>Platform and Scope</h3>';
-    html += `<div class="review-item"><strong>Platform:</strong> ${data.platform ? data.platform.toUpperCase() : 'Not provided'}</div>`;
-    html += `<div class="review-item"><strong>Pages:</strong> ${data.pages === 'one' ? 'One page' : data.pages === 'multi' ? `Multi page (${data.pageCount || 'N/A'} pages)` : 'Not provided'}</div>`;
-    html += `<div class="review-item"><strong>Deadline:</strong> ${formatDeadline(data.deadline) || 'Not provided'}</div>`;
-    html += `<div class="review-item"><strong>Budget:</strong> ${formatBudget(data.budget) || 'Not provided'}</div>`;
-    html += `<div class="review-item"><strong>Maintenance:</strong> ${data.maintenance ? 'Yes (discount applied)' : 'No'}</div>`;
-    html += '</div>';
-
-    // Step 3: Goals and Audience
-    html += '<div class="review-section"><h3>Goals and Audience</h3>';
-    html += `<div class="review-item"><strong>Primary Goal:</strong> ${formatGoal(data.primaryGoal, data.primaryGoalOther) || 'Not provided'}</div>`;
-    html += `<div class="review-item"><strong>Target Audience:</strong> ${data.targetAudience || 'Not provided'}</div>`;
-    html += `<div class="review-item"><strong>Top Actions:</strong> ${data.topActions || 'Not provided'}</div>`;
-    const competitors = [data.competitor1, data.competitor2, data.competitor3].filter(Boolean);
-    if (competitors.length > 0) {
-        html += `<div class="review-item"><strong>Competitors:</strong> ${competitors.join(', ')}</div>`;
-    }
-    if (data.competitorLikes) {
-        html += `<div class="review-item"><strong>Competitor Likes:</strong> ${data.competitorLikes}</div>`;
-    }
-    html += '</div>';
-
-    // Step 4: Branding and Content
-    html += '<div class="review-section"><h3>Branding and Content</h3>';
-    const personality = Array.isArray(data.brandPersonality) ? data.brandPersonality.join(', ') : (data.brandPersonality || 'Not provided');
-    html += `<div class="review-item"><strong>Brand Personality:</strong> ${personality}${data.brandPersonalityOther ? ` (${data.brandPersonalityOther})` : ''}</div>`;
-    if (data.colorPreferences) html += `<div class="review-item"><strong>Colors:</strong> ${data.colorPreferences}</div>`;
-    html += `<div class="review-item"><strong>Typography:</strong> ${data.typographyVibe || 'Not provided'}${data.typographyVibeOther ? ` (${data.typographyVibeOther})` : ''}</div>`;
-    html += `<div class="review-item"><strong>Has Logo:</strong> ${data.hasLogo || 'Not provided'}</div>`;
-    html += `<div class="review-item"><strong>Has Brand Assets:</strong> ${data.hasBrandAssets || 'Not provided'}</div>`;
-    html += `<div class="review-item"><strong>Content Status:</strong> ${formatContentStatus(data.contentStatus) || 'Not provided'}</div>`;
-    const sections = Array.isArray(data.sections) ? data.sections.join(', ') : (data.sections || 'Not provided');
-    html += `<div class="review-item"><strong>Sections:</strong> ${sections}${data.sectionsOtherText ? ` (${data.sectionsOtherText})` : ''}</div>`;
-    if (data.requiredCTAs) html += `<div class="review-item"><strong>CTAs:</strong> ${data.requiredCTAs}</div>`;
-    html += '</div>';
-
-    // Step 5: Features and Integrations
-    html += '<div class="review-section"><h3>Features and Integrations</h3>';
-    const features = Array.isArray(data.features) ? data.features.join(', ') : 'None selected';
-    html += `<div class="review-item"><strong>Features:</strong> ${features}</div>`;
+    html += `<div class="summary-item"><span class="summary-item-label">Business Name</span><span class="summary-item-value">${data.businessName || 'Not provided'}</span></div>`;
+    html += `<div class="summary-item"><span class="summary-item-label">Platform</span><span class="summary-item-value">${data.platform ? data.platform.toUpperCase() : 'Not provided'}</span></div>`;
+    html += `<div class="summary-item"><span class="summary-item-label">Pages</span><span class="summary-item-value">${data.pages === 'one' ? 'One page' : data.pages === 'multi' ? `${data.pageCount || 'N/A'} pages` : 'Not provided'}</span></div>`;
+    html += `<div class="summary-item"><span class="summary-item-label">Timeline</span><span class="summary-item-value">${formatDeadline(data.deadline) || 'Not provided'}</span></div>`;
+    html += `<div class="summary-item"><span class="summary-item-label">Budget</span><span class="summary-item-value">${formatBudget(data.budget) || 'Not provided'}</span></div>`;
+    html += `<div class="summary-item"><span class="summary-item-label">Maintenance</span><span class="summary-item-value">${data.maintenance_included ? 'Yes (discount applied)' : 'No'}</span></div>`;
+    html += `<div class="summary-item"><span class="summary-item-label">Primary Goal</span><span class="summary-item-value">${formatGoal(data.primaryGoal, data.primaryGoalOther) || 'Not provided'}</span></div>`;
     
-    if (data.platform === 'wordpress') {
-        if (data.wpBlog) html += `<div class="review-item"><strong>WordPress Blog:</strong> Yes</div>`;
-        if (data.wpFormsPlugin) html += `<div class="review-item"><strong>Forms Plugin:</strong> ${data.wpFormsPlugin}</div>`;
-        if (data.wpHosting) html += `<div class="review-item"><strong>Hosting:</strong> ${data.wpHosting}</div>`;
-    }
-    
-    if (data.platform === 'shopify') {
-        if (data.shopifyProducts) html += `<div class="review-item"><strong>Products:</strong> ${data.shopifyProducts}</div>`;
-        if (data.shopifyCollections) html += `<div class="review-item"><strong>Collections:</strong> ${data.shopifyCollections}</div>`;
-        if (data.shopifyApps) html += `<div class="review-item"><strong>Apps:</strong> ${data.shopifyApps}</div>`;
-    }
-    
-    const integrations = Array.isArray(data.integrations) ? data.integrations.join(', ') : 'None';
-    html += `<div class="review-item"><strong>Integrations:</strong> ${integrations}${data.integrationsOtherText ? ` (${data.integrationsOtherText})` : ''}</div>`;
-    const legal = Array.isArray(data.legalNeeds) ? data.legalNeeds.join(', ') : 'None';
-    html += `<div class="review-item"><strong>Legal Needs:</strong> ${legal}</div>`;
-    html += '</div>';
+    summaryCard.innerHTML = html;
 
-    summary.innerHTML = html;
+    // Generate and show prompt preview
+    const prompt = generateCursorPrompt();
+    if (promptPreview) {
+        promptPreview.value = prompt;
+    }
+
+    // Update endpoint option
+    const endpointCheckbox = document.getElementById('useEndpoint');
+    const endpointHelper = document.getElementById('endpointHelper');
+    
+    if (!ENDPOINT_URL) {
+        if (endpointCheckbox) {
+            endpointCheckbox.disabled = true;
+            endpointCheckbox.checked = false;
+        }
+        if (endpointHelper) {
+            endpointHelper.textContent = 'Not available right now';
+        }
+    } else {
+        if (endpointHelper) {
+            endpointHelper.textContent = 'Send via secure endpoint instead of email';
+        }
+    }
 }
 
 function formatDeadline(value) {
@@ -554,6 +667,9 @@ function formatContentStatus(value) {
 // ============================================
 
 function getCompleteFormData() {
+    // Save competitor data before getting complete data
+    saveCompetitorData();
+    
     const data = { ...formData };
     
     // Add computed fields
@@ -577,6 +693,11 @@ function getCompleteFormData() {
     }
     if (!Array.isArray(data.legalNeeds)) {
         data.legalNeeds = data.legalNeeds ? [data.legalNeeds] : [];
+    }
+    
+    // Ensure competitors is an array
+    if (!Array.isArray(data.competitors)) {
+        data.competitors = [];
     }
     
     return data;
@@ -696,16 +817,17 @@ function generateCursorPrompt() {
         prompt += `\n`;
     }
 
-    // Competitors
-    const competitors = [data.competitor1, data.competitor2, data.competitor3].filter(Boolean);
-    if (competitors.length > 0) {
-        prompt += `Competitor References\n\n`;
-        competitors.forEach(comp => {
-            prompt += `\t•\t${comp}\n`;
+    // Competitors (inspiration references only)
+    if (data.competitors && Array.isArray(data.competitors) && data.competitors.length > 0) {
+        prompt += `Competitor Inspiration References\n\n`;
+        prompt += `\t•\tThese URLs are provided as inspiration references only, not to be copied or scraped.\n`;
+        data.competitors.forEach(comp => {
+            prompt += `\t•\t${comp.url}`;
+            if (comp.likes) {
+                prompt += ` - Client likes: ${comp.likes}`;
+            }
+            prompt += `\n`;
         });
-        if (data.competitorLikes) {
-            prompt += `\t•\tWhat client likes: ${data.competitorLikes}\n`;
-        }
         prompt += `\n`;
     }
 
@@ -724,77 +846,174 @@ function generateCursorPrompt() {
 }
 
 // ============================================
+// Submit Request
+// ============================================
+
+function submitRequest() {
+    // Validate all steps
+    if (!validateCurrentStep()) {
+        return;
+    }
+    
+    // Save competitor data
+    saveCompetitorData();
+    saveFormData();
+    
+    const data = getCompleteFormData();
+    const useEndpoint = document.getElementById('useEndpoint')?.checked && ENDPOINT_URL;
+    
+    // If endpoint is enabled, try that first
+    if (useEndpoint) {
+        postToEndpoint(data);
+        return;
+    }
+    
+    // Otherwise, send email
+    sendEmailWithPrompt(data);
+}
+
+function sendEmailWithPrompt(data) {
+    const prompt = generateCursorPrompt();
+    
+    // Generate email body with prompt and metadata
+    let emailBody = prompt;
+    emailBody += `\n\n${'='.repeat(50)}\n`;
+    emailBody += `METADATA\n`;
+    emailBody += `${'='.repeat(50)}\n\n`;
+    emailBody += `Platform: ${data.platform ? data.platform.toUpperCase() : 'Not specified'}\n`;
+    emailBody += `Timeline: ${formatDeadline(data.deadline) || 'Not specified'}\n`;
+    emailBody += `Budget: ${formatBudget(data.budget) || 'Not specified'}\n`;
+    emailBody += `Maintenance: ${data.maintenance_included ? 'Yes (discount applied)' : 'No'}\n`;
+    emailBody += `Contact Email: ${data.email || 'Not provided'}\n`;
+    if (data.phone) {
+        emailBody += `Phone: ${data.phone}\n`;
+    }
+    
+    const subject = encodeURIComponent(`Website Intake: ${data.businessName || 'New Client'}`);
+    const body = encodeURIComponent(emailBody);
+    
+    // Check mailto length limit (approximately 2000 characters for the full URL)
+    const mailtoLink = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
+    
+    if (mailtoLink.length > 2000) {
+        // Show modal for too long
+        showLongEmailModal(data);
+    } else {
+        // Open email draft
+        try {
+            window.location.href = mailtoLink;
+            showSubmitStatus('Email draft opened. Please press Send.', 'success');
+            
+            // Add retry button in case popup blocker
+            setTimeout(() => {
+                const statusEl = document.getElementById('submitStatus');
+                if (statusEl) {
+                    const retryBtn = document.createElement('button');
+                    retryBtn.className = 'btn btn-primary';
+                    retryBtn.textContent = 'Open email draft';
+                    retryBtn.style.marginTop = 'var(--space-md)';
+                    retryBtn.addEventListener('click', () => {
+                        window.location.href = mailtoLink;
+                    });
+                    statusEl.appendChild(retryBtn);
+                }
+            }, 1000);
+        } catch (e) {
+            showSubmitStatus('Could not open email. Please use "Download .txt" and send manually.', 'error');
+        }
+    }
+}
+
+function generateShortSummaryEmail(data) {
+    let summary = `Website Build Request: ${data.businessName || 'New Client'}\n\n`;
+    summary += `Platform: ${data.platform ? data.platform.toUpperCase() : 'Not specified'}\n`;
+    summary += `Pages: ${data.pages === 'one' ? 'One page' : data.pages === 'multi' ? `${data.pageCount || 'N/A'} pages` : 'Not specified'}\n`;
+    summary += `Timeline: ${formatDeadline(data.deadline) || 'Not specified'}\n`;
+    summary += `Budget: ${formatBudget(data.budget) || 'Not specified'}\n`;
+    summary += `Maintenance: ${data.maintenance_included ? 'Yes (discount applied)' : 'No'}\n`;
+    summary += `Primary Goal: ${formatGoal(data.primaryGoal, data.primaryGoalOther) || 'Not specified'}\n\n`;
+    summary += `The full Cursor Prompt is included in the attached intake.txt file.`;
+    
+    return summary;
+}
+
+function showLongEmailModal(data) {
+    const modal = document.getElementById('emailModal');
+    modal.classList.add('active');
+    
+    // Store data for modal buttons
+    window._modalData = data;
+}
+
+// ============================================
 // Export Functions
 // ============================================
 
 function initExportHandlers() {
-    document.getElementById('copyPromptBtn').addEventListener('click', () => {
-        const prompt = generateCursorPrompt();
-        copyToClipboard(prompt, 'Cursor Prompt copied to clipboard!');
-    });
-
-    document.getElementById('copyJsonBtn').addEventListener('click', () => {
-        const data = getCompleteFormData();
-        const json = JSON.stringify(data, null, 2);
-        copyToClipboard(json, 'JSON copied to clipboard!');
-    });
-
-    document.getElementById('emailBtn').addEventListener('click', () => {
-        emailFormData();
-    });
-
-    document.getElementById('downloadBtn').addEventListener('click', () => {
-        downloadFormData();
-    });
-
-    const postBtn = document.getElementById('postEndpointBtn');
-    if (!ENDPOINT_URL) {
-        postBtn.disabled = true;
-        postBtn.title = 'Endpoint URL not configured. Set ENDPOINT_URL in intake.js';
-        postBtn.style.opacity = '0.5';
-        postBtn.style.cursor = 'not-allowed';
-    } else {
-        postBtn.addEventListener('click', () => {
-            postToEndpoint();
+    // Advanced section buttons
+    const copyPromptBtn = document.getElementById('copyPromptBtn');
+    const copyJsonBtn = document.getElementById('copyJsonBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    
+    if (copyPromptBtn) {
+        copyPromptBtn.addEventListener('click', () => {
+            const prompt = generateCursorPrompt();
+            copyToClipboard(prompt, 'Cursor Prompt copied to clipboard!');
         });
     }
 
-    document.getElementById('resetBtn').addEventListener('click', () => {
-        if (confirm('Are you sure you want to reset the form? All data will be lost.')) {
-            resetForm();
-        }
-    });
+    if (copyJsonBtn) {
+        copyJsonBtn.addEventListener('click', () => {
+            const data = getCompleteFormData();
+            const json = JSON.stringify(data, null, 2);
+            copyToClipboard(json, 'JSON copied to clipboard!');
+        });
+    }
 
-    // Initialize modal handlers
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', () => {
+            downloadFormData();
+        });
+    }
+
+    // Modal handlers
     const modal = document.getElementById('emailModal');
-    const closeModal = () => modal.classList.remove('active');
-    
-    document.getElementById('modalDownloadBtn').addEventListener('click', () => {
-        downloadFormData();
-        closeModal();
-    });
-    
-    document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
-    document.getElementById('modalClose').addEventListener('click', closeModal);
-    modal.querySelector('.modal-overlay').addEventListener('click', closeModal);
-}
-
-function emailFormData() {
-    const data = getCompleteFormData();
-    const prompt = generateCursorPrompt();
-    const json = JSON.stringify(data, null, 2);
-    
-    const subject = encodeURIComponent(`Website Intake: ${data.businessName || 'New Client'}`);
-    const body = encodeURIComponent(`CURSOR PROMPT:\n\n${prompt}\n\n\nJSON DATA:\n\n${json}`);
-    
-    // Check mailto length limit (approximately 2000 characters)
-    const mailtoLink = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
-    
-    if (mailtoLink.length > 2000) {
-        // Show modal
-        document.getElementById('emailModal').classList.add('active');
-    } else {
-        window.location.href = mailtoLink;
+    if (modal) {
+        const closeModal = () => modal.classList.remove('active');
+        
+        const modalDownloadBtn = document.getElementById('modalDownloadBtn');
+        const modalCopyPromptBtn = document.getElementById('modalCopyPromptBtn');
+        const modalCopySummaryBtn = document.getElementById('modalCopySummaryBtn');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const modalClose = document.getElementById('modalClose');
+        
+        if (modalDownloadBtn) {
+            modalDownloadBtn.addEventListener('click', () => {
+                downloadFormData();
+                closeModal();
+            });
+        }
+        
+        if (modalCopyPromptBtn) {
+            modalCopyPromptBtn.addEventListener('click', () => {
+                const prompt = generateCursorPrompt();
+                copyToClipboard(prompt, 'Cursor Prompt copied to clipboard!');
+            });
+        }
+        
+        if (modalCopySummaryBtn) {
+            modalCopySummaryBtn.addEventListener('click', () => {
+                const data = window._modalData || getCompleteFormData();
+                const summary = generateShortSummaryEmail(data);
+                copyToClipboard(summary, 'Short summary email copied to clipboard!');
+            });
+        }
+        
+        if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+        if (modalClose) modalClose.addEventListener('click', closeModal);
+        if (modal.querySelector('.modal-overlay')) {
+            modal.querySelector('.modal-overlay').addEventListener('click', closeModal);
+        }
     }
 }
 
@@ -813,50 +1032,6 @@ function copyToClipboard(text, successMessage) {
     });
 }
 
-function emailFormData() {
-    const data = getCompleteFormData();
-    const prompt = generateCursorPrompt();
-    const json = JSON.stringify(data, null, 2);
-    
-    const subject = encodeURIComponent(`Website Intake: ${data.businessName || 'New Client'}`);
-    const body = encodeURIComponent(`CURSOR PROMPT:\n\n${prompt}\n\n\nJSON DATA:\n\n${json}`);
-    
-    // Check mailto length limit (approximately 2000 characters)
-    const mailtoLink = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
-    
-    if (mailtoLink.length > 2000) {
-        // Show modal
-        const modal = document.getElementById('emailModal');
-        modal.classList.add('active');
-        
-        // Use one-time handlers
-        const closeModal = () => modal.classList.remove('active');
-        
-        const downloadAndClose = () => {
-            downloadFormData();
-            closeModal();
-        };
-        
-        // Remove existing listeners and add new ones
-        const downloadBtn = document.getElementById('modalDownloadBtn');
-        const closeBtn = document.getElementById('modalCloseBtn');
-        const closeX = document.getElementById('modalClose');
-        
-        downloadBtn.replaceWith(downloadBtn.cloneNode(true));
-        closeBtn.replaceWith(closeBtn.cloneNode(true));
-        closeX.replaceWith(closeX.cloneNode(true));
-        
-        document.getElementById('modalDownloadBtn').addEventListener('click', downloadAndClose);
-        document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
-        document.getElementById('modalClose').addEventListener('click', closeModal);
-        
-        // Close on overlay click
-        modal.querySelector('.modal-overlay').addEventListener('click', closeModal);
-    } else {
-        window.location.href = mailtoLink;
-    }
-}
-
 function downloadFormData() {
     const data = getCompleteFormData();
     const prompt = generateCursorPrompt();
@@ -868,7 +1043,7 @@ function downloadFormData() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `website-intake-${data.businessName ? data.businessName.replace(/\s+/g, '-').toLowerCase() : 'form'}-${Date.now()}.txt`;
+    a.download = `intake-${data.businessName ? data.businessName.replace(/\s+/g, '-').toLowerCase() : 'form'}-${Date.now()}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -877,46 +1052,64 @@ function downloadFormData() {
     showStatus('File downloaded successfully!', 'success');
 }
 
-function postToEndpoint() {
+function postToEndpoint(data) {
     if (!ENDPOINT_URL) {
-        showStatus('Endpoint URL not configured. Please set ENDPOINT_URL in intake.js', 'error');
+        showSubmitStatus('Endpoint URL not configured.', 'error');
         return;
     }
 
-    const data = getCompleteFormData();
-    const json = JSON.stringify(data);
+    if (!data) {
+        data = getCompleteFormData();
+    }
     
-    showStatus('Sending...', 'success');
+    const prompt = generateCursorPrompt();
+    const payload = {
+        ...data,
+        cursor_prompt: prompt,
+        submitted_at: new Date().toISOString()
+    };
+    
+    showSubmitStatus('Sending securely...', 'success');
     
     fetch(ENDPOINT_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: json
+        body: JSON.stringify(payload)
     })
     .then(response => {
         if (response.ok) {
-            showStatus('Successfully posted to endpoint!', 'success');
+            showSubmitStatus('Successfully sent! We\'ll be in touch soon.', 'success');
         } else {
-            showStatus('Error posting to endpoint. Please check the endpoint configuration.', 'error');
+            showSubmitStatus('Error sending. Please try the email option instead.', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showStatus('Error posting to endpoint. Please check your connection and endpoint configuration.', 'error');
+        showSubmitStatus('Error sending. Please try the email option instead.', 'error');
     });
 }
 
 function showStatus(message, type) {
     const statusEl = document.getElementById('exportStatus');
-    statusEl.textContent = message;
-    statusEl.className = `export-status ${type}`;
-    
-    setTimeout(() => {
-        statusEl.textContent = '';
-        statusEl.className = 'export-status';
-    }, 5000);
+    if (statusEl) {
+        statusEl.textContent = message;
+        statusEl.className = `export-status ${type}`;
+        
+        setTimeout(() => {
+            statusEl.textContent = '';
+            statusEl.className = 'export-status';
+        }, 5000);
+    }
+}
+
+function showSubmitStatus(message, type) {
+    const statusEl = document.getElementById('submitStatus');
+    if (statusEl) {
+        statusEl.textContent = message;
+        statusEl.className = `submit-status ${type}`;
+    }
 }
 
 function resetForm() {

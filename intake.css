@@ -1,4 +1,13 @@
 /* ============================================
+   PRIVATE INTAKE FORM STYLES
+   NOT FOR PUBLIC ACCESS
+   ============================================
+   
+   This form should be hosted behind authentication.
+   The passcode gate is a basic UX feature, not real security.
+   ============================================ */
+
+/* ============================================
    CSS Variables & Theme System
    ============================================ */
 

@@ -1,0 +1,30 @@
+# Protect Intake Form from Public Access
+# This file should be placed in the root directory if using Apache
+
+# Block access to intake files (uncomment if you want to block entirely)
+# <FilesMatch "^(intake\.html|intake\.css|intake\.js)$">
+#     Require all denied
+# </FilesMatch>
+
+# Prevent directory listing
+Options -Indexes
+
+# Block access to sensitive files
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql|bak)$">
+    Require all denied
+</FilesMatch>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Prevent caching of intake form (optional)
+<FilesMatch "^(intake\.html|intake\.css|intake\.js)$">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    </IfModule>
+</FilesMatch>
+

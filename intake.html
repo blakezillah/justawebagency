@@ -1,13 +1,124 @@
 <!DOCTYPE html>
+<!-- 
+    PRIVATE INTAKE FORM - NOT FOR PUBLIC ACCESS
+    This form contains internal business logic and should be:
+    1. Hosted behind authentication (not publicly accessible)
+    2. Not indexed by search engines
+    3. Protected at the server level
+    
+    The passcode gate is a basic UX feature, not real security.
+    For production, use proper server-side authentication.
+-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Website Build Intake Form - justaweb.agency">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <title>Website Build Intake — justaweb.agency</title>
     <link rel="stylesheet" href="intake.css">
+    <style>
+        /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+        /* Re-enable selection for form inputs */
+        input, textarea, select {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+    </style>
 </head>
 <body>
+    <!-- Source Code Protection Script -->
+    <script>
+        (function() {
+            'use strict';
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable common keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Disable F12 (DevTools)
+                if (e.key === 'F12') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+J (Console)
+                if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.key === 'u') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+S (Save Page)
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+C (Inspect Element)
+                if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+P (Print - can reveal source)
+                if (e.ctrlKey && e.key === 'p') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Detect DevTools opening (basic detection)
+            let devtools = {open: false, orientation: null};
+            const threshold = 160;
+            setInterval(function() {
+                if (window.outerHeight - window.innerHeight > threshold || 
+                    window.outerWidth - window.innerWidth > threshold) {
+                    if (!devtools.open) {
+                        devtools.open = true;
+                        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:system-ui;text-align:center;"><div><h1>Access Denied</h1><p>Developer tools are not allowed on this page.</p><p>Please close DevTools and refresh the page.</p></div></div>';
+                    }
+                } else {
+                    devtools.open = false;
+                }
+            }, 500);
+            
+            // Disable drag and drop
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Clear console
+            console.clear();
+            console.log('%cStop!', 'color: red; font-size: 50px; font-weight: bold;');
+            console.log('%cThis is a private form. Unauthorized access is prohibited.', 'color: red; font-size: 16px;');
+        })();
+    </script>
     <!-- Access Gate -->
     <div class="access-gate" id="accessGate">
         <div class="gate-content">

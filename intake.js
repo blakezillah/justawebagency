@@ -1,4 +1,18 @@
 // ============================================
+// PRIVATE INTAKE FORM - NOT FOR PUBLIC ACCESS
+// ============================================
+// 
+// WARNING: This code contains internal business logic.
+// For production use:
+// 1. Host behind server-side authentication (not just passcode gate)
+// 2. Use environment variables for sensitive values
+// 3. Consider obfuscation/minification for additional protection
+// 4. Never commit sensitive data to version control
+//
+// The passcode gate is a basic UX feature, NOT real security.
+// ============================================
+
+// ============================================
 // Configuration Constants
 // ============================================
 

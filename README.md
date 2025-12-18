@@ -2,6 +2,18 @@
 
 A premium one-page marketing website for justaweb.agency, a web design agency specializing in simple, fast, and powerful websites. Built with vanilla HTML, CSS, and JavaScript—no frameworks, no build tools, no external dependencies.
 
+## ⚠️ Important: Intake Form Privacy
+
+The `intake.html`, `intake.css`, and `intake.js` files are **private internal tools** and should **NOT** be publicly accessible. 
+
+**To protect the intake form:**
+1. **Host behind authentication** - Use server-side authentication (not just the passcode gate)
+2. **Don't index** - The form includes `noindex` meta tags, but ensure your server blocks search engines
+3. **Use environment variables** - For production, move sensitive values (passcode, email, endpoint) to environment variables
+4. **Consider obfuscation** - For additional protection, minify/obfuscate the JavaScript before deployment
+
+The passcode gate is a basic UX feature for convenience, **not real security**. Always use proper server-side authentication for production.
+
 ## 🚀 Features
 
 ### Core Functionality

@@ -16,7 +16,7 @@
 // Configuration Constants
 // ============================================
 
-const PASCODE = 'justaweb2024'; // Change this to your desired passcode
+const PASCODE = 'intake'; // Change this to your desired passcode
 const EMAIL_ADDRESS = 'hblake.goble@icloud.com'; // Your email address
 const ENDPOINT_URL = ''; // Set this to your endpoint URL, or leave empty to disable
 const STORAGE_KEY = 'intake_form_data';

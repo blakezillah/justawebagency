@@ -21,10 +21,12 @@ Options -Indexes
     Header set X-XSS-Protection "1; mode=block"
 </IfModule>
 
-# Prevent caching of intake form (optional)
+# Prevent caching of intake form (REQUIRED - always reload)
 <FilesMatch "^(intake\.html|intake\.css|intake\.js)$">
     <IfModule mod_headers.c>
-        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0, private"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
     </IfModule>
 </FilesMatch>
 

@@ -41,21 +41,36 @@
         (function() {
             'use strict';
             
-            // Disable right-click context menu
+            // Helper: Check if user is interacting with form elements
+            function isFormElement(e) {
+                const tag = e.target.tagName.toLowerCase();
+                return tag === 'input' || tag === 'textarea' || tag === 'select' || 
+                       tag === 'button' || e.target.closest('button') || 
+                       e.target.closest('form') || e.target.isContentEditable;
+            }
+            
+            // Disable right-click context menu (but allow on form elements)
             document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
+                if (!isFormElement(e)) {
+                    e.preventDefault();
+                    return false;
+                }
             });
             
-            // Disable common keyboard shortcuts
+            // Disable common keyboard shortcuts (only when not in form)
             document.addEventListener('keydown', function(e) {
+                // Allow all keyboard events in form elements
+                if (isFormElement(e)) {
+                    return true;
+                }
+                
                 // Disable F12 (DevTools)
                 if (e.key === 'F12') {
                     e.preventDefault();
                     return false;
                 }
                 
-                // Disable Ctrl+Shift+I (DevTools)
+                // Disable Ctrl+Shift+I (DevTools) - but allow Ctrl+I alone
                 if (e.ctrlKey && e.shiftKey && e.key === 'I') {
                     e.preventDefault();
                     return false;
@@ -67,14 +82,14 @@
                     return false;
                 }
                 
-                // Disable Ctrl+U (View Source)
-                if (e.ctrlKey && e.key === 'u') {
+                // Disable Ctrl+U (View Source) - but allow Ctrl+U in inputs
+                if (e.ctrlKey && e.key === 'u' && !isFormElement(e)) {
                     e.preventDefault();
                     return false;
                 }
                 
-                // Disable Ctrl+S (Save Page)
-                if (e.ctrlKey && e.key === 's') {
+                // Disable Ctrl+S (Save Page) - but allow Ctrl+S in inputs
+                if (e.ctrlKey && e.key === 's' && !isFormElement(e)) {
                     e.preventDefault();
                     return false;
                 }
@@ -85,14 +100,14 @@
                     return false;
                 }
                 
-                // Disable Ctrl+P (Print - can reveal source)
-                if (e.ctrlKey && e.key === 'p') {
+                // Disable Ctrl+P (Print) - but allow in form elements
+                if (e.ctrlKey && e.key === 'p' && !isFormElement(e)) {
                     e.preventDefault();
                     return false;
                 }
-            });
+            }, true); // Use capture phase to allow form handlers to work
             
-            // Detect DevTools opening (basic detection)
+            // Detect DevTools opening (less aggressive - only warn, don't break form)
             let devtools = {open: false, orientation: null};
             const threshold = 160;
             setInterval(function() {
@@ -100,20 +115,22 @@
                     window.outerWidth - window.innerWidth > threshold) {
                     if (!devtools.open) {
                         devtools.open = true;
-                        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:system-ui;text-align:center;"><div><h1>Access Denied</h1><p>Developer tools are not allowed on this page.</p><p>Please close DevTools and refresh the page.</p></div></div>';
+                        console.warn('%cDeveloper tools detected. This form is private.', 'color: red; font-size: 14px;');
                     }
                 } else {
                     devtools.open = false;
                 }
-            }, 500);
+            }, 1000); // Check less frequently
             
-            // Disable drag and drop
+            // Disable drag and drop (but allow on form elements)
             document.addEventListener('dragstart', function(e) {
-                e.preventDefault();
-                return false;
+                if (!isFormElement(e)) {
+                    e.preventDefault();
+                    return false;
+                }
             });
             
-            // Clear console
+            // Clear console and show warning
             console.clear();
             console.log('%cStop!', 'color: red; font-size: 50px; font-weight: bold;');
             console.log('%cThis is a private form. Unauthorized access is prohibited.', 'color: red; font-size: 16px;');

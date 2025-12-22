@@ -1115,43 +1115,58 @@
 // ============================================
 
 (function initCaseStudyModals() {
-    const workCards = document.querySelectorAll('.work-card[data-modal]');
-    const modals = document.querySelectorAll('.case-study-modal');
-    
-    // Open modal when work card is clicked
-    workCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const modalId = card.getAttribute('data-modal');
-            const modal = document.getElementById(`modal-${modalId}`);
-            if (modal) {
-                openModal(modal);
+    // Wait for DOM to be ready
+    function init() {
+        const workCards = document.querySelectorAll('.work-card[data-modal]');
+        const modals = document.querySelectorAll('.case-study-modal');
+        
+        if (workCards.length === 0 || modals.length === 0) {
+            return; // Elements not found yet
+        }
+        
+        // Open modal when work card is clicked
+        workCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const modalId = card.getAttribute('data-modal');
+                const modal = document.getElementById(`modal-${modalId}`);
+                if (modal) {
+                    openModal(modal);
+                } else {
+                    console.warn(`Modal not found: modal-${modalId}`);
+                }
+            });
+        });
+        
+        // Close modal handlers
+        modals.forEach(modal => {
+            const closeBtn = modal.querySelector('.modal-close');
+            const overlay = modal.querySelector('.modal-overlay');
+            
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => closeModal(modal));
+            }
+            
+            if (overlay) {
+                overlay.addEventListener('click', () => closeModal(modal));
             }
         });
-    });
-    
-    // Close modal handlers
-    modals.forEach(modal => {
-        const closeBtn = modal.querySelector('.modal-close');
-        const overlay = modal.querySelector('.modal-overlay');
         
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => closeModal(modal));
-        }
-        
-        if (overlay) {
-            overlay.addEventListener('click', () => closeModal(modal));
-        }
-        
-        // Close on Escape key
+        // Close on Escape key (single listener for all modals)
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal.classList.contains('active')) {
-                closeModal(modal);
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.case-study-modal.active');
+                if (activeModal) {
+                    closeModal(activeModal);
+                }
             }
         });
-    });
+    }
     
     function openModal(modal) {
         modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
         
         // Focus management
@@ -1163,7 +1178,15 @@
     
     function closeModal(modal) {
         modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+    }
+    
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
     }
 })();
 

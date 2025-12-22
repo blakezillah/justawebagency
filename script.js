@@ -341,47 +341,52 @@
         const integrations = integrationsSelect.value;
         const includeMaintenance = maintenanceCheckbox.checked;
         
-        // Base pricing logic based on pages and integrations
+        // Base pricing logic for small businesses
         let basePrice = 0;
-        let plan = 'Starter';
+        let plan = 'Essential';
         
-        if (pages <= 5 && integrations === 'none') {
-            basePrice = 5000;
-            plan = 'Starter';
-        } else if (pages <= 15 || integrations === 'basic') {
-            basePrice = 12000;
-            plan = 'Growth';
-        } else {
-            basePrice = 25000;
-            plan = 'Premium';
+        // HTML sites (1-3 pages)
+        if (platform === 'html' && pages <= 3) {
+            basePrice = 2500;
+            plan = 'Essential';
         }
-        
-        // Platform adjustments
-        if (platform === 'shopify') {
-            basePrice += 2000; // Shopify typically costs more
-            if (plan === 'Starter' && basePrice > 7000) plan = 'Growth';
-        } else if (platform === 'wordpress') {
-            basePrice += 1000; // WordPress slightly more than HTML
+        // WordPress/Shopify (up to 8 pages)
+        else if ((platform === 'wordpress' || platform === 'shopify') && pages <= 8) {
+            basePrice = 4500;
+            plan = 'Professional';
+            // Adjust for Shopify (slightly more)
+            if (platform === 'shopify') {
+                basePrice += 500;
+            }
         }
-        // HTML is base price
+        // Larger sites (up to 15 pages)
+        else if (pages <= 15) {
+            basePrice = 7500;
+            plan = 'Complete';
+            if (platform === 'shopify') {
+                basePrice += 1000;
+            }
+        }
+        // Very large sites (15+ pages)
+        else {
+            basePrice = 7500 + ((pages - 15) * 300);
+            plan = 'Complete';
+            if (platform === 'shopify') {
+                basePrice += 1000;
+            }
+        }
         
         // Adjust for urgency
         let urgencyMultiplier = 1;
-        if (urgency === 'rush') urgencyMultiplier = 1.3;
-        else if (urgency === 'flexible') urgencyMultiplier = 0.9;
+        if (urgency === 'rush') urgencyMultiplier = 1.25;
+        else if (urgency === 'flexible') urgencyMultiplier = 0.95;
         
         // Adjust for integrations
-        if (integrations === 'advanced') {
-            basePrice += 5000;
-            if (plan === 'Starter') plan = 'Growth';
-        }
-        
-        // Adjust for pages
-        if (pages > 15 && plan !== 'Premium') {
-            plan = 'Premium';
-            basePrice = 25000;
-            if (platform === 'shopify') basePrice += 2000;
-            else if (platform === 'wordpress') basePrice += 1000;
+        if (integrations === 'basic') {
+            basePrice += 300;
+        } else if (integrations === 'advanced') {
+            basePrice += 1000;
+            if (plan === 'Essential') plan = 'Professional';
         }
         
         // Calculate final price before discount

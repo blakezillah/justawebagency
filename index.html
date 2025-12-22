@@ -139,7 +139,7 @@
                 <button class="filter-btn" data-filter="web" role="tab" aria-selected="false">Web</button>
             </div>
             <div class="work-grid" id="workGrid">
-                <a href="case-studies/artisan-coffee.html" class="work-card reveal" data-category="web brand" style="text-decoration: none; color: inherit; display: block;">
+                <button type="button" class="work-card reveal" data-category="web brand" data-modal="artisan-coffee" style="border: none; background: none; padding: 0; width: 100%; text-align: left; cursor: pointer;">
                     <div class="work-card-image">
                         <div class="work-card-gradient gradient-1"></div>
                         <div class="work-card-pattern pattern-coffee"></div>
@@ -159,8 +159,8 @@
                             <span>2.1s load</span>
                         </div>
                     </div>
-                </a>
-                <a href="case-studies/tech-consulting.html" class="work-card reveal" data-category="web" style="text-decoration: none; color: inherit; display: block;">
+                </button>
+                <button type="button" class="work-card reveal" data-category="web" data-modal="tech-consulting" style="border: none; background: none; padding: 0; width: 100%; text-align: left; cursor: pointer;">
                     <div class="work-card-image">
                         <div class="work-card-gradient gradient-2"></div>
                         <div class="work-card-pattern pattern-tech"></div>
@@ -183,8 +183,8 @@
                             <span>45% CVR</span>
                         </div>
                     </div>
-                </a>
-                <a href="case-studies/fitness-studio.html" class="work-card reveal" data-category="brand" style="text-decoration: none; color: inherit; display: block;">
+                </button>
+                <button type="button" class="work-card reveal" data-category="brand" data-modal="fitness-studio" style="border: none; background: none; padding: 0; width: 100%; text-align: left; cursor: pointer;">
                     <div class="work-card-image">
                         <div class="work-card-gradient gradient-3"></div>
                         <div class="work-card-pattern pattern-fitness"></div>
@@ -204,8 +204,8 @@
                             <span>Modern UI</span>
                         </div>
                     </div>
-                </a>
-                <a href="case-studies/local-restaurant.html" class="work-card reveal" data-category="web" style="text-decoration: none; color: inherit; display: block;">
+                </button>
+                <button type="button" class="work-card reveal" data-category="web" data-modal="local-restaurant" style="border: none; background: none; padding: 0; width: 100%; text-align: left; cursor: pointer;">
                     <div class="work-card-image">
                         <div class="work-card-gradient gradient-4"></div>
                         <div class="work-card-pattern pattern-restaurant"></div>
@@ -225,8 +225,8 @@
                             <span>Easy CMS</span>
                         </div>
                     </div>
-                </a>
-                <a href="case-studies/b2b-saas.html" class="work-card reveal" data-category="web brand" style="text-decoration: none; color: inherit; display: block;">
+                </button>
+                <button type="button" class="work-card reveal" data-category="web brand" data-modal="b2b-saas" style="border: none; background: none; padding: 0; width: 100%; text-align: left; cursor: pointer;">
                     <div class="work-card-image">
                         <div class="work-card-gradient gradient-5"></div>
                         <div class="work-card-pattern pattern-saas"></div>
@@ -248,8 +248,8 @@
                             <span>+200% leads</span>
                         </div>
                     </div>
-                </a>
-                <a href="case-studies/creative-agency.html" class="work-card reveal" data-category="web brand" style="text-decoration: none; color: inherit; display: block;">
+                </button>
+                <button type="button" class="work-card reveal" data-category="web brand" data-modal="creative-agency" style="border: none; background: none; padding: 0; width: 100%; text-align: left; cursor: pointer;">
                     <div class="work-card-image">
                         <div class="work-card-gradient gradient-6"></div>
                         <div class="work-card-pattern pattern-creative"></div>
@@ -857,6 +857,381 @@
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Get my teardown</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Case Study Modals -->
+    <div class="case-study-modal" id="modal-artisan-coffee" role="dialog" aria-label="Artisan Coffee Co. Case Study" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="case-study-modal-content">
+            <button class="modal-close" aria-label="Close modal">×</button>
+            <div class="case-study-modal-hero" style="background: linear-gradient(135deg, #8B5A3C 0%, #6B4423 100%);">
+                <div class="case-study-logo-container">
+                    <svg class="case-study-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M60 40 L60 120 Q60 140 80 140 L120 140 Q140 140 140 120 L140 40 Z" fill="white" opacity="0.95"/>
+                        <path d="M70 50 L70 110 Q70 120 80 120 L120 120 Q130 120 130 110 L130 50 Z" fill="white" opacity="0.7"/>
+                        <circle cx="100" cy="150" r="15" fill="white" opacity="0.9"/>
+                        <path d="M100 150 L100 180" stroke="white" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+                        <path d="M50 30 Q100 10 150 30" stroke="white" stroke-width="3" fill="none" opacity="0.8"/>
+                    </svg>
+                </div>
+                <h1>Artisan Coffee Co.</h1>
+                <p class="case-study-subtitle">Complete rebrand and e-commerce transformation</p>
+                <div class="case-study-meta">
+                    <span>Web + Brand</span>
+                    <span>Shopify</span>
+                    <span>8 weeks</span>
+                    <span>2.1s load</span>
+                </div>
+            </div>
+            <div class="case-study-modal-body">
+                <div class="case-study-section">
+                    <h2>The Challenge</h2>
+                    <p>Artisan Coffee Co. had an outdated website that didn't reflect their premium brand or support their growing e-commerce needs. Their old site was slow, difficult to manage, and didn't convert visitors into customers. They needed a complete rebrand and a modern e-commerce platform that could scale with their business.</p>
+                </div>
+                <div class="case-study-section">
+                    <h2>Our Approach</h2>
+                    <h3>Brand Identity</h3>
+                    <p>We developed a warm, inviting brand identity that reflected their artisanal approach to coffee. The new logo, color palette, and typography system created a cohesive brand experience across all touchpoints.</p>
+                    <h3>E-commerce Strategy</h3>
+                    <p>We built a custom Shopify store with a focus on product discovery and conversion. The site features intuitive navigation, beautiful product photography, and a streamlined checkout process.</p>
+                    <h3>Performance Optimization</h3>
+                    <p>Every element was optimized for speed. We implemented lazy loading, optimized images, and minimized JavaScript to achieve a 2.1-second load time—critical for e-commerce conversion rates.</p>
+                </div>
+                <div class="case-study-section">
+                    <h2>Results</h2>
+                    <div class="case-study-metrics">
+                        <div class="metric-card"><div class="metric-value">+60%</div><div class="metric-label">Online Sales</div></div>
+                        <div class="metric-card"><div class="metric-value">2.1s</div><div class="metric-label">Load Time</div></div>
+                        <div class="metric-card"><div class="metric-value">+45%</div><div class="metric-label">Mobile Conversion</div></div>
+                        <div class="metric-card"><div class="metric-value">98</div><div class="metric-label">Performance Score</div></div>
+                    </div>
+                </div>
+                <div class="case-study-section">
+                    <h2>Key Features</h2>
+                    <ul>
+                        <li>Custom Shopify theme with unique design</li>
+                        <li>Complete brand identity system</li>
+                        <li>Mobile-first responsive design</li>
+                        <li>Product filtering and search</li>
+                        <li>Subscription coffee service integration</li>
+                        <li>Customer account portal</li>
+                        <li>SEO-optimized product pages</li>
+                        <li>Analytics and conversion tracking</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="case-study-modal" id="modal-tech-consulting" role="dialog" aria-label="Tech Consulting Firm Case Study" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="case-study-modal-content">
+            <button class="modal-close" aria-label="Close modal">×</button>
+            <div class="case-study-modal-hero" style="background: linear-gradient(135deg, #4F46E5 0%, #312E81 100%);">
+                <div class="case-study-logo-container">
+                    <svg class="case-study-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="50" y="60" width="100" height="80" rx="8" fill="white" opacity="0.95"/>
+                        <rect x="60" y="70" width="80" height="60" rx="4" fill="white" opacity="0.7"/>
+                        <circle cx="80" cy="90" r="6" fill="white" opacity="0.9"/>
+                        <circle cx="100" cy="90" r="6" fill="white" opacity="0.9"/>
+                        <circle cx="120" cy="90" r="6" fill="white" opacity="0.9"/>
+                        <path d="M70 110 L130 110" stroke="white" stroke-width="4" opacity="0.8"/>
+                        <path d="M70 120 L110 120" stroke="white" stroke-width="4" opacity="0.6"/>
+                        <rect x="45" y="55" width="110" height="90" rx="8" fill="none" stroke="white" stroke-width="3" opacity="0.5"/>
+                    </svg>
+                </div>
+                <h1>Tech Consulting Firm</h1>
+                <p class="case-study-subtitle">Lead generation site with content strategy</p>
+                <div class="case-study-meta">
+                    <span>Web</span>
+                    <span>WordPress</span>
+                    <span>6 weeks</span>
+                    <span>45% CVR</span>
+                </div>
+            </div>
+            <div class="case-study-modal-body">
+                <div class="case-study-section">
+                    <h2>The Challenge</h2>
+                    <p>A tech consulting firm needed a professional website that would generate qualified leads and establish thought leadership in their industry. Their previous site was outdated and didn't reflect their expertise. They needed a content-driven site with a blog, lead capture forms, and strong SEO foundations.</p>
+                </div>
+                <div class="case-study-section">
+                    <h2>Our Approach</h2>
+                    <h3>Content Strategy</h3>
+                    <p>We developed a content strategy focused on addressing their target audience's pain points. The blog became a lead generation engine, with each post designed to capture leads through valuable resources and consultation offers.</p>
+                    <h3>Lead Generation System</h3>
+                    <p>We built a comprehensive lead capture system with multiple touchpoints: homepage CTA, blog post CTAs, resource downloads, and consultation booking forms. Every element was optimized for conversion.</p>
+                    <h3>SEO Foundations</h3>
+                    <p>Strong on-page SEO, technical optimization, and content structure resulted in 3x organic traffic growth. The site ranks for high-value keywords in their industry.</p>
+                </div>
+                <div class="case-study-section">
+                    <h2>Results</h2>
+                    <div class="case-study-metrics">
+                        <div class="metric-card"><div class="metric-value">3x</div><div class="metric-label">Traffic Growth</div></div>
+                        <div class="metric-card"><div class="metric-value">45%</div><div class="metric-label">Conversion Rate</div></div>
+                        <div class="metric-card"><div class="metric-value">+200%</div><div class="metric-label">Qualified Leads</div></div>
+                        <div class="metric-card"><div class="metric-value">Top 5</div><div class="metric-label">Keyword Rankings</div></div>
+                    </div>
+                </div>
+                <div class="case-study-section">
+                    <h2>Key Features</h2>
+                    <ul>
+                        <li>Custom WordPress theme with blog</li>
+                        <li>Lead capture forms throughout the site</li>
+                        <li>Resource download system with gated content</li>
+                        <li>Consultation booking system</li>
+                        <li>SEO-optimized content structure</li>
+                        <li>Analytics and conversion tracking</li>
+                        <li>Email marketing integration</li>
+                        <li>Mobile-responsive design</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="case-study-modal" id="modal-fitness-studio" role="dialog" aria-label="Fitness Studio Case Study" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="case-study-modal-content">
+            <button class="modal-close" aria-label="Close modal">×</button>
+            <div class="case-study-modal-hero" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);">
+                <div class="case-study-logo-container">
+                    <svg class="case-study-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="70" r="24" fill="white" opacity="0.95"/>
+                        <path d="M100 94 L100 140" stroke="white" stroke-width="6" stroke-linecap="round" opacity="0.95"/>
+                        <path d="M70 120 L100 140 L100 120 L130 120" stroke="white" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.95"/>
+                        <path d="M60 160 L100 140 L140 160" stroke="white" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.95"/>
+                        <circle cx="100" cy="70" r="18" fill="none" stroke="white" stroke-width="3" opacity="0.7"/>
+                    </svg>
+                </div>
+                <h1>Fitness Studio</h1>
+                <p class="case-study-subtitle">Brand identity and website redesign</p>
+                <div class="case-study-meta">
+                    <span>Brand</span>
+                    <span>HTML</span>
+                    <span>4 weeks</span>
+                    <span>Modern UI</span>
+                </div>
+            </div>
+            <div class="case-study-modal-body">
+                <div class="case-study-section">
+                    <h2>The Challenge</h2>
+                    <p>A fitness studio needed a complete brand transformation to reflect their modern, energetic approach to fitness. Their old brand felt outdated and didn't resonate with their target audience. They needed a fresh brand identity and a website that would attract new members and showcase their unique fitness philosophy.</p>
+                </div>
+                <div class="case-study-section">
+                    <h2>Our Approach</h2>
+                    <h3>Brand Identity</h3>
+                    <p>We developed a bold, energetic brand that reflects their dynamic approach to fitness. The new logo, color palette, and typography system create a cohesive brand experience that resonates with their target audience.</p>
+                    <h3>Website Design</h3>
+                    <p>The website features a modern, clean design with smooth animations and engaging visuals. Every element was designed to motivate and inspire visitors to take action.</p>
+                </div>
+                <div class="case-study-section">
+                    <h2>Results</h2>
+                    <div class="case-study-metrics">
+                        <div class="metric-card"><div class="metric-value">+80%</div><div class="metric-label">Brand Recognition</div></div>
+                        <div class="metric-card"><div class="metric-value">+50%</div><div class="metric-label">New Members</div></div>
+                        <div class="metric-card"><div class="metric-value">Modern</div><div class="metric-label">Brand Identity</div></div>
+                        <div class="metric-card"><div class="metric-value">95+</div><div class="metric-label">Performance Score</div></div>
+                    </div>
+                </div>
+                <div class="case-study-section">
+                    <h2>Key Features</h2>
+                    <ul>
+                        <li>Complete brand identity system</li>
+                        <li>Modern, energetic website design</li>
+                        <li>Class schedule and booking system</li>
+                        <li>Member testimonials and success stories</li>
+                        <li>Mobile-responsive design</li>
+                        <li>Fast-loading static site</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="case-study-modal" id="modal-local-restaurant" role="dialog" aria-label="Local Restaurant Case Study" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="case-study-modal-content">
+            <button class="modal-close" aria-label="Close modal">×</button>
+            <div class="case-study-modal-hero" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">
+                <div class="case-study-logo-container">
+                    <svg class="case-study-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M60 50 L60 150 L70 150 L70 100 L80 100 L80 150 L90 150 L90 100 L100 100 L100 150 L110 150 L110 100 L120 100 L120 150 L130 150 L130 100 L140 100 L140 150 L140 50 Z" fill="white" opacity="0.95"/>
+                        <circle cx="100" cy="40" r="16" fill="white" opacity="0.9"/>
+                        <path d="M70 60 L130 60" stroke="white" stroke-width="4" opacity="0.7"/>
+                        <path d="M70 80 L130 80" stroke="white" stroke-width="4" opacity="0.7"/>
+                        <rect x="55" y="45" width="90" height="110" rx="4" fill="none" stroke="white" stroke-width="3" opacity="0.5"/>
+                    </svg>
+                </div>
+                <h1>Local Restaurant</h1>
+                <p class="case-study-subtitle">Menu-focused site with online ordering</p>
+                <div class="case-study-meta">
+                    <span>Web</span>
+                    <span>WordPress</span>
+                    <span>5 weeks</span>
+                    <span>Mobile-first</span>
+                </div>
+            </div>
+            <div class="case-study-modal-body">
+                <div class="case-study-section">
+                    <h2>The Challenge</h2>
+                    <p>A local restaurant needed a website that would showcase their menu, enable online ordering, and be easy to update. Their previous site was difficult to maintain and didn't work well on mobile devices. They needed a mobile-first solution that would help them attract customers and take orders online.</p>
+                </div>
+                <div class="case-study-section">
+                    <h2>Our Approach</h2>
+                    <h3>Menu-Focused Design</h3>
+                    <p>We designed the site with the menu as the hero element. Beautiful food photography and easy-to-read menu items make it simple for customers to browse and order.</p>
+                    <h3>Online Ordering Integration</h3>
+                    <p>We integrated a seamless online ordering system that allows customers to place orders directly from the website, with real-time order tracking.</p>
+                    <h3>Easy Content Management</h3>
+                    <p>Built on WordPress with a custom theme, the restaurant can easily update menus, add specials, and manage content without technical knowledge.</p>
+                </div>
+                <div class="case-study-section">
+                    <h2>Results</h2>
+                    <div class="case-study-metrics">
+                        <div class="metric-card"><div class="metric-value">+120%</div><div class="metric-label">Online Orders</div></div>
+                        <div class="metric-card"><div class="metric-value">Mobile</div><div class="metric-label">First Design</div></div>
+                        <div class="metric-card"><div class="metric-value">Easy</div><div class="metric-label">CMS Updates</div></div>
+                        <div class="metric-card"><div class="metric-value">+40%</div><div class="metric-label">Mobile Traffic</div></div>
+                    </div>
+                </div>
+                <div class="case-study-section">
+                    <h2>Key Features</h2>
+                    <ul>
+                        <li>Menu-focused homepage design</li>
+                        <li>Online ordering system integration</li>
+                        <li>Easy-to-update WordPress CMS</li>
+                        <li>Mobile-first responsive design</li>
+                        <li>Reservation booking system</li>
+                        <li>Location and hours information</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="case-study-modal" id="modal-b2b-saas" role="dialog" aria-label="B2B SaaS Platform Case Study" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="case-study-modal-content">
+            <button class="modal-close" aria-label="Close modal">×</button>
+            <div class="case-study-modal-hero" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+                <div class="case-study-logo-container">
+                    <svg class="case-study-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="50" y="50" width="100" height="100" rx="8" fill="white" opacity="0.95"/>
+                        <rect x="60" y="60" width="40" height="30" rx="4" fill="white" opacity="0.7"/>
+                        <rect x="110" y="60" width="30" height="30" rx="4" fill="white" opacity="0.7"/>
+                        <rect x="60" y="100" width="80" height="40" rx="4" fill="white" opacity="0.6"/>
+                        <circle cx="80" cy="80" r="4" fill="white" opacity="0.9"/>
+                        <circle cx="94" cy="80" r="4" fill="white" opacity="0.9"/>
+                        <rect x="45" y="45" width="110" height="110" rx="8" fill="none" stroke="white" stroke-width="3" opacity="0.5"/>
+                    </svg>
+                </div>
+                <h1>B2B SaaS Platform</h1>
+                <p class="case-study-subtitle">Complete redesign with conversion optimization</p>
+                <div class="case-study-meta">
+                    <span>Web + Brand</span>
+                    <span>HTML</span>
+                    <span>10 weeks</span>
+                    <span>Top 3 rankings</span>
+                </div>
+            </div>
+            <div class="case-study-modal-body">
+                <div class="case-study-section">
+                    <h2>The Challenge</h2>
+                    <p>A B2B SaaS platform needed a complete website redesign to improve lead generation and establish thought leadership. Their existing site didn't convert well and didn't rank for important keywords. They needed a conversion-optimized site with strong SEO foundations and a modern brand identity.</p>
+                </div>
+                <div class="case-study-section">
+                    <h2>Our Approach</h2>
+                    <h3>Conversion Optimization</h3>
+                    <p>We redesigned every page with conversion in mind. Strategic CTA placement, clear value propositions, and optimized user flows resulted in a 200% increase in qualified leads.</p>
+                    <h3>SEO Strategy</h3>
+                    <p>Comprehensive SEO optimization including technical SEO, on-page optimization, and content strategy. The site now ranks in the top 3 for all target keywords.</p>
+                    <h3>Brand Identity</h3>
+                    <p>We developed a professional, trustworthy brand identity that resonates with B2B decision-makers and reflects their innovative technology.</p>
+                </div>
+                <div class="case-study-section">
+                    <h2>Results</h2>
+                    <div class="case-study-metrics">
+                        <div class="metric-card"><div class="metric-value">+200%</div><div class="metric-label">Lead Increase</div></div>
+                        <div class="metric-card"><div class="metric-value">Top 3</div><div class="metric-label">Keyword Rankings</div></div>
+                        <div class="metric-card"><div class="metric-value">+150%</div><div class="metric-label">Organic Traffic</div></div>
+                        <div class="metric-card"><div class="metric-value">97</div><div class="metric-label">Performance Score</div></div>
+                    </div>
+                </div>
+                <div class="case-study-section">
+                    <h2>Key Features</h2>
+                    <ul>
+                        <li>Conversion-optimized landing pages</li>
+                        <li>Complete brand identity system</li>
+                        <li>SEO-optimized content structure</li>
+                        <li>Resource center and blog</li>
+                        <li>Demo request and trial signup flows</li>
+                        <li>Case studies and testimonials</li>
+                        <li>Fast-loading static site</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="case-study-modal" id="modal-creative-agency" role="dialog" aria-label="Creative Agency Case Study" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="case-study-modal-content">
+            <button class="modal-close" aria-label="Close modal">×</button>
+            <div class="case-study-modal-hero" style="background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);">
+                <div class="case-study-logo-container">
+                    <svg class="case-study-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="60" y="60" width="40" height="40" rx="4" fill="white" opacity="0.9" transform="rotate(15 80 80)"/>
+                        <rect x="100" y="80" width="40" height="40" rx="4" fill="white" opacity="0.9" transform="rotate(-15 120 100)"/>
+                        <circle cx="80" cy="110" r="16" fill="white" opacity="0.8"/>
+                        <path d="M70 130 L90 150 L110 130" stroke="white" stroke-width="4" fill="none" opacity="0.9"/>
+                        <path d="M50 50 Q100 20 150 50" stroke="white" stroke-width="3" fill="none" opacity="0.6"/>
+                    </svg>
+                </div>
+                <h1>Creative Agency</h1>
+                <p class="case-study-subtitle">Portfolio site with bold design</p>
+                <div class="case-study-meta">
+                    <span>Web + Brand</span>
+                    <span>HTML</span>
+                    <span>6 weeks</span>
+                    <span>95+ score</span>
+                </div>
+            </div>
+            <div class="case-study-modal-body">
+                <div class="case-study-section">
+                    <h2>The Challenge</h2>
+                    <p>A creative agency needed a portfolio website that would showcase their work and attract new clients. They wanted a bold, creative design that would stand out and demonstrate their design capabilities. The site needed to be fast, smooth, and visually impressive.</p>
+                </div>
+                <div class="case-study-section">
+                    <h2>Our Approach</h2>
+                    <h3>Bold Design</h3>
+                    <p>We created a striking, modern design that showcases their creative work. Bold typography, smooth animations, and engaging interactions create a memorable experience.</p>
+                    <h3>Portfolio Showcase</h3>
+                    <p>The portfolio section features their best work with beautiful case studies, project details, and client testimonials. Each project is presented in a way that tells a story.</p>
+                    <h3>Performance Optimization</h3>
+                    <p>Despite the rich visuals and animations, the site maintains a 95+ performance score through careful optimization and efficient code.</p>
+                </div>
+                <div class="case-study-section">
+                    <h2>Results</h2>
+                    <div class="case-study-metrics">
+                        <div class="metric-card"><div class="metric-value">95+</div><div class="metric-label">Performance Score</div></div>
+                        <div class="metric-card"><div class="metric-value">Bold</div><div class="metric-label">Design System</div></div>
+                        <div class="metric-card"><div class="metric-value">+100%</div><div class="metric-label">Inquiry Increase</div></div>
+                        <div class="metric-card"><div class="metric-value">Smooth</div><div class="metric-label">Animations</div></div>
+                    </div>
+                </div>
+                <div class="case-study-section">
+                    <h2>Key Features</h2>
+                    <ul>
+                        <li>Bold, creative design system</li>
+                        <li>Portfolio showcase with case studies</li>
+                        <li>Smooth animations and interactions</li>
+                        <li>Fast-loading static site</li>
+                        <li>Mobile-responsive design</li>
+                        <li>Contact and inquiry forms</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 

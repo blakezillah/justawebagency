@@ -1105,3 +1105,60 @@
     document.head.appendChild(style);
 })();
 
+// ============================================
+// Case Study Modals
+// ============================================
+
+(function initCaseStudyModals() {
+    const workCards = document.querySelectorAll('.work-card[data-modal]');
+    const modals = document.querySelectorAll('.case-study-modal');
+    
+    // Open modal when work card is clicked
+    workCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const modalId = card.getAttribute('data-modal');
+            const modal = document.getElementById(`modal-${modalId}`);
+            if (modal) {
+                openModal(modal);
+            }
+        });
+    });
+    
+    // Close modal handlers
+    modals.forEach(modal => {
+        const closeBtn = modal.querySelector('.modal-close');
+        const overlay = modal.querySelector('.modal-overlay');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => closeModal(modal));
+        }
+        
+        if (overlay) {
+            overlay.addEventListener('click', () => closeModal(modal));
+        }
+        
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal(modal);
+            }
+        });
+    });
+    
+    function openModal(modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Focus management
+        const closeBtn = modal.querySelector('.modal-close');
+        if (closeBtn) {
+            closeBtn.focus();
+        }
+    }
+    
+    function closeModal(modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+})();
+

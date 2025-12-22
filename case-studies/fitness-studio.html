@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Studio — Case Study | justaweb.agency</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .case-study-hero {
+            padding: var(--space-3xl) 0;
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            color: white;
+            text-align: center;
+        }
+        .case-study-hero h1 { font-size: var(--font-size-5xl); margin-bottom: var(--space-md); }
+        .case-study-hero .subtitle { font-size: var(--font-size-xl); opacity: 0.9; margin-bottom: var(--space-lg); }
+        .case-study-meta { display: flex; gap: var(--space-xl); justify-content: center; flex-wrap: wrap; margin-top: var(--space-xl); }
+        .case-study-meta-item { display: flex; flex-direction: column; gap: var(--space-xs); }
+        .case-study-meta-label { font-size: var(--font-size-sm); opacity: 0.8; }
+        .case-study-meta-value { font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); }
+        .case-study-content { max-width: 800px; margin: 0 auto; padding: var(--space-3xl) var(--space-md); }
+        .case-study-section { margin-bottom: var(--space-3xl); }
+        .case-study-section h2 { font-size: var(--font-size-3xl); margin-bottom: var(--space-lg); color: var(--color-text); }
+        .case-study-section h3 { font-size: var(--font-size-2xl); margin-bottom: var(--space-md); margin-top: var(--space-xl); color: var(--color-text); }
+        .case-study-section p { font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); color: var(--color-text-alt); margin-bottom: var(--space-md); }
+        .case-study-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-lg); margin: var(--space-xl) 0; }
+        .metric-card { background: var(--color-bg-alt); padding: var(--space-lg); border-radius: var(--radius-lg); text-align: center; }
+        .metric-value { font-size: var(--font-size-4xl); font-weight: var(--font-weight-bold); color: var(--color-accent); margin-bottom: var(--space-xs); }
+        .metric-label { font-size: var(--font-size-sm); color: var(--color-text-alt); }
+        .back-link { display: inline-flex; align-items: center; gap: var(--space-xs); color: white; text-decoration: none; margin-bottom: var(--space-xl); font-weight: var(--font-weight-medium); opacity: 0.9; }
+        .back-link:hover { opacity: 1; }
+        .showcase-link { display: inline-block; margin-top: var(--space-lg); }
+    </style>
+</head>
+<body>
+    <div class="case-study-hero">
+        <div class="container">
+            <a href="../index.html#work" class="back-link">← Back to portfolio</a>
+            <h1>Fitness Studio</h1>
+            <p class="subtitle">Brand identity and website redesign</p>
+            <div class="case-study-meta">
+                <div class="case-study-meta-item"><span class="case-study-meta-label">Category</span><span class="case-study-meta-value">Brand</span></div>
+                <div class="case-study-meta-item"><span class="case-study-meta-label">Platform</span><span class="case-study-meta-value">HTML</span></div>
+                <div class="case-study-meta-item"><span class="case-study-meta-label">Timeline</span><span class="case-study-meta-value">4 weeks</span></div>
+                <div class="case-study-meta-item"><span class="case-study-meta-label">Style</span><span class="case-study-meta-value">Modern UI</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="case-study-content">
+        <div class="case-study-section">
+            <h2>The Challenge</h2>
+            <p>A fitness studio needed a complete brand transformation to reflect their modern, energetic approach to fitness. Their old brand felt outdated and didn't resonate with their target audience. They needed a fresh brand identity and a website that would attract new members and showcase their unique fitness philosophy.</p>
+        </div>
+        <div class="case-study-section">
+            <h2>Our Approach</h2>
+            <h3>Brand Identity</h3>
+            <p>We developed a bold, energetic brand that reflects their dynamic approach to fitness. The new logo, color palette, and typography system create a cohesive brand experience that resonates with their target audience.</p>
+            <h3>Website Design</h3>
+            <p>The website features a modern, clean design with smooth animations and engaging visuals. Every element was designed to motivate and inspire visitors to take action.</p>
+        </div>
+        <div class="case-study-section">
+            <h2>Results</h2>
+            <div class="case-study-metrics">
+                <div class="metric-card"><div class="metric-value">+80%</div><div class="metric-label">Brand recognition</div></div>
+                <div class="metric-card"><div class="metric-value">+50%</div><div class="metric-label">New members</div></div>
+                <div class="metric-card"><div class="metric-value">Modern</div><div class="metric-label">Brand identity</div></div>
+                <div class="metric-card"><div class="metric-value">95+</div><div class="metric-label">Performance score</div></div>
+            </div>
+        </div>
+        <div class="case-study-section">
+            <h2>Key Features</h2>
+            <ul style="font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); color: var(--color-text-alt);">
+                <li>Complete brand identity system</li>
+                <li>Modern, energetic website design</li>
+                <li>Class schedule and booking system</li>
+                <li>Member testimonials and success stories</li>
+                <li>Mobile-responsive design</li>
+                <li>Fast-loading static site</li>
+            </ul>
+        </div>
+        <div class="case-study-section" style="text-align: center; padding: var(--space-2xl); background: var(--color-bg-alt); border-radius: var(--radius-lg);">
+            <h2>See the Live Site</h2>
+            <p style="margin-bottom: var(--space-lg);">Explore the complete website we delivered</p>
+            <a href="../showcases/fitness-studio.html" class="btn btn-primary showcase-link">View Showcase Site →</a>
+        </div>
+    </div>
+    <footer style="background: var(--color-bg-alt); padding: var(--space-xl) 0; text-align: center; margin-top: var(--space-3xl);">
+        <div class="container"><p style="color: var(--color-text-alt);">© 2026 justaweb.agency. All rights reserved.</p></div>
+    </footer>
+</body>
+</html>
+

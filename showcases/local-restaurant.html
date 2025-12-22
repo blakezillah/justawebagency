@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Restaurant — Showcase | justaweb.agency</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .showcase-header { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; padding: var(--space-2xl) 0; text-align: center; }
+        .showcase-header h1 { font-size: var(--font-size-4xl); margin-bottom: var(--space-sm); }
+        .showcase-header p { font-size: var(--font-size-lg); opacity: 0.9; }
+        .showcase-nav { background: var(--color-surface); border-bottom: 1px solid var(--color-border); padding: var(--space-md) 0; position: sticky; top: 0; z-index: 100; }
+        .showcase-nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .showcase-nav a { color: var(--color-text); text-decoration: none; font-weight: var(--font-weight-medium); }
+        .showcase-nav a:hover { color: var(--color-accent); }
+        .showcase-section { padding: var(--space-3xl) 0; }
+        .showcase-hero { text-align: center; padding: var(--space-3xl) 0; background: var(--color-bg-alt); }
+        .showcase-hero h2 { font-size: var(--font-size-4xl); margin-bottom: var(--space-md); }
+        .showcase-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-lg); margin: var(--space-xl) 0; }
+        .feature-card { background: var(--color-surface); padding: var(--space-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-border); }
+        .feature-card h3 { font-size: var(--font-size-xl); margin-bottom: var(--space-sm); color: var(--color-text); }
+        .feature-card p { color: var(--color-text-alt); line-height: var(--line-height-relaxed); }
+    </style>
+</head>
+<body>
+    <div class="showcase-nav"><div class="container"><a href="../index.html#work">← Back to Portfolio</a><a href="../case-studies/local-restaurant.html">View Case Study</a></div></div>
+    <div class="showcase-header"><div class="container"><h1>Local Restaurant</h1><p>Fresh ingredients, authentic flavors</p></div></div>
+    <section class="showcase-hero"><div class="container"><h2>What We Delivered</h2><p style="font-size: var(--font-size-lg); color: var(--color-text-alt); max-width: 600px; margin: 0 auto;">A mobile-first restaurant website with online ordering and easy content management.</p></div></section>
+    <section class="showcase-section"><div class="container"><h2 style="text-align: center; margin-bottom: var(--space-xl);">Key Deliverables</h2>
+        <div class="showcase-features">
+            <div class="feature-card"><h3>Menu-Focused Design</h3><p>Beautiful menu presentation with food photography and easy-to-read items.</p></div>
+            <div class="feature-card"><h3>Online Ordering</h3><p>Seamless online ordering system with real-time order tracking.</p></div>
+            <div class="feature-card"><h3>WordPress CMS</h3><p>Easy-to-update content management system for menus and specials.</p></div>
+            <div class="feature-card"><h3>Mobile-First</h3><p>Fully responsive design optimized for mobile devices.</p></div>
+            <div class="feature-card"><h3>Reservation System</h3><p>Integrated booking system for table reservations.</p></div>
+            <div class="feature-card"><h3>Location Info</h3><p>Clear location, hours, and contact information.</p></div>
+        </div>
+    </div></section>
+    <section class="showcase-section" style="background: var(--color-bg-alt);"><div class="container"><h2 style="text-align: center; margin-bottom: var(--space-xl);">Results</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-lg); text-align: center;">
+            <div><div style="font-size: var(--font-size-4xl); font-weight: var(--font-weight-bold); color: var(--color-accent);">+120%</div><div style="color: var(--color-text-alt); margin-top: var(--space-xs);">Online Orders</div></div>
+            <div><div style="font-size: var(--font-size-4xl); font-weight: var(--font-weight-bold); color: var(--color-accent);">+40%</div><div style="color: var(--color-text-alt); margin-top: var(--space-xs);">Mobile Traffic</div></div>
+        </div>
+    </div></section>
+    <footer style="background: var(--color-surface); padding: var(--space-xl) 0; text-align: center; margin-top: var(--space-3xl); border-top: 1px solid var(--color-border);"><div class="container"><p style="color: var(--color-text-alt);">This is a showcase of work delivered by <a href="../index.html" style="color: var(--color-accent);">justaweb.agency</a></p></div></footer>
+</body>
+</html>
+

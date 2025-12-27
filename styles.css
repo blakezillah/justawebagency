@@ -636,9 +636,8 @@ section .container {
 .service-number {
     font-size: var(--font-size-4xl);
     font-weight: var(--font-weight-bold);
-    color: var(--color-accent-light);
+    color: var(--color-accent);
     margin-bottom: var(--space-sm);
-    opacity: 0.5;
 }
 
 .service-card h3 {

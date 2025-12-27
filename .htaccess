@@ -30,3 +30,24 @@ Options -Indexes
     </IfModule>
 </FilesMatch>
 
+# Remove .html extension from URLs
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Redirect .html URLs to clean URLs (301 permanent redirect)
+    RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
+    RewriteRule ^ /%1 [R=301,L]
+    
+    # Internally rewrite clean URLs to .html files if they exist
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}\.html -f
+    RewriteRule ^(.*)$ $1.html [L]
+    
+    # Handle root/index
+    RewriteCond %{REQUEST_URI} ^/$
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.html [L]
+</IfModule>
+

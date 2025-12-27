@@ -1150,11 +1150,14 @@ section .container {
 
 .pricing-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--space-xl);
     margin-bottom: var(--space-3xl);
     position: relative;
     z-index: 1;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .pricing-card {
@@ -1164,6 +1167,13 @@ section .container {
     border: 2px solid var(--color-border);
     position: relative;
     transition: all var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.pricing-card .btn {
+    margin-top: auto;
 }
 
 .pricing-card:hover {
@@ -1221,6 +1231,7 @@ section .container {
 .pricing-features {
     list-style: none;
     margin-bottom: var(--space-xl);
+    flex-grow: 1;
 }
 
 .pricing-features li {
@@ -2267,6 +2278,7 @@ section .container {
     .work-grid,
     .pricing-grid {
         grid-template-columns: 1fr;
+        max-width: 100%;
     }
 
     .process-step {

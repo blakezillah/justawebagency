@@ -1,0 +1,17 @@
+[build]
+  # Static site - no build command needed
+  publish = "."
+
+# Redirect rules for clean URLs (removing .html)
+[[redirects]]
+  from = "/*.html"
+  to = "/:splat"
+  status = 301
+  force = false
+
+# Handle root
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
+

@@ -1197,6 +1197,10 @@
             contactModal.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
             
+            // Store previously focused element for return focus
+            const previousActiveElement = document.activeElement;
+            contactModal.dataset.previousActiveElement = previousActiveElement ? previousActiveElement.id || '' : '';
+            
             // Focus first input
             setTimeout(() => {
                 const form = document.getElementById('contactModalForm');
@@ -1205,6 +1209,33 @@
                     if (firstInput) firstInput.focus();
                 }
             }, 100);
+            
+            // Focus trap: trap focus within modal
+            const focusableElements = contactModal.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstFocusable = focusableElements[0];
+            const lastFocusable = focusableElements[focusableElements.length - 1];
+            
+            // Handle Tab key to trap focus
+            const handleTabKey = (e) => {
+                if (e.key !== 'Tab') return;
+                
+                if (e.shiftKey) {
+                    if (document.activeElement === firstFocusable) {
+                        e.preventDefault();
+                        lastFocusable.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastFocusable) {
+                        e.preventDefault();
+                        firstFocusable.focus();
+                    }
+                }
+            };
+            
+            contactModal.addEventListener('keydown', handleTabKey);
+            contactModal.dataset.tabHandler = 'true';
         }
         
         // Close modal
@@ -1212,6 +1243,28 @@
             contactModal.classList.remove('active');
             contactModal.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
+            
+            // Remove focus trap
+            if (contactModal.dataset.tabHandler === 'true') {
+                const handleTabKey = (e) => {
+                    if (e.key === 'Tab') {
+                        // Remove listener after handling
+                        contactModal.removeEventListener('keydown', handleTabKey);
+                    }
+                };
+                contactModal.removeEventListener('keydown', handleTabKey);
+                delete contactModal.dataset.tabHandler;
+            }
+            
+            // Return focus to previously focused element
+            const previousId = contactModal.dataset.previousActiveElement;
+            if (previousId) {
+                const previousElement = document.getElementById(previousId) || 
+                    document.querySelector(`[data-open-contact][data-source="${previousId}"]`);
+                if (previousElement) {
+                    previousElement.focus();
+                }
+            }
         }
         
         // Attach open handlers
@@ -1493,21 +1546,73 @@ function initModalFormValidation(form) {
     }
     
     function openModal(modal) {
+        // Store previously focused element
+        const previousActiveElement = document.activeElement;
+        modal.dataset.previousActiveElement = previousActiveElement ? previousActiveElement.id || '' : '';
+        
         modal.classList.add('active');
         modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
         
-        // Focus management
+        // Focus management - focus close button
         const closeBtn = modal.querySelector('.modal-close');
         if (closeBtn) {
-            closeBtn.focus();
+            setTimeout(() => closeBtn.focus(), 100);
         }
+        
+        // Focus trap: trap focus within modal
+        const focusableElements = modal.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
+        
+        // Handle Tab key to trap focus
+        const handleTabKey = (e) => {
+            if (e.key !== 'Tab') return;
+            
+            if (e.shiftKey) {
+                if (document.activeElement === firstFocusable) {
+                    e.preventDefault();
+                    lastFocusable.focus();
+                }
+            } else {
+                if (document.activeElement === lastFocusable) {
+                    e.preventDefault();
+                    firstFocusable.focus();
+                }
+            }
+        };
+        
+        modal.addEventListener('keydown', handleTabKey);
+        modal.dataset.tabHandler = 'true';
     }
     
     function closeModal(modal) {
         modal.classList.remove('active');
         modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        
+        // Remove focus trap
+        if (modal.dataset.tabHandler === 'true') {
+            const handleTabKey = (e) => {
+                if (e.key === 'Tab') {
+                    modal.removeEventListener('keydown', handleTabKey);
+                }
+            };
+            modal.removeEventListener('keydown', handleTabKey);
+            delete modal.dataset.tabHandler;
+        }
+        
+        // Return focus to previously focused element (work card)
+        const previousId = modal.dataset.previousActiveElement;
+        if (previousId) {
+            const previousElement = document.getElementById(previousId) || 
+                document.querySelector(`[data-modal="${previousId.replace('modal-', '')}"]`);
+            if (previousElement) {
+                previousElement.focus();
+            }
+        }
     }
     
     // Initialize on DOM ready

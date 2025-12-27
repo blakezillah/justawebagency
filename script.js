@@ -1131,99 +1131,129 @@
 // ============================================
 
 (function initContactModal() {
-    const contactModal = document.getElementById('contactModal');
-    const openButtons = document.querySelectorAll('[data-open-contact]');
-    const closeBtn = contactModal?.querySelector('.modal-close');
-    const overlay = contactModal?.querySelector('.modal-overlay');
-    
-    if (!contactModal) return;
-    
-    // Open modal and pre-fill form
-    function openContactModal(button) {
-        const tier = button.getAttribute('data-tier');
-        const budget = button.getAttribute('data-budget');
-        const source = button.getAttribute('data-source');
+    function init() {
+        const contactModal = document.getElementById('contactModal');
+        const openButtons = document.querySelectorAll('[data-open-contact]');
         
-        // Reset form
-        const form = document.getElementById('contactModalForm');
-        if (form) {
-            form.reset();
-            
-            // Clear errors
-            const errorElements = form.querySelectorAll('.form-error');
-            errorElements.forEach(el => el.textContent = '');
-            const errorInputs = form.querySelectorAll('.error');
-            errorInputs.forEach(el => el.classList.remove('error'));
-            
-            // Pre-fill based on button data
-            if (budget) {
-                const budgetSelect = document.getElementById('modalBudget');
-                if (budgetSelect) {
-                    budgetSelect.value = budget;
-                }
+        if (!contactModal) {
+            console.warn('Contact modal not found');
+            return;
+        }
+        
+        if (openButtons.length === 0) {
+            console.warn('No contact buttons found');
+            return;
+        }
+        
+        const closeBtn = contactModal.querySelector('.modal-close');
+        const overlay = contactModal.querySelector('.modal-overlay');
+        
+        // Open modal and pre-fill form
+        function openContactModal(button) {
+            if (!contactModal) {
+                console.error('Contact modal element not found');
+                return;
             }
             
-            if (tier) {
-                const messageTextarea = document.getElementById('modalMessage');
-                if (messageTextarea) {
-                    let message = `I'm interested in the ${tier} plan.`;
-                    if (source === 'hero') {
-                        message = `I'm interested in getting my first website. ${tier ? `I'm considering the ${tier} plan.` : ''}`;
-                    } else if (source === 'health-demo') {
-                        message = `I'd like to get a free site audit.`;
+            const tier = button.getAttribute('data-tier');
+            const budget = button.getAttribute('data-budget');
+            const source = button.getAttribute('data-source');
+            
+            // Reset form
+            const form = document.getElementById('contactModalForm');
+            if (form) {
+                form.reset();
+                
+                // Clear errors
+                const errorElements = form.querySelectorAll('.form-error');
+                errorElements.forEach(el => el.textContent = '');
+                const errorInputs = form.querySelectorAll('.error');
+                errorInputs.forEach(el => el.classList.remove('error'));
+                
+                // Pre-fill based on button data
+                if (budget) {
+                    const budgetSelect = document.getElementById('modalBudget');
+                    if (budgetSelect) {
+                        budgetSelect.value = budget;
                     }
-                    messageTextarea.value = message;
+                }
+                
+                if (tier) {
+                    const messageTextarea = document.getElementById('modalMessage');
+                    if (messageTextarea) {
+                        let message = `I'm interested in the ${tier} plan.`;
+                        if (source === 'hero') {
+                            message = `I'm interested in getting my first website. ${tier ? `I'm considering the ${tier} plan.` : ''}`;
+                        } else if (source === 'health-demo') {
+                            message = `I'd like to get a free site audit.`;
+                        }
+                        messageTextarea.value = message;
+                    }
                 }
             }
+            
+            // Show modal
+            contactModal.classList.add('active');
+            contactModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus first input
+            setTimeout(() => {
+                const form = document.getElementById('contactModalForm');
+                if (form) {
+                    const firstInput = form.querySelector('input[type="text"], input[type="email"]');
+                    if (firstInput) firstInput.focus();
+                }
+            }, 100);
         }
         
-        // Show modal
-        contactModal.classList.add('active');
-        contactModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+        // Close modal
+        function closeContactModal() {
+            contactModal.classList.remove('active');
+            contactModal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
         
-        // Focus first input
-        setTimeout(() => {
-            const firstInput = form?.querySelector('input[type="text"], input[type="email"]');
-            if (firstInput) firstInput.focus();
-        }, 100);
-    }
-    
-    // Close modal
-    function closeContactModal() {
-        contactModal.classList.remove('active');
-        contactModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-    }
-    
-    // Attach open handlers
-    openButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            openContactModal(button);
+        // Attach open handlers
+        openButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Contact button clicked', button);
+                openContactModal(button);
+            });
         });
-    });
-    
-    // Attach close handlers
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeContactModal);
-    }
-    
-    if (overlay) {
-        overlay.addEventListener('click', closeContactModal);
-    }
-    
-    // Close on Escape
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && contactModal.classList.contains('active')) {
-            closeContactModal();
+        
+        console.log(`Contact modal initialized with ${openButtons.length} buttons`);
+        
+        // Attach close handlers
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeContactModal);
         }
-    });
+        
+        if (overlay) {
+            overlay.addEventListener('click', closeContactModal);
+        }
+        
+        // Close on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && contactModal.classList.contains('active')) {
+                closeContactModal();
+            }
+        });
     
-    // Initialize modal form validation
-    const modalForm = document.getElementById('contactModalForm');
-    if (modalForm) {
-        initModalFormValidation(modalForm);
+        // Initialize modal form validation
+        const modalForm = document.getElementById('contactModalForm');
+        if (modalForm) {
+            initModalFormValidation(modalForm);
+        }
+    }
+    
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
     }
 })();
 

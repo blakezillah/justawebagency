@@ -923,7 +923,7 @@ section .container {
     left: 24px;
     top: 64px;
     width: 2px;
-    height: calc(100% + var(--space-3xl));
+    height: calc(100% + var(--space-lg));
     background: var(--color-border);
 }
 

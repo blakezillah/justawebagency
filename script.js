@@ -1127,6 +1127,288 @@
 })();
 
 // ============================================
+// Contact Form Modal
+// ============================================
+
+(function initContactModal() {
+    const contactModal = document.getElementById('contactModal');
+    const openButtons = document.querySelectorAll('[data-open-contact]');
+    const closeBtn = contactModal?.querySelector('.modal-close');
+    const overlay = contactModal?.querySelector('.modal-overlay');
+    
+    if (!contactModal) return;
+    
+    // Open modal and pre-fill form
+    function openContactModal(button) {
+        const tier = button.getAttribute('data-tier');
+        const budget = button.getAttribute('data-budget');
+        const source = button.getAttribute('data-source');
+        
+        // Reset form
+        const form = document.getElementById('contactModalForm');
+        if (form) {
+            form.reset();
+            
+            // Clear errors
+            const errorElements = form.querySelectorAll('.form-error');
+            errorElements.forEach(el => el.textContent = '');
+            const errorInputs = form.querySelectorAll('.error');
+            errorInputs.forEach(el => el.classList.remove('error'));
+            
+            // Pre-fill based on button data
+            if (budget) {
+                const budgetSelect = document.getElementById('modalBudget');
+                if (budgetSelect) {
+                    budgetSelect.value = budget;
+                }
+            }
+            
+            if (tier) {
+                const messageTextarea = document.getElementById('modalMessage');
+                if (messageTextarea) {
+                    let message = `I'm interested in the ${tier} plan.`;
+                    if (source === 'hero') {
+                        message = `I'm interested in getting my first website. ${tier ? `I'm considering the ${tier} plan.` : ''}`;
+                    } else if (source === 'health-demo') {
+                        message = `I'd like to get a free site audit.`;
+                    }
+                    messageTextarea.value = message;
+                }
+            }
+        }
+        
+        // Show modal
+        contactModal.classList.add('active');
+        contactModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        
+        // Focus first input
+        setTimeout(() => {
+            const firstInput = form?.querySelector('input[type="text"], input[type="email"]');
+            if (firstInput) firstInput.focus();
+        }, 100);
+    }
+    
+    // Close modal
+    function closeContactModal() {
+        contactModal.classList.remove('active');
+        contactModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+    
+    // Attach open handlers
+    openButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            openContactModal(button);
+        });
+    });
+    
+    // Attach close handlers
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeContactModal);
+    }
+    
+    if (overlay) {
+        overlay.addEventListener('click', closeContactModal);
+    }
+    
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && contactModal.classList.contains('active')) {
+            closeContactModal();
+        }
+    });
+    
+    // Initialize modal form validation
+    const modalForm = document.getElementById('contactModalForm');
+    if (modalForm) {
+        initModalFormValidation(modalForm);
+    }
+})();
+
+// Modal form validation (reuses existing validation logic)
+function initModalFormValidation(form) {
+    const nameInput = document.getElementById('modalName');
+    const emailInput = document.getElementById('modalEmail');
+    const websiteInput = document.getElementById('modalWebsite');
+    const messageInput = document.getElementById('modalMessage');
+    
+    const nameError = document.getElementById('modalNameError');
+    const emailError = document.getElementById('modalEmailError');
+    const websiteError = document.getElementById('modalWebsiteError');
+    const messageError = document.getElementById('modalMessageError');
+    
+    function validateName() {
+        const value = nameInput.value.trim();
+        if (!value) {
+            nameError.textContent = 'Name is required';
+            nameInput.classList.add('error');
+            return false;
+        }
+        if (value.length < 2) {
+            nameError.textContent = 'Name must be at least 2 characters';
+            nameInput.classList.add('error');
+            return false;
+        }
+        nameError.textContent = '';
+        nameInput.classList.remove('error');
+        return true;
+    }
+    
+    function validateEmail() {
+        const value = emailInput.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value) {
+            emailError.textContent = 'Email is required';
+            emailInput.classList.add('error');
+            return false;
+        }
+        if (!emailRegex.test(value)) {
+            emailError.textContent = 'Please enter a valid email address';
+            emailInput.classList.add('error');
+            return false;
+        }
+        emailError.textContent = '';
+        emailInput.classList.remove('error');
+        return true;
+    }
+    
+    function validateWebsite() {
+        const value = websiteInput.value.trim();
+        if (value) {
+            try {
+                new URL(value);
+                websiteError.textContent = '';
+                websiteInput.classList.remove('error');
+                return true;
+            } catch {
+                websiteError.textContent = 'Please enter a valid URL';
+                websiteInput.classList.add('error');
+                return false;
+            }
+        }
+        websiteError.textContent = '';
+        websiteInput.classList.remove('error');
+        return true;
+    }
+    
+    function validateMessage() {
+        const value = messageInput.value.trim();
+        if (!value) {
+            messageError.textContent = 'Message is required';
+            messageInput.classList.add('error');
+            return false;
+        }
+        if (value.length < 10) {
+            messageError.textContent = 'Message must be at least 10 characters';
+            messageInput.classList.add('error');
+            return false;
+        }
+        messageError.textContent = '';
+        messageInput.classList.remove('error');
+        return true;
+    }
+    
+    // Remove error class on input
+    nameInput?.addEventListener('input', () => {
+        if (nameInput.classList.contains('error')) {
+            nameInput.classList.remove('error');
+            nameError.textContent = '';
+        }
+    });
+    
+    emailInput?.addEventListener('input', () => {
+        if (emailInput.classList.contains('error')) {
+            emailInput.classList.remove('error');
+            emailError.textContent = '';
+        }
+    });
+    
+    websiteInput?.addEventListener('input', () => {
+        if (websiteInput.classList.contains('error')) {
+            websiteInput.classList.remove('error');
+            websiteError.textContent = '';
+        }
+    });
+    
+    messageInput?.addEventListener('input', () => {
+        if (messageInput.classList.contains('error')) {
+            messageInput.classList.remove('error');
+            messageError.textContent = '';
+        }
+    });
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const isNameValid = validateName();
+        const isEmailValid = validateEmail();
+        const isWebsiteValid = validateWebsite();
+        const isMessageValid = validateMessage();
+        
+        if (isNameValid && isEmailValid && isWebsiteValid && isMessageValid) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+            
+            // Submit to Netlify
+            const formData = new FormData(form);
+            
+            fetch('/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(formData).toString()
+            })
+            .then(() => {
+                submitBtn.textContent = 'Message sent!';
+                form.reset();
+                
+                setTimeout(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    // Close modal after success
+                    const contactModal = document.getElementById('contactModal');
+                    if (contactModal) {
+                        contactModal.classList.remove('active');
+                        contactModal.setAttribute('aria-hidden', 'true');
+                        document.body.style.overflow = '';
+                    }
+                }, 2000);
+            })
+            .catch((error) => {
+                console.error('Form submission error:', error);
+                submitBtn.textContent = 'Error sending message';
+                
+                // Fallback to mailto
+                const subject = encodeURIComponent('New Contact Form Submission');
+                const body = encodeURIComponent(
+                    `Name: ${nameInput.value.trim()}\n` +
+                    `Email: ${emailInput.value.trim()}\n` +
+                    `Website: ${websiteInput.value.trim() || 'N/A'}\n` +
+                    `Budget: ${document.getElementById('modalBudget').value || 'Not specified'}\n` +
+                    `Timeline: ${document.getElementById('modalTimeline').value || 'Not specified'}\n\n` +
+                    `Message:\n${messageInput.value.trim()}`
+                );
+                window.location.href = `mailto:hello@justaweb.agency?subject=${subject}&body=${body}`;
+                
+                setTimeout(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }, 3000);
+            });
+        } else {
+            // Focus first invalid field
+            if (!isNameValid) nameInput.focus();
+            else if (!isEmailValid) emailInput.focus();
+            else if (!isWebsiteValid) websiteInput.focus();
+            else if (!isMessageValid) messageInput.focus();
+        }
+    });
+}
+
+// ============================================
 // Case Study Modals
 // ============================================
 

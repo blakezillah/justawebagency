@@ -1935,7 +1935,9 @@ section .container {
 .modal-content {
     position: relative;
     width: 90%;
-    max-width: 500px;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
     background: var(--color-surface);
     border-radius: var(--radius-xl);
     border: 1px solid var(--color-border);
@@ -1944,6 +1946,19 @@ section .container {
     z-index: 1;
     transform: scale(0.9);
     transition: transform var(--transition-base);
+}
+
+.modal-content h2 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+}
+
+.modal-content > p {
+    color: var(--color-text-alt);
+    margin-bottom: var(--space-xl);
+    line-height: var(--line-height-relaxed);
 }
 
 .modal.active .modal-content {

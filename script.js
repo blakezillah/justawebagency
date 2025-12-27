@@ -48,21 +48,37 @@
 // ============================================
 
 (function initSmoothScroll() {
+    // Add smooth scrolling CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        html {
+            scroll-behavior: smooth;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     if (!prefersReducedMotion) {
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 const href = this.getAttribute('href');
-                if (href === '#') return;
+                if (href === '#' || href === '#!') return;
                 
                 e.preventDefault();
                 const target = document.querySelector(href);
                 if (target) {
-                    const headerHeight = document.querySelector('.header').offsetHeight;
-                    const targetPosition = target.offsetTop - headerHeight;
+                    const header = document.querySelector('.header');
+                    const headerHeight = header ? header.offsetHeight : 0;
+                    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
+                    
                     window.scrollTo({
-                        top: targetPosition,
+                        top: Math.max(0, targetPosition),
                         behavior: 'smooth'
                     });
                 }

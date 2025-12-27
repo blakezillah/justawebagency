@@ -92,15 +92,23 @@
     --color-error: #f87171;
 }
 
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto !important;
+    }
+    
     *,
     *::before,
     *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
     }
 }
 
@@ -1714,8 +1722,8 @@ section .container {
 
 .back-to-top {
     position: fixed;
-    bottom: var(--space-lg);
-    right: var(--space-lg);
+    bottom: var(--space-md);
+    right: var(--space-md);
     width: 48px;
     height: 48px;
     border-radius: var(--radius-full);

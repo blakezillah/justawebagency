@@ -363,12 +363,12 @@
         
         // HTML sites (1-3 pages)
         if (platform === 'html' && pages <= 3) {
-            basePrice = 2500;
+            basePrice = 2000;
             plan = 'Essential';
         }
         // WordPress/Shopify (up to 8 pages)
         else if ((platform === 'wordpress' || platform === 'shopify') && pages <= 8) {
-            basePrice = 4500;
+            basePrice = 5000;
             plan = 'Professional';
             // Adjust for Shopify (slightly more)
             if (platform === 'shopify') {
@@ -377,7 +377,7 @@
         }
         // Larger sites (up to 15 pages)
         else if (pages <= 15) {
-            basePrice = 7500;
+            basePrice = 8000;
             plan = 'Complete';
             if (platform === 'shopify') {
                 basePrice += 1000;
@@ -385,7 +385,7 @@
         }
         // Very large sites (15+ pages)
         else {
-            basePrice = 7500 + ((pages - 15) * 300);
+            basePrice = 8000 + ((pages - 15) * 300);
             plan = 'Complete';
             if (platform === 'shopify') {
                 basePrice += 1000;

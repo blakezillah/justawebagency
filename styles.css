@@ -838,7 +838,7 @@ section .container {
     height: auto;
     max-width: none;
     max-height: none;
-    transform: scale(2);
+    transform: scale(2) translateX(20%);
     margin: 0;
     display: block;
 }

@@ -2147,25 +2147,6 @@ a:focus-visible {
     background: var(--color-accent-hover);
 }
 
-/* Scroll indicator - fade at bottom (only when scrollable) */
-.case-study-modal-body.has-scroll-content::after {
-    content: '';
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 50px;
-    background: linear-gradient(to bottom, transparent, var(--color-surface));
-    pointer-events: none;
-    z-index: 1;
-    margin-top: -50px;
-    display: block;
-}
-
-.case-study-modal-body::after {
-    display: none;
-}
-
 /* Scroll hint indicator */
 .case-study-modal-body::before {
     content: '↓';

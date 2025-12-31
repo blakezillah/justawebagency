@@ -2123,6 +2123,78 @@ a:focus-visible {
     padding: var(--space-3xl) var(--space-xl);
     overflow-y: auto;
     flex: 1;
+    position: relative;
+    /* Custom scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-accent) var(--color-border);
+}
+
+.case-study-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.case-study-modal-body::-webkit-scrollbar-track {
+    background: var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+.case-study-modal-body::-webkit-scrollbar-thumb {
+    background: var(--color-accent);
+    border-radius: var(--radius-sm);
+}
+
+.case-study-modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent-hover);
+}
+
+/* Scroll indicator - fade at bottom (only when scrollable) */
+.case-study-modal-body.has-scroll-content::after {
+    content: '';
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: linear-gradient(to bottom, transparent, var(--color-surface));
+    pointer-events: none;
+    z-index: 1;
+    margin-top: -50px;
+    display: block;
+}
+
+.case-study-modal-body::after {
+    display: none;
+}
+
+/* Scroll hint indicator */
+.case-study-modal-body::before {
+    content: '↓';
+    position: absolute;
+    bottom: var(--space-md);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--font-size-2xl);
+    color: var(--color-accent);
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 2;
+    animation: scrollHint 2s ease-in-out infinite;
+    display: none;
+}
+
+.case-study-modal-body.has-scroll-content:not(.scrolled)::before {
+    display: block;
+}
+
+@keyframes scrollHint {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateX(-50%) translateY(8px);
+        opacity: 0.3;
+    }
 }
 
 .case-study-section {

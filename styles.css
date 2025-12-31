@@ -774,10 +774,11 @@ section .container {
 }
 
 .work-card {
-    background: var(--color-surface);
+    background: #ffffff;
     border-radius: var(--radius-xl);
     overflow: hidden;
     border: 1px solid var(--color-border);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transition: all var(--transition-base);
     opacity: 1;
     transform: scale(1);
@@ -794,7 +795,7 @@ section .container {
 
 .work-card:hover {
     transform: translateY(-8px);
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .work-card[data-modal] {
@@ -803,14 +804,14 @@ section .container {
 
 .work-card[data-modal]:hover {
     transform: translateY(-8px);
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .work-card-image {
     height: 240px;
     position: relative;
     overflow: hidden;
-    background: var(--color-bg-alt);
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -824,6 +825,13 @@ section .container {
     height: auto;
     object-fit: contain;
     display: block;
+}
+
+.work-card-image .makarios-logo {
+    max-width: 140%;
+    max-height: 140%;
+    width: auto;
+    height: auto;
 }
 
 .work-card-gradient {

@@ -169,16 +169,17 @@
 }
 
 .portfolio-card {
-    background: var(--color-surface);
+    background: #ffffff;
     border-radius: var(--radius-xl);
     overflow: hidden;
     border: 1px solid var(--color-border);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
 .portfolio-card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .portfolio-image {
@@ -186,7 +187,7 @@
     height: 200px;
     position: relative;
     overflow: hidden;
-    background: var(--color-bg-alt);
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -200,6 +201,13 @@
     height: auto;
     object-fit: contain;
     display: block;
+}
+
+.portfolio-image .makarios-logo {
+    max-width: 140%;
+    max-height: 140%;
+    width: auto;
+    height: auto;
 }
 
 .portfolio-content {

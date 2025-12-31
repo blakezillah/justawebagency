@@ -771,6 +771,7 @@ section .container {
     gap: var(--space-xl);
     position: relative;
     z-index: 1;
+    align-items: stretch;
 }
 
 .work-card {
@@ -782,6 +783,9 @@ section .container {
     transition: all var(--transition-base);
     opacity: 1;
     transform: scale(1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .work-card.hidden {
@@ -809,6 +813,7 @@ section .container {
 
 .work-card-image {
     height: 240px;
+    min-height: 240px;
     position: relative;
     overflow: hidden;
     background: #ffffff;
@@ -816,6 +821,7 @@ section .container {
     align-items: center;
     justify-content: center;
     padding: var(--space-lg);
+    flex-shrink: 0;
 }
 
 .work-card-image img {
@@ -928,6 +934,9 @@ section .container {
     padding: var(--space-lg);
     background: #000000;
     color: #ffffff;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .work-card-category {

@@ -1644,3 +1644,41 @@ function initModalFormValidation(form) {
     }
 })();
 
+
+// ============================================
+// Logo Cursor Glow Effect
+// ============================================
+
+(function initLogoGlow() {
+    function init() {
+        const logos = document.querySelectorAll('.logo');
+        
+        logos.forEach(logo => {
+            const glow = logo.querySelector('.logo-glow');
+            if (!glow) return;
+            
+            logo.addEventListener('mousemove', (e) => {
+                const rect = logo.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Position glow at cursor location
+                glow.style.left = `${x}px`;
+                glow.style.top = `${y}px`;
+                glow.style.transform = 'translate(-50%, -50%)';
+                glow.style.opacity = '0.6';
+            });
+            
+            logo.addEventListener('mouseleave', () => {
+                glow.style.opacity = '0';
+            });
+        });
+    }
+    
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();

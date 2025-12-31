@@ -834,11 +834,13 @@ section .container {
 }
 
 .work-card-image .makarios-logo {
-    max-width: 200%;
-    max-height: 200%;
     width: auto;
     height: auto;
-    transform: scale(1.5);
+    max-width: none;
+    max-height: none;
+    transform: scale(2);
+    margin: 0;
+    display: block;
 }
 
 .work-card-gradient {

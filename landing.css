@@ -204,25 +204,28 @@
 }
 
 .portfolio-image .makarios-logo {
-    max-width: 140%;
-    max-height: 140%;
+    max-width: 200%;
+    max-height: 200%;
     width: auto;
     height: auto;
+    transform: scale(1.5);
 }
 
 .portfolio-content {
     padding: var(--space-lg);
+    background: #000000;
+    color: #ffffff;
 }
 
 .portfolio-content h4 {
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
     margin-bottom: var(--space-xs);
-    color: var(--color-text);
+    color: #ffffff;
 }
 
 .portfolio-content p {
-    color: var(--color-text-alt);
+    color: rgba(255, 255, 255, 0.8);
     font-size: var(--font-size-sm);
 }
 

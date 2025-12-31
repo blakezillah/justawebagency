@@ -828,10 +828,11 @@ section .container {
 }
 
 .work-card-image .makarios-logo {
-    max-width: 140%;
-    max-height: 140%;
+    max-width: 200%;
+    max-height: 200%;
     width: auto;
     height: auto;
+    transform: scale(1.5);
 }
 
 .work-card-gradient {
@@ -925,6 +926,8 @@ section .container {
 
 .work-card-content {
     padding: var(--space-lg);
+    background: #000000;
+    color: #ffffff;
 }
 
 .work-card-category {
@@ -939,11 +942,11 @@ section .container {
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-bold);
     margin: var(--space-sm) 0;
-    color: var(--color-text);
+    color: #ffffff;
 }
 
 .work-card p {
-    color: var(--color-text-alt);
+    color: rgba(255, 255, 255, 0.8);
     margin-bottom: var(--space-md);
     line-height: var(--line-height-relaxed);
 }

@@ -57,7 +57,7 @@ CTA LINKING:
                     </h1>
                     <p class="hero-subtitle">Get a professional website in 4-6 weeks. Clear pricing starting at $1,500. No contracts, no hassle, just a website that works.</p>
                     <div class="hero-cta">
-                        <a href="#book-call" class="btn btn-primary btn-large" id="heroPrimaryCTA">Book a call</a>
+                        <button type="button" class="btn btn-primary btn-large" data-open-contact data-source="hero">Book a call</button>
                         <a href="#pricing" class="btn btn-secondary btn-large">See pricing</a>
                     </div>
                     <ul class="hero-trust-bullets">
@@ -112,7 +112,7 @@ CTA LINKING:
                             <li>Basic SEO setup</li>
                             <li>Fast load times</li>
                         </ul>
-                        <a href="#book-call" class="btn btn-secondary btn-block pricing-cta">Book a call</a>
+                        <button type="button" class="btn btn-secondary btn-block pricing-cta" data-open-contact data-source="pricing" data-tier="Starter" data-budget="starter">Book a call</button>
                     </div>
                     <div class="pricing-card pricing-card-featured">
                         <div class="pricing-badge">Most popular</div>
@@ -137,7 +137,7 @@ CTA LINKING:
                             <li>Content management system</li>
                             <li>Fast load times</li>
                         </ul>
-                        <a href="#book-call" class="btn btn-primary btn-block pricing-cta">Book a call</a>
+                        <button type="button" class="btn btn-primary btn-block pricing-cta" data-open-contact data-source="pricing" data-tier="Standard" data-budget="standard">Book a call</button>
                     </div>
                     <div class="pricing-card">
                         <div class="pricing-card-header">
@@ -163,7 +163,7 @@ CTA LINKING:
                             <li>Optional maintenance included</li>
                             <li>Fast load times</li>
                         </ul>
-                        <a href="#book-call" class="btn btn-secondary btn-block pricing-cta">Book a call</a>
+                        <button type="button" class="btn btn-secondary btn-block pricing-cta" data-open-contact data-source="pricing" data-tier="Plus" data-budget="plus">Book a call</button>
                     </div>
                 </div>
             </div>
@@ -276,27 +276,27 @@ CTA LINKING:
                 <div class="portfolio-strip">
                     <h3 class="portfolio-title">Recent work</h3>
                     <div class="portfolio-grid">
-                        <div class="portfolio-card">
-                            <div class="portfolio-image" style="background: linear-gradient(135deg, #8B5A3C 0%, #6B4423 100%);"></div>
+                        <a href="https://precisionsafetyinc.com" target="_blank" rel="noopener noreferrer" class="portfolio-card" style="text-decoration: none;">
+                            <div class="portfolio-image" style="background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);"></div>
                             <div class="portfolio-content">
-                                <h4>Local Bakery</h4>
-                                <p>Simple website for a family bakery</p>
+                                <h4>Precision Safety Inc.</h4>
+                                <p>Industrial safety solutions website</p>
                             </div>
-                        </div>
-                        <div class="portfolio-card">
-                            <div class="portfolio-image" style="background: linear-gradient(135deg, #4F46E5 0%, #312E81 100%);"></div>
+                        </a>
+                        <a href="https://internationaltactical.com" target="_blank" rel="noopener noreferrer" class="portfolio-card" style="text-decoration: none;">
+                            <div class="portfolio-image" style="background: linear-gradient(135deg, #7C2D12 0%, #5A1A0A 100%);"></div>
                             <div class="portfolio-content">
-                                <h4>Consulting Firm</h4>
-                                <p>Professional site for tech consultant</p>
+                                <h4>International Tactical</h4>
+                                <p>E-commerce training website</p>
                             </div>
-                        </div>
-                        <div class="portfolio-card">
-                            <div class="portfolio-image" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);"></div>
+                        </a>
+                        <a href="https://makarios.digital" target="_blank" rel="noopener noreferrer" class="portfolio-card" style="text-decoration: none;">
+                            <div class="portfolio-image" style="background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);"></div>
                             <div class="portfolio-content">
-                                <h4>Fitness Studio</h4>
-                                <p>Clean website for yoga instructor</p>
+                                <h4>Makarios Digital</h4>
+                                <p>Digital agency portfolio site</p>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -436,7 +436,7 @@ CTA LINKING:
                 <div class="final-cta-content">
                     <h2>Ready to get your website?</h2>
                     <p>Professional websites starting at $1,500. Ready in 4-6 weeks. Book a call to get started.</p>
-                    <a href="#book-call" class="btn btn-primary btn-large final-cta-button">Book a call</a>
+                    <button type="button" class="btn btn-primary btn-large final-cta-button" data-open-contact data-source="final-cta">Book a call</button>
                 </div>
             </div>
         </section>
@@ -479,10 +479,68 @@ CTA LINKING:
         </section>
     </main>
 
+    <!-- Contact Form Modal -->
+    <div class="modal" id="contactModal" role="dialog" aria-label="Contact Form" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close modal">×</button>
+            <h2>Get in touch</h2>
+            <p>Tell us about your project and we'll get back to you soon.</p>
+            <form class="contact-form" id="contactModalForm" name="contact" netlify netlify-honeypot="bot-field" novalidate>
+                <input type="hidden" name="form-name" value="contact">
+                <p style="display: none;">
+                    <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+                </p>
+                <div class="form-group">
+                    <label for="modalName">Name *</label>
+                    <input type="text" id="modalName" name="name" required aria-required="true" aria-describedby="modalNameError">
+                    <span class="form-error" id="modalNameError" role="alert" aria-live="polite"></span>
+                </div>
+                <div class="form-group">
+                    <label for="modalEmail">Email *</label>
+                    <input type="email" id="modalEmail" name="email" required aria-required="true" aria-describedby="modalEmailError">
+                    <span class="form-error" id="modalEmailError" role="alert" aria-live="polite"></span>
+                </div>
+                <div class="form-group">
+                    <label for="modalWebsite">Website URL</label>
+                    <input type="url" id="modalWebsite" name="website" placeholder="https://yoursite.com" aria-describedby="modalWebsiteError">
+                    <span class="form-error" id="modalWebsiteError" role="alert" aria-live="polite"></span>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="modalBudget">Budget range</label>
+                        <select id="modalBudget" name="budget">
+                            <option value="">Select range</option>
+                            <option value="starter">Starter ($1,500)</option>
+                            <option value="standard">Standard ($3,500)</option>
+                            <option value="plus">Plus ($5,500)</option>
+                            <option value="custom">Custom quote</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="modalTimeline">Timeline</label>
+                        <select id="modalTimeline" name="timeline">
+                            <option value="">Select timeline</option>
+                            <option value="rush">Rush (2-3 weeks)</option>
+                            <option value="standard">Standard (4-6 weeks)</option>
+                            <option value="flexible">Flexible (6+ weeks)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="modalMessage">Message *</label>
+                    <textarea id="modalMessage" name="message" rows="5" required aria-required="true" aria-describedby="modalMessageError"></textarea>
+                    <span class="form-error" id="modalMessageError" role="alert" aria-live="polite"></span>
+                </div>
+                <button type="submit" class="btn btn-primary btn-large btn-block">Send message</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Sticky Mobile CTA -->
     <div class="sticky-cta" id="stickyCTA">
         <div class="container">
-            <a href="#book-call" class="btn btn-primary btn-block">Book a call</a>
+            <button type="button" class="btn btn-primary btn-block" data-open-contact data-source="sticky">Book a call</button>
         </div>
     </div>
 

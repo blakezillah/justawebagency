@@ -1561,15 +1561,17 @@ function initModalFormValidation(form) {
             modalBody.classList.remove('scrolled');
             modalBody.scrollTop = 0;
             
-            // Check if scrollable and update indicators
+            // Check if scrollable and show arrow
             setTimeout(() => {
-                updateScrollIndicator(modalBody);
+                const isScrollable = modalBody.scrollHeight > modalBody.clientHeight;
+                if (isScrollable) {
+                    modalBody.classList.add('has-scroll-content');
+                }
             }, 100);
             
-            // Update on scroll
+            // Update on scroll - hide arrow when user scrolls
             modalBody.addEventListener('scroll', () => {
                 modalBody.classList.add('scrolled');
-                updateScrollIndicator(modalBody);
             });
         }
         
@@ -1631,24 +1633,6 @@ function initModalFormValidation(form) {
             if (previousElement) {
                 previousElement.focus();
             }
-        }
-        
-        // Remove scroll indicator
-        const modalBody = modal.querySelector('.case-study-modal-body');
-        if (modalBody) {
-            modalBody.removeEventListener('scroll', () => updateScrollIndicator(modalBody));
-        }
-    }
-    
-    // Update scroll indicator visibility
-    function updateScrollIndicator(modalBody) {
-        const isScrollable = modalBody.scrollHeight > modalBody.clientHeight;
-        const isAtBottom = modalBody.scrollHeight - modalBody.scrollTop <= modalBody.clientHeight + 10;
-        
-        if (isScrollable && !isAtBottom) {
-            modalBody.classList.add('has-scroll-content');
-        } else {
-            modalBody.classList.remove('has-scroll-content');
         }
     }
     

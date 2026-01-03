@@ -1713,6 +1713,7 @@ function initModalFormValidation(form) {
         
         let previousActiveElement = null;
         let currentSource = 'unknown';
+        let tabKeyHandler = null;
         
         // Open modal
         function openAuditModal(button) {
@@ -1748,7 +1749,7 @@ function initModalFormValidation(form) {
             const firstFocusable = focusableElements[0];
             const lastFocusable = focusableElements[focusableElements.length - 1];
             
-            const handleTabKey = (e) => {
+            tabKeyHandler = (e) => {
                 if (e.key !== 'Tab') return;
                 
                 if (e.shiftKey) {
@@ -1764,7 +1765,7 @@ function initModalFormValidation(form) {
                 }
             };
             
-            auditModal.addEventListener('keydown', handleTabKey);
+            auditModal.addEventListener('keydown', tabKeyHandler);
             auditModal.dataset.tabHandler = 'true';
         }
         
@@ -1775,14 +1776,17 @@ function initModalFormValidation(form) {
             document.body.style.overflow = '';
             
             // Remove focus trap
-            if (auditModal.dataset.tabHandler === 'true') {
-                auditModal.removeEventListener('keydown', handleTabKey);
+            if (auditModal.dataset.tabHandler === 'true' && tabKeyHandler) {
+                auditModal.removeEventListener('keydown', tabKeyHandler);
                 delete auditModal.dataset.tabHandler;
+                tabKeyHandler = null;
             }
             
             // Return focus
             if (previousActiveElement) {
-                previousActiveElement.focus();
+                setTimeout(() => {
+                    previousActiveElement.focus();
+                }, 100);
             }
         }
         

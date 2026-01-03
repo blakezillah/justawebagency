@@ -2569,3 +2569,106 @@ a:focus-visible {
     }
 }
 
+/* ============================================
+   Audit Runner Section
+   ============================================ */
+
+.audit-runner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-xl);
+    padding: var(--space-2xl) 0;
+}
+
+.audit-panel {
+    background: var(--color-surface);
+    padding: var(--space-xl);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+}
+
+.audit-panel h2,
+.audit-panel h3 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--space-lg);
+    color: var(--color-text);
+}
+
+.audit-log {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    max-height: 400px;
+    overflow-y: auto;
+    line-height: 1.6;
+}
+
+.audit-log::before {
+    content: '';
+    display: block;
+    margin-bottom: var(--space-sm);
+}
+
+.audit-scores {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+}
+
+.audit-score-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-md);
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.audit-score-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-alt);
+    font-weight: var(--font-weight-medium);
+}
+
+.audit-score-value {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent);
+}
+
+.audit-actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.audit-actions .btn {
+    flex: 1;
+    min-width: 150px;
+}
+
+@media (max-width: 768px) {
+    .audit-runner {
+        grid-template-columns: 1fr;
+    }
+    
+    .audit-scores {
+        grid-template-columns: 1fr;
+    }
+    
+    .audit-actions {
+        flex-direction: column;
+    }
+    
+    .audit-actions .btn {
+        width: 100%;
+    }
+}
+

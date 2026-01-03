@@ -282,7 +282,7 @@
                     </div>
                 </div>
                 <!-- OPTIMIZED: Standardized CTA language -->
-                <button type="button" class="btn btn-primary" data-open-contact data-source="health-demo">Get a free audit</button>
+                <button type="button" class="btn btn-primary" data-open-audit data-source="health-demo">Get a free audit</button>
             </div>
         </div>
     </section>
@@ -504,7 +504,7 @@
             <div class="lead-magnet-content reveal">
                 <h2>Get a free homepage audit</h2>
                 <p>See what's hurting your current site and how to fix it. Free analysis, no strings attached.</p>
-                <button class="btn btn-primary" id="leadMagnetBtn">Get a free audit</button>
+                <button class="btn btn-primary" data-open-audit data-source="lead-magnet">Get a free audit</button>
             </div>
         </div>
     </section>
@@ -744,6 +744,50 @@
         </div>
     </div>
 
+    <!-- Audit Runner Section -->
+    <section id="auditRunner" hidden>
+        <div class="container">
+            <div class="audit-runner">
+                <div class="audit-panel">
+                    <h2>Running Site Audit</h2>
+                    <div class="audit-log" id="auditLog" role="log" aria-live="polite"></div>
+                </div>
+                <div class="audit-panel">
+                    <h3>Audit Scores</h3>
+                    <div class="audit-scores">
+                        <div class="audit-score-item">
+                            <span class="audit-score-label">Performance</span>
+                            <span class="audit-score-value" id="scorePerformance">-</span>
+                        </div>
+                        <div class="audit-score-item">
+                            <span class="audit-score-label">Technical</span>
+                            <span class="audit-score-value" id="scoreTechnical">-</span>
+                        </div>
+                        <div class="audit-score-item">
+                            <span class="audit-score-label">Accessibility</span>
+                            <span class="audit-score-value" id="scoreAccessibility">-</span>
+                        </div>
+                        <div class="audit-score-item">
+                            <span class="audit-score-label">Uptime</span>
+                            <span class="audit-score-value" id="scoreUptime">-</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="audit-panel" id="auditSummary" hidden>
+                    <h3>Audit Summary</h3>
+                    <div id="auditSummaryText"></div>
+                    <div id="auditPlatformText" style="margin-top: 1rem; font-weight: 600;"></div>
+                    <div class="audit-actions" style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-primary" id="auditCopyPromptBtn">Copy ChatGPT Prompt</button>
+                        <button type="button" class="btn btn-secondary" id="auditDownloadJsonBtn">Download JSON</button>
+                        <button type="button" class="btn btn-secondary" id="auditCopyDeckBtn">Copy Deck Outline</button>
+                        <button type="button" class="btn btn-secondary" id="auditCopyEmailBtn">Copy Email Draft</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -856,6 +900,169 @@
                     <span class="form-error" id="leadWebsiteError" role="alert" aria-live="polite"></span>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Get my teardown</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Audit Modal -->
+    <div class="modal" id="auditModal" role="dialog" aria-label="Free Site Audit" aria-hidden="true">
+        <div class="modal-overlay" data-audit-close></div>
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close modal" data-audit-close>×</button>
+            <h2>Get your free site audit</h2>
+            <p>We'll analyze your website and provide actionable recommendations.</p>
+            <form class="contact-form" id="auditForm" name="audit" netlify netlify-honeypot="bot-field" novalidate>
+                <input type="hidden" name="form-name" value="audit">
+                <p style="display: none;">
+                    <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+                </p>
+                
+                <!-- Required Fields -->
+                <div class="form-group">
+                    <label for="auditCompany">Company *</label>
+                    <input type="text" id="auditCompany" name="company" required aria-describedby="auditCompanyError">
+                    <span class="form-error" id="auditCompanyError" role="alert" aria-live="polite"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditUrl">Website URL *</label>
+                    <input type="url" id="auditUrl" name="url" placeholder="https://yoursite.com" required aria-describedby="auditUrlError">
+                    <span class="form-error" id="auditUrlError" role="alert" aria-live="polite"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditGoal">Primary Goal *</label>
+                    <select id="auditGoal" name="goal" required aria-describedby="auditGoalError">
+                        <option value="">Select a goal</option>
+                        <option value="new-site">Build a new website</option>
+                        <option value="redesign">Redesign existing site</option>
+                        <option value="ecommerce">Start selling online</option>
+                        <option value="performance">Improve speed/performance</option>
+                        <option value="seo">Improve search rankings</option>
+                        <option value="conversion">Increase conversions</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <span class="form-error" id="auditGoalError" role="alert" aria-live="polite"></span>
+                </div>
+                
+                <!-- Optional Fields -->
+                <div class="form-group">
+                    <label for="auditIndustry">Industry (optional)</label>
+                    <input type="text" id="auditIndustry" name="industry" placeholder="e.g., Retail, Healthcare, Legal">
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditCurrentPlatform">Current Platform (optional)</label>
+                    <select id="auditCurrentPlatform" name="currentPlatform">
+                        <option value="">Select platform</option>
+                        <option value="none">No website yet</option>
+                        <option value="html">HTML/CSS/JS</option>
+                        <option value="wordpress">WordPress</option>
+                        <option value="shopify">Shopify</option>
+                        <option value="wix">Wix</option>
+                        <option value="squarespace">Squarespace</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditContactEmail">Contact Email (optional)</label>
+                    <input type="email" id="auditContactEmail" name="contactEmail" placeholder="your@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditAudience">Target Audience (optional)</label>
+                    <input type="text" id="auditAudience" name="audience" placeholder="e.g., Small business owners, Local customers">
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditCompetitors">Main Competitors (optional)</label>
+                    <input type="text" id="auditCompetitors" name="competitors" placeholder="e.g., competitor1.com, competitor2.com">
+                </div>
+                
+                <!-- Platform Needs -->
+                <div class="form-group">
+                    <label for="auditEcommerce">Do you need e-commerce? (optional)</label>
+                    <select id="auditEcommerce" name="ecommerce">
+                        <option value="">Not sure</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditInventory">Product/Inventory Type (optional)</label>
+                    <select id="auditInventory" name="inventory">
+                        <option value="">Select type</option>
+                        <option value="none">No products</option>
+                        <option value="few">Few products (1-20)</option>
+                        <option value="many">Many products (20+)</option>
+                        <option value="digital">Digital products</option>
+                        <option value="services">Services</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditSelfEdit">Need to edit content yourself? (optional)</label>
+                    <select id="auditSelfEdit" name="selfEdit">
+                        <option value="">Not sure</option>
+                        <option value="yes">Yes, frequently</option>
+                        <option value="sometimes">Sometimes</option>
+                        <option value="no">No, I'll hire help</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditBlog">Need a blog? (optional)</label>
+                    <select id="auditBlog" name="blog">
+                        <option value="">Not sure</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditIntegrations">Need third-party integrations? (optional)</label>
+                    <select id="auditIntegrations" name="integrations">
+                        <option value="">Not sure</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditPerfPriority">Is performance a priority? (optional)</label>
+                    <select id="auditPerfPriority" name="perfPriority">
+                        <option value="">Not sure</option>
+                        <option value="yes">Yes, very important</option>
+                        <option value="somewhat">Somewhat important</option>
+                        <option value="no">Not a priority</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditBudgetSensitivity">Budget sensitivity (optional)</label>
+                    <select id="auditBudgetSensitivity" name="budgetSensitivity">
+                        <option value="">Select</option>
+                        <option value="very">Very budget-conscious</option>
+                        <option value="moderate">Moderate budget</option>
+                        <option value="flexible">Flexible budget</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditTimeline">Timeline (optional)</label>
+                    <select id="auditTimeline" name="timeline">
+                        <option value="">Select timeline</option>
+                        <option value="asap">ASAP</option>
+                        <option value="1month">Within 1 month</option>
+                        <option value="3months">Within 3 months</option>
+                        <option value="6months">Within 6 months</option>
+                        <option value="flexible">Flexible</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-large btn-block">Run Audit</button>
             </form>
         </div>
     </div>

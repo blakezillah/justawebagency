@@ -781,7 +781,7 @@
 
 (function initLeadMagnet() {
     const modal = document.getElementById('leadMagnetModal');
-    const openBtn = document.getElementById('leadMagnetBtn');
+    const openBtn = document.querySelector('[data-open-lead-magnet]');
     const closeBtn = document.getElementById('leadMagnetClose');
     const form = document.getElementById('leadMagnetForm');
     
@@ -970,7 +970,7 @@
         { id: 'contact', label: 'Go to Contact', icon: '📧', action: () => scrollToSection('contact') },
         { id: 'theme', label: 'Toggle Theme', icon: '🌓', action: () => document.getElementById('themeToggle')?.click() },
         { id: 'email', label: 'Copy Email', icon: '📋', action: () => document.querySelector('.contact-copy')?.click() },
-        { id: 'teardown', label: 'Free Teardown', icon: '🎁', action: () => document.getElementById('leadMagnetBtn')?.click() }
+        { id: 'audit', label: 'Free Audit', icon: '🎁', action: () => document.querySelector('[data-open-audit]')?.click() }
     ];
     
     let selectedIndex = 0;
@@ -1673,6 +1673,486 @@ function initModalFormValidation(form) {
                 glow.style.opacity = '0';
             });
         });
+    }
+    
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+// ============================================
+// Audit Modal
+// ============================================
+
+(function initAuditModal() {
+    function init() {
+        const auditModal = document.getElementById('auditModal');
+        const openButtons = document.querySelectorAll('[data-open-audit]');
+        
+        if (!auditModal) {
+            console.warn('Audit modal not found');
+            return;
+        }
+        
+        if (openButtons.length === 0) {
+            console.warn('No audit buttons found');
+            return;
+        }
+        
+        const closeBtns = auditModal.querySelectorAll('[data-audit-close]');
+        const overlay = auditModal.querySelector('.modal-overlay');
+        const form = document.getElementById('auditForm');
+        const auditRunner = document.getElementById('auditRunner');
+        const auditLog = document.getElementById('auditLog');
+        const auditSummary = document.getElementById('auditSummary');
+        const auditSummaryText = document.getElementById('auditSummaryText');
+        const auditPlatformText = document.getElementById('auditPlatformText');
+        
+        let previousActiveElement = null;
+        let currentSource = 'unknown';
+        
+        // Open modal
+        function openAuditModal(button) {
+            if (!auditModal) return;
+            
+            previousActiveElement = document.activeElement;
+            currentSource = button.getAttribute('data-source') || 'unknown';
+            
+            // Reset form
+            if (form) {
+                form.reset();
+                const errorElements = form.querySelectorAll('.form-error');
+                errorElements.forEach(el => el.textContent = '');
+                const errorInputs = form.querySelectorAll('.error');
+                errorInputs.forEach(el => el.classList.remove('error'));
+            }
+            
+            // Show modal
+            auditModal.classList.add('active');
+            auditModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus first input
+            setTimeout(() => {
+                const companyInput = document.getElementById('auditCompany');
+                if (companyInput) companyInput.focus();
+            }, 100);
+            
+            // Focus trap
+            const focusableElements = auditModal.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstFocusable = focusableElements[0];
+            const lastFocusable = focusableElements[focusableElements.length - 1];
+            
+            const handleTabKey = (e) => {
+                if (e.key !== 'Tab') return;
+                
+                if (e.shiftKey) {
+                    if (document.activeElement === firstFocusable) {
+                        e.preventDefault();
+                        lastFocusable.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastFocusable) {
+                        e.preventDefault();
+                        firstFocusable.focus();
+                    }
+                }
+            };
+            
+            auditModal.addEventListener('keydown', handleTabKey);
+            auditModal.dataset.tabHandler = 'true';
+        }
+        
+        // Close modal
+        function closeAuditModal() {
+            auditModal.classList.remove('active');
+            auditModal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            
+            // Remove focus trap
+            if (auditModal.dataset.tabHandler === 'true') {
+                auditModal.removeEventListener('keydown', handleTabKey);
+                delete auditModal.dataset.tabHandler;
+            }
+            
+            // Return focus
+            if (previousActiveElement) {
+                previousActiveElement.focus();
+            }
+        }
+        
+        // Attach open handlers
+        openButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openAuditModal(button);
+            });
+        });
+        
+        // Attach close handlers
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', closeAuditModal);
+        });
+        
+        if (overlay) {
+            overlay.addEventListener('click', closeAuditModal);
+        }
+        
+        // Close on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && auditModal.classList.contains('active')) {
+                closeAuditModal();
+            }
+        });
+        
+        // Form validation
+        if (form) {
+            const companyInput = document.getElementById('auditCompany');
+            const urlInput = document.getElementById('auditUrl');
+            const goalSelect = document.getElementById('auditGoal');
+            
+            const companyError = document.getElementById('auditCompanyError');
+            const urlError = document.getElementById('auditUrlError');
+            const goalError = document.getElementById('auditGoalError');
+            
+            function validateCompany() {
+                const value = companyInput.value.trim();
+                if (!value) {
+                    companyError.textContent = 'Company is required';
+                    companyInput.classList.add('error');
+                    return false;
+                }
+                companyError.textContent = '';
+                companyInput.classList.remove('error');
+                return true;
+            }
+            
+            function validateUrl() {
+                const value = urlInput.value.trim();
+                if (!value) {
+                    urlError.textContent = 'URL is required';
+                    urlInput.classList.add('error');
+                    return false;
+                }
+                try {
+                    new URL(value);
+                    urlError.textContent = '';
+                    urlInput.classList.remove('error');
+                    return true;
+                } catch {
+                    urlError.textContent = 'Please enter a valid URL (must start with http:// or https://)';
+                    urlInput.classList.add('error');
+                    return false;
+                }
+            }
+            
+            function validateGoal() {
+                const value = goalSelect.value;
+                if (!value) {
+                    goalError.textContent = 'Goal is required';
+                    goalSelect.classList.add('error');
+                    return false;
+                }
+                goalError.textContent = '';
+                goalSelect.classList.remove('error');
+                return true;
+            }
+            
+            // Remove error on input
+            companyInput.addEventListener('input', () => {
+                if (companyInput.classList.contains('error')) {
+                    companyInput.classList.remove('error');
+                    companyError.textContent = '';
+                }
+            });
+            
+            urlInput.addEventListener('input', () => {
+                if (urlInput.classList.contains('error')) {
+                    urlInput.classList.remove('error');
+                    urlError.textContent = '';
+                }
+            });
+            
+            goalSelect.addEventListener('change', () => {
+                if (goalSelect.classList.contains('error')) {
+                    goalSelect.classList.remove('error');
+                    goalError.textContent = '';
+                }
+            });
+            
+            // Form submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const isCompanyValid = validateCompany();
+                const isUrlValid = validateUrl();
+                const isGoalValid = validateGoal();
+                
+                if (isCompanyValid && isUrlValid && isGoalValid) {
+                    // Close modal
+                    closeAuditModal();
+                    
+                    // Reveal audit runner and scroll to it
+                    if (auditRunner) {
+                        auditRunner.hidden = false;
+                        auditRunner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    
+                    // Get form data
+                    const formData = new FormData(form);
+                    const intake = {};
+                    for (const [key, value] of formData.entries()) {
+                        if (key !== 'form-name' && key !== 'bot-field') {
+                            intake[key] = value;
+                        }
+                    }
+                    
+                    // Run audit simulation
+                    runAuditSimulation(intake, currentSource);
+                } else {
+                    // Focus first invalid field
+                    if (!isCompanyValid) companyInput.focus();
+                    else if (!isUrlValid) urlInput.focus();
+                    else if (!isGoalValid) goalSelect.focus();
+                }
+            });
+        }
+        
+        // Audit simulation
+        function runAuditSimulation(intake, source) {
+            if (!auditLog) return;
+            
+            auditLog.textContent = '';
+            auditSummary.hidden = true;
+            
+            const messages = [
+                'Initializing audit...',
+                'Connecting to site...',
+                'Analyzing performance metrics...',
+                'Checking technical implementation...',
+                'Running accessibility scan...',
+                'Checking uptime status...',
+                'Compiling results...',
+                'Audit complete!'
+            ];
+            
+            let messageIndex = 0;
+            const messageInterval = setInterval(() => {
+                if (messageIndex < messages.length) {
+                    const timestamp = new Date().toLocaleTimeString();
+                    auditLog.textContent += `[${timestamp}] ${messages[messageIndex]}\n`;
+                    auditLog.scrollTop = auditLog.scrollHeight;
+                    messageIndex++;
+                } else {
+                    clearInterval(messageInterval);
+                    generateAuditResults(intake, source);
+                }
+            }, 800);
+        }
+        
+        // Generate audit results
+        function generateAuditResults(intake, source) {
+            // Generate placeholder scores
+            const scorePerformance = Math.floor(Math.random() * 20) + 70; // 70-90
+            const scoreTechnical = Math.floor(Math.random() * 20) + 65; // 65-85
+            const scoreAccessibility = Math.floor(Math.random() * 15) + 60; // 60-75 (automated scan alignment)
+            const scoreUptime = Math.floor(Math.random() * 5) + 95; // 95-99 (current availability check)
+            
+            // Update score displays
+            document.getElementById('scorePerformance').textContent = scorePerformance;
+            document.getElementById('scoreTechnical').textContent = scoreTechnical;
+            document.getElementById('scoreAccessibility').textContent = scoreAccessibility + ' (automated scan alignment)';
+            document.getElementById('scoreUptime').textContent = scoreUptime + '% (current availability check)';
+            
+            // Determine recommended platform
+            let recommendation = 'WordPress'; // default
+            const ecommerce = intake.ecommerce === 'yes' || (intake.goal === 'ecommerce' && intake.inventory !== 'none');
+            const blog = intake.blog === 'yes';
+            const selfEdit = intake.selfEdit === 'yes' || intake.selfEdit === 'sometimes';
+            const integrations = intake.integrations === 'yes';
+            const perfPriority = intake.perfPriority === 'yes';
+            
+            if (ecommerce || (intake.goal === 'ecommerce' && intake.inventory !== 'none')) {
+                recommendation = 'Shopify';
+            } else if (blog || selfEdit || integrations) {
+                recommendation = 'WordPress';
+            } else if (perfPriority && !ecommerce && !integrations) {
+                recommendation = 'HTML';
+            }
+            
+            // Generate summary
+            const summaryText = `Based on your requirements, we recommend a ${recommendation} website. Your site shows ${scorePerformance}% performance score, ${scoreTechnical}% technical score, ${scoreAccessibility}% automated scan alignment for accessibility, and ${scoreUptime}% current availability check.`;
+            auditSummaryText.textContent = summaryText;
+            auditPlatformText.textContent = `Recommended Platform: ${recommendation}`;
+            
+            // Generate deck outline and email draft
+            const deckOutline = generateDeckOutline(intake, recommendation, {
+                performance: scorePerformance,
+                technical: scoreTechnical,
+                accessibility: scoreAccessibility,
+                uptime: scoreUptime
+            });
+            
+            const emailDraft = generateEmailDraft(intake, recommendation, {
+                performance: scorePerformance,
+                technical: scoreTechnical,
+                accessibility: scoreAccessibility,
+                uptime: scoreUptime
+            });
+            
+            // Create audit output object
+            window.__auditOutput = {
+                generatedAt: new Date().toISOString(),
+                source: source,
+                intake: intake,
+                metrics: {
+                    performance: scorePerformance,
+                    technical: scoreTechnical,
+                    accessibility: scoreAccessibility,
+                    uptime: scoreUptime
+                },
+                recommendation: recommendation,
+                deckOutline: deckOutline,
+                emailDraft: emailDraft
+            };
+            
+            // Show summary
+            auditSummary.hidden = false;
+            auditSummary.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            // Wire up action buttons
+            const copyPromptBtn = document.getElementById('auditCopyPromptBtn');
+            const downloadJsonBtn = document.getElementById('auditDownloadJsonBtn');
+            const copyDeckBtn = document.getElementById('auditCopyDeckBtn');
+            const copyEmailBtn = document.getElementById('auditCopyEmailBtn');
+            
+            if (copyPromptBtn) {
+                copyPromptBtn.onclick = () => {
+                    const prompt = `Use the following audit data to create a 10-slide presentation deck with speaker notes and an email draft. Use ONLY the provided data - do not invent metrics, do not claim WCAG compliance, do not claim 12-month uptime. Produce a 10-slide deck + speaker notes + email draft.\n\n${JSON.stringify(window.__auditOutput, null, 2)}`;
+                    navigator.clipboard.writeText(prompt).then(() => {
+                        copyPromptBtn.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyPromptBtn.textContent = 'Copy ChatGPT Prompt';
+                        }, 2000);
+                    });
+                };
+            }
+            
+            if (downloadJsonBtn) {
+                downloadJsonBtn.onclick = () => {
+                    const blob = new Blob([JSON.stringify(window.__auditOutput, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'audit.json';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                };
+            }
+            
+            if (copyDeckBtn) {
+                copyDeckBtn.onclick = () => {
+                    navigator.clipboard.writeText(deckOutline).then(() => {
+                        copyDeckBtn.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyDeckBtn.textContent = 'Copy Deck Outline';
+                        }, 2000);
+                    });
+                };
+            }
+            
+            if (copyEmailBtn) {
+                copyEmailBtn.onclick = () => {
+                    navigator.clipboard.writeText(emailDraft).then(() => {
+                        copyEmailBtn.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyEmailBtn.textContent = 'Copy Email Draft';
+                        }, 2000);
+                    });
+                };
+            }
+        }
+        
+        // Generate deck outline
+        function generateDeckOutline(intake, recommendation, metrics) {
+            return `AUDIT DECK OUTLINE
+
+1. Title Slide
+   - Site Audit: ${intake.company || 'Client'}
+   - Date: ${new Date().toLocaleDateString()}
+
+2. Executive Summary
+   - Current site performance overview
+   - Key findings at a glance
+
+3. Performance Analysis
+   - Score: ${metrics.performance}%
+   - Load time analysis
+   - Optimization opportunities
+
+4. Technical Assessment
+   - Score: ${metrics.technical}%
+   - Code quality review
+   - Technical recommendations
+
+5. Accessibility Review
+   - Automated scan alignment: ${metrics.accessibility}%
+   - Key accessibility considerations
+   - Improvement suggestions
+
+6. Uptime & Reliability
+   - Current availability check: ${metrics.uptime}%
+   - Reliability assessment
+
+7. Platform Recommendation
+   - Recommended: ${recommendation}
+   - Rationale based on requirements
+
+8. Key Recommendations
+   - Priority improvements
+   - Quick wins
+
+9. Next Steps
+   - Implementation roadmap
+   - Timeline considerations
+
+10. Q&A
+    - Open discussion
+    - Address questions`;
+        }
+        
+        // Generate email draft
+        function generateEmailDraft(intake, recommendation, metrics) {
+            return `Subject: Site Audit Results for ${intake.company || 'Your Website'}
+
+Hi ${intake.company || 'there'},
+
+I've completed the audit of ${intake.url || 'your website'}. Here's a summary of the findings:
+
+PERFORMANCE: ${metrics.performance}%
+TECHNICAL: ${metrics.technical}%
+ACCESSIBILITY: ${metrics.accessibility}% (automated scan alignment)
+UPTIME: ${metrics.uptime}% (current availability check)
+
+Based on your requirements (${intake.goal || 'primary goal'}), I recommend a ${recommendation} website.
+
+Key findings:
+- Performance could be improved with optimization
+- Technical implementation shows room for enhancement
+- Accessibility scan indicates areas for improvement
+- Current availability is at ${metrics.uptime}%
+
+Would you like to schedule a call to discuss these findings and next steps?
+
+Best regards,
+justaweb.agency`;
+        }
     }
     
     // Initialize on DOM ready

@@ -21,6 +21,28 @@
             margin-bottom: var(--space-3xl);
         }
         
+        .audit-logo {
+            margin-bottom: var(--space-xl);
+            display: flex;
+            justify-content: center;
+        }
+        
+        .audit-logo .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text);
+            text-decoration: none;
+        }
+        
+        .audit-logo .logo-icon {
+            width: 32px;
+            height: 32px;
+            color: var(--color-accent);
+        }
+        
         .audit-results-header h1 {
             font-size: var(--font-size-4xl);
             font-weight: var(--font-weight-bold);
@@ -93,26 +115,26 @@
             font-weight: var(--font-weight-semibold);
             color: var(--color-text);
             font-size: var(--font-size-lg);
+            margin-top: var(--space-md);
         }
         
-        .audit-cta-section {
-            text-align: center;
-            padding: var(--space-3xl);
-            background: var(--color-bg-alt);
-            border-radius: var(--radius-xl);
+        .audit-deck-message {
+            margin-top: var(--space-lg);
+            padding: var(--space-md);
+            background: var(--color-accent-light);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--color-accent);
         }
         
-        .audit-cta-section h2 {
-            font-size: var(--font-size-3xl);
-            font-weight: var(--font-weight-bold);
-            margin-bottom: var(--space-md);
+        .audit-deck-message p {
             color: var(--color-text);
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-relaxed);
+            margin: 0;
         }
         
-        .audit-cta-section p {
-            font-size: var(--font-size-lg);
-            color: var(--color-text-alt);
-            margin-bottom: var(--space-xl);
+        .audit-cta {
+            text-align: center;
         }
         
         @media (max-width: 768px) {
@@ -126,6 +148,17 @@
     <div class="audit-results-page">
         <div class="container">
             <div class="audit-results-header">
+                <div class="audit-logo">
+                    <a href="index.html" class="logo" aria-label="justaweb.agency home">
+                        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="4" y="6" width="24" height="16" rx="2" stroke="currentColor" stroke-width="2" class="logo-screen"/>
+                            <rect x="6" y="8" width="20" height="12" fill="currentColor" opacity="0.2" class="logo-screen-inner"/>
+                            <rect x="10" y="24" width="12" height="2" rx="1" fill="currentColor" class="logo-base"/>
+                            <rect x="13" y="26" width="6" height="1" rx="0.5" fill="currentColor" class="logo-stand"/>
+                        </svg>
+                        <span class="logo-text">justaweb.agency</span>
+                    </a>
+                </div>
                 <h1>Site Audit Results</h1>
                 <p class="section-subtitle" id="auditClientName"></p>
             </div>
@@ -158,13 +191,13 @@
                         <h2>Audit Summary</h2>
                         <div class="audit-summary-text" id="auditSummaryText"></div>
                         <div class="audit-platform-text" id="auditPlatformText"></div>
+                        <div class="audit-deck-message">
+                            <p>I'll be in touch soon with a detailed presentation deck covering these findings and recommendations.</p>
+                        </div>
+                        <div class="audit-cta" style="margin-top: var(--space-xl);">
+                            <a href="index.html#contact" class="btn btn-primary btn-large">Get in Touch</a>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="audit-cta-section">
-                    <h2>Ready to improve your website?</h2>
-                    <p>Let's discuss how we can help you achieve your goals.</p>
-                    <a href="index.html#contact" class="btn btn-primary btn-large">Get in Touch</a>
                 </div>
             </div>
         </div>

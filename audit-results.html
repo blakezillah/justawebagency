@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Site Audit Results">
+    <title>Audit Results | justaweb.agency</title>
+    
+    <!-- Inline SVG Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='%23fff' font-family='system-ui'>j</text></svg>">
+    
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .audit-results-page {
+            min-height: 100vh;
+            padding: var(--space-3xl) 0;
+        }
+        
+        .audit-results-header {
+            text-align: center;
+            margin-bottom: var(--space-3xl);
+        }
+        
+        .audit-results-header h1 {
+            font-size: var(--font-size-4xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-md);
+            color: var(--color-text);
+        }
+        
+        .audit-results-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .audit-results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-3xl);
+        }
+        
+        .audit-results-panel {
+            background: var(--color-surface);
+            padding: var(--space-xl);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .audit-results-panel h2 {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-lg);
+            color: var(--color-text);
+        }
+        
+        .audit-scores {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-md);
+        }
+        
+        .audit-score-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+            padding: var(--space-md);
+            background: var(--color-bg-alt);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+        }
+        
+        .audit-score-label {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-alt);
+            font-weight: var(--font-weight-medium);
+        }
+        
+        .audit-score-value {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-accent);
+        }
+        
+        .audit-summary-text {
+            color: var(--color-text-alt);
+            line-height: var(--line-height-relaxed);
+            margin-bottom: var(--space-md);
+        }
+        
+        .audit-platform-text {
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text);
+            font-size: var(--font-size-lg);
+        }
+        
+        .audit-cta-section {
+            text-align: center;
+            padding: var(--space-3xl);
+            background: var(--color-bg-alt);
+            border-radius: var(--radius-xl);
+        }
+        
+        .audit-cta-section h2 {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-md);
+            color: var(--color-text);
+        }
+        
+        .audit-cta-section p {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-alt);
+            margin-bottom: var(--space-xl);
+        }
+        
+        @media (max-width: 768px) {
+            .audit-results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="audit-results-page">
+        <div class="container">
+            <div class="audit-results-header">
+                <h1>Site Audit Results</h1>
+                <p class="section-subtitle" id="auditClientName"></p>
+            </div>
+            
+            <div class="audit-results-content">
+                <div class="audit-results-grid">
+                    <div class="audit-results-panel">
+                        <h2>Audit Scores</h2>
+                        <div class="audit-scores">
+                            <div class="audit-score-item">
+                                <span class="audit-score-label">Performance</span>
+                                <span class="audit-score-value" id="scorePerformance">-</span>
+                            </div>
+                            <div class="audit-score-item">
+                                <span class="audit-score-label">Technical</span>
+                                <span class="audit-score-value" id="scoreTechnical">-</span>
+                            </div>
+                            <div class="audit-score-item">
+                                <span class="audit-score-label">Accessibility</span>
+                                <span class="audit-score-value" id="scoreAccessibility">-</span>
+                            </div>
+                            <div class="audit-score-item">
+                                <span class="audit-score-label">Uptime</span>
+                                <span class="audit-score-value" id="scoreUptime">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="audit-results-panel">
+                        <h2>Audit Summary</h2>
+                        <div class="audit-summary-text" id="auditSummaryText"></div>
+                        <div class="audit-platform-text" id="auditPlatformText"></div>
+                    </div>
+                </div>
+                
+                <div class="audit-cta-section">
+                    <h2>Ready to improve your website?</h2>
+                    <p>Let's discuss how we can help you achieve your goals.</p>
+                    <a href="index.html#contact" class="btn btn-primary btn-large">Get in Touch</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Parse URL parameters and display results
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const auditData = params.get('data');
+            
+            if (auditData) {
+                try {
+                    const data = JSON.parse(decodeURIComponent(auditData));
+                    
+                    // Display client name
+                    const clientName = data.intake?.name || data.intake?.company || 'Client';
+                    const clientTitle = data.intake?.title || '';
+                    const clientCompany = data.intake?.company || '';
+                    const nameDisplay = clientTitle && clientCompany 
+                        ? `${clientName}, ${clientTitle} at ${clientCompany}`
+                        : clientCompany || clientName;
+                    document.getElementById('auditClientName').textContent = nameDisplay;
+                    
+                    // Display scores
+                    if (data.metrics) {
+                        document.getElementById('scorePerformance').textContent = data.metrics.performance;
+                        document.getElementById('scoreTechnical').textContent = data.metrics.technical;
+                        document.getElementById('scoreAccessibility').textContent = data.metrics.accessibility + ' (automated scan alignment)';
+                        document.getElementById('scoreUptime').textContent = data.metrics.uptime + '% (current availability check)';
+                    }
+                    
+                    // Display summary
+                    if (data.metrics && data.recommendation) {
+                        const summaryText = `Based on your requirements, we recommend a ${data.recommendation} website. Your site shows ${data.metrics.performance}% performance score, ${data.metrics.technical}% technical score, ${data.metrics.accessibility}% automated scan alignment for accessibility, and ${data.metrics.uptime}% current availability check.`;
+                        document.getElementById('auditSummaryText').textContent = summaryText;
+                        document.getElementById('auditPlatformText').textContent = `Recommended Platform: ${data.recommendation}`;
+                    }
+                } catch (e) {
+                    console.error('Error parsing audit data:', e);
+                    document.body.innerHTML = '<div class="container" style="text-align: center; padding: 3rem;"><h1>Error</h1><p>Unable to load audit results. Please try again.</p></div>';
+                }
+            } else {
+                document.body.innerHTML = '<div class="container" style="text-align: center; padding: 3rem;"><h1>No Results</h1><p>No audit data found. Please start a new audit.</p><a href="index.html" class="btn btn-primary">Start New Audit</a></div>';
+            }
+        })();
+    </script>
+</body>
+</html>
+

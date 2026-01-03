@@ -744,92 +744,6 @@
         </div>
     </div>
 
-    <!-- Audit Runner Section -->
-    <section id="auditRunner" hidden>
-        <div class="container">
-            <div class="audit-tabs">
-                <div class="audit-tabs-nav">
-                    <button class="audit-tab-btn active" data-tab="progress" id="auditTabProgress">Audit Progress</button>
-                    <button class="audit-tab-btn" data-tab="results" id="auditTabResults">Audit Results</button>
-                </div>
-                
-                <div class="audit-tab-content active" id="auditTabContentProgress">
-                    <div class="audit-progress-panel">
-                        <h2>Running Site Audit</h2>
-                        <div class="audit-progress-bar-container">
-                            <div class="audit-progress-bar" id="auditProgressBar">
-                                <div class="audit-progress-fill" id="auditProgressFill"></div>
-                            </div>
-                            <div class="audit-progress-text" id="auditProgressText">0%</div>
-                        </div>
-                        <div class="audit-log" id="auditLog" role="log" aria-live="polite"></div>
-                        <div class="audit-scores-grid">
-                            <div class="audit-scores-column">
-                                <h3>Audit Scores</h3>
-                                <div class="audit-scores">
-                                    <div class="audit-score-item">
-                                        <span class="audit-score-label">Performance</span>
-                                        <span class="audit-score-value" id="scorePerformance">-</span>
-                                    </div>
-                                    <div class="audit-score-item">
-                                        <span class="audit-score-label">Technical</span>
-                                        <span class="audit-score-value" id="scoreTechnical">-</span>
-                                    </div>
-                                    <div class="audit-score-item">
-                                        <span class="audit-score-label">Accessibility</span>
-                                        <span class="audit-score-value" id="scoreAccessibility">-</span>
-                                    </div>
-                                    <div class="audit-score-item">
-                                        <span class="audit-score-label">Uptime</span>
-                                        <span class="audit-score-value" id="scoreUptime">-</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="audit-summary-column" id="auditSummaryColumn" hidden>
-                                <h3>Audit Summary</h3>
-                                <div id="auditSummaryText"></div>
-                                <div id="auditPlatformText" style="margin-top: 1rem; font-weight: 600;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="audit-tab-content" id="auditTabContentResults" hidden>
-                    <div class="audit-results-panel">
-                        <h2>Audit Results</h2>
-                        <div class="audit-results-grid">
-                            <div class="audit-results-column">
-                                <h3>Audit Scores</h3>
-                                <div class="audit-scores">
-                                    <div class="audit-score-item">
-                                        <span class="audit-score-label">Performance</span>
-                                        <span class="audit-score-value" id="scorePerformanceResults">-</span>
-                                    </div>
-                                    <div class="audit-score-item">
-                                        <span class="audit-score-label">Technical</span>
-                                        <span class="audit-score-value" id="scoreTechnicalResults">-</span>
-                                    </div>
-                                    <div class="audit-score-item">
-                                        <span class="audit-score-label">Accessibility</span>
-                                        <span class="audit-score-value" id="scoreAccessibilityResults">-</span>
-                                    </div>
-                                    <div class="audit-score-item">
-                                        <span class="audit-score-label">Uptime</span>
-                                        <span class="audit-score-value" id="scoreUptimeResults">-</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="audit-results-column">
-                                <h3>Audit Summary</h3>
-                                <div id="auditSummaryTextResults"></div>
-                                <div id="auditPlatformTextResults" style="margin-top: 1rem; font-weight: 600;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
     
     <!-- Hidden form for email submission -->
     <form id="auditEmailForm" name="audit-email" netlify netlify-honeypot="bot-field" hidden>
@@ -968,6 +882,18 @@
                 </p>
                 
                 <!-- Required Fields -->
+                <div class="form-group">
+                    <label for="auditName">Your Name *</label>
+                    <input type="text" id="auditName" name="name" required aria-describedby="auditNameError">
+                    <span class="form-error" id="auditNameError" role="alert" aria-live="polite"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditTitle">Your Title *</label>
+                    <input type="text" id="auditTitle" name="title" placeholder="e.g., Owner, Marketing Director" required aria-describedby="auditTitleError">
+                    <span class="form-error" id="auditTitleError" role="alert" aria-live="polite"></span>
+                </div>
+                
                 <div class="form-group">
                     <label for="auditCompany">Company *</label>
                     <input type="text" id="auditCompany" name="company" required aria-describedby="auditCompanyError">

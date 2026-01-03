@@ -2573,14 +2573,49 @@ a:focus-visible {
    Audit Runner Section
    ============================================ */
 
-.audit-runner {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--space-xl);
+.audit-tabs {
     padding: var(--space-2xl) 0;
 }
 
-.audit-panel {
+.audit-tabs-nav {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.audit-tab-btn {
+    padding: var(--space-md) var(--space-xl);
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--color-text-alt);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    margin-bottom: -2px;
+    font-size: var(--font-size-base);
+}
+
+.audit-tab-btn:hover {
+    color: var(--color-text);
+}
+
+.audit-tab-btn.active {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+}
+
+.audit-tab-content {
+    display: none;
+}
+
+.audit-tab-content.active {
+    display: block;
+}
+
+.audit-progress-panel,
+.audit-results-panel {
     background: var(--color-surface);
     padding: var(--space-xl);
     border-radius: var(--radius-xl);
@@ -2588,12 +2623,50 @@ a:focus-visible {
     box-shadow: var(--shadow-md);
 }
 
-.audit-panel h2,
-.audit-panel h3 {
-    font-size: var(--font-size-2xl);
+.audit-progress-panel h2,
+.audit-results-panel h2 {
+    font-size: var(--font-size-3xl);
     font-weight: var(--font-weight-bold);
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-xl);
     color: var(--color-text);
+}
+
+.audit-progress-panel h3,
+.audit-results-panel h3 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--space-md);
+    color: var(--color-text);
+}
+
+.audit-progress-bar-container {
+    margin-bottom: var(--space-xl);
+}
+
+.audit-progress-bar {
+    width: 100%;
+    height: 32px;
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    position: relative;
+    margin-bottom: var(--space-sm);
+}
+
+.audit-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover));
+    border-radius: var(--radius-full);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.audit-progress-text {
+    text-align: center;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
 }
 
 .audit-log {
@@ -2604,20 +2677,29 @@ a:focus-visible {
     font-family: 'Courier New', Courier, monospace;
     font-size: var(--font-size-sm);
     color: var(--color-text);
-    max-height: 400px;
+    max-height: 300px;
     overflow-y: auto;
     line-height: 1.6;
+    margin-bottom: var(--space-xl);
 }
 
-.audit-log::before {
-    content: '';
-    display: block;
-    margin-bottom: var(--space-sm);
+.audit-scores-grid,
+.audit-results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    margin-top: var(--space-xl);
+}
+
+.audit-scores-column,
+.audit-results-column {
+    display: flex;
+    flex-direction: column;
 }
 
 .audit-scores {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: var(--space-md);
 }
 
@@ -2643,32 +2725,20 @@ a:focus-visible {
     color: var(--color-accent);
 }
 
-.audit-actions {
-    display: flex;
-    gap: var(--space-md);
-    flex-wrap: wrap;
-}
-
-.audit-actions .btn {
-    flex: 1;
-    min-width: 150px;
+.audit-summary-column #auditSummaryText,
+.audit-results-column #auditSummaryTextResults {
+    color: var(--color-text-alt);
+    line-height: var(--line-height-relaxed);
 }
 
 @media (max-width: 768px) {
-    .audit-runner {
+    .audit-scores-grid,
+    .audit-results-grid {
         grid-template-columns: 1fr;
     }
     
     .audit-scores {
         grid-template-columns: 1fr;
-    }
-    
-    .audit-actions {
-        flex-direction: column;
-    }
-    
-    .audit-actions .btn {
-        width: 100%;
     }
 }
 

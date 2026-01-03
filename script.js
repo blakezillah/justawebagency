@@ -1707,7 +1707,14 @@ function initModalFormValidation(form) {
         const form = document.getElementById('auditForm');
         const auditRunner = document.getElementById('auditRunner');
         const auditLog = document.getElementById('auditLog');
-        const auditSummary = document.getElementById('auditSummary');
+        const auditProgressBar = document.getElementById('auditProgressBar');
+        const auditProgressFill = document.getElementById('auditProgressFill');
+        const auditProgressText = document.getElementById('auditProgressText');
+        const auditTabProgress = document.getElementById('auditTabProgress');
+        const auditTabResults = document.getElementById('auditTabResults');
+        const auditTabContentProgress = document.getElementById('auditTabContentProgress');
+        const auditTabContentResults = document.getElementById('auditTabContentResults');
+        const auditSummaryColumn = document.getElementById('auditSummaryColumn');
         const auditSummaryText = document.getElementById('auditSummaryText');
         const auditPlatformText = document.getElementById('auditPlatformText');
         
@@ -1814,6 +1821,23 @@ function initModalFormValidation(form) {
                 closeAuditModal();
             }
         });
+        
+        // Tab switching
+        if (auditTabProgress && auditTabResults) {
+            auditTabProgress.addEventListener('click', () => {
+                auditTabProgress.classList.add('active');
+                auditTabResults.classList.remove('active');
+                auditTabContentProgress.classList.add('active');
+                auditTabContentResults.classList.remove('active');
+            });
+            
+            auditTabResults.addEventListener('click', () => {
+                auditTabResults.classList.add('active');
+                auditTabProgress.classList.remove('active');
+                auditTabContentResults.classList.add('active');
+                auditTabContentProgress.classList.remove('active');
+            });
+        }
         
         // Form validation
         if (form) {
@@ -1933,7 +1957,17 @@ function initModalFormValidation(form) {
             if (!auditLog) return;
             
             auditLog.textContent = '';
-            auditSummary.hidden = true;
+            if (auditSummaryColumn) auditSummaryColumn.hidden = true;
+            if (auditProgressFill) auditProgressFill.style.width = '0%';
+            if (auditProgressText) auditProgressText.textContent = '0%';
+            
+            // Switch to progress tab
+            if (auditTabProgress && auditTabContentProgress) {
+                auditTabProgress.classList.add('active');
+                auditTabResults.classList.remove('active');
+                auditTabContentProgress.classList.add('active');
+                auditTabContentResults.classList.remove('active');
+            }
             
             const messages = [
                 'Initializing audit...',
@@ -1946,12 +1980,19 @@ function initModalFormValidation(form) {
                 'Audit complete!'
             ];
             
+            const totalSteps = messages.length;
             let messageIndex = 0;
             const messageInterval = setInterval(() => {
                 if (messageIndex < messages.length) {
                     const timestamp = new Date().toLocaleTimeString();
                     auditLog.textContent += `[${timestamp}] ${messages[messageIndex]}\n`;
                     auditLog.scrollTop = auditLog.scrollHeight;
+                    
+                    // Update progress bar
+                    const progress = ((messageIndex + 1) / totalSteps) * 100;
+                    if (auditProgressFill) auditProgressFill.style.width = progress + '%';
+                    if (auditProgressText) auditProgressText.textContent = Math.round(progress) + '%';
+                    
                     messageIndex++;
                 } else {
                     clearInterval(messageInterval);
@@ -1968,11 +2009,27 @@ function initModalFormValidation(form) {
             const scoreAccessibility = Math.floor(Math.random() * 15) + 60; // 60-75 (automated scan alignment)
             const scoreUptime = Math.floor(Math.random() * 5) + 95; // 95-99 (current availability check)
             
-            // Update score displays
-            document.getElementById('scorePerformance').textContent = scorePerformance;
-            document.getElementById('scoreTechnical').textContent = scoreTechnical;
-            document.getElementById('scoreAccessibility').textContent = scoreAccessibility + ' (automated scan alignment)';
-            document.getElementById('scoreUptime').textContent = scoreUptime + '% (current availability check)';
+            // Update score displays in progress tab
+            const scorePerfEl = document.getElementById('scorePerformance');
+            const scoreTechEl = document.getElementById('scoreTechnical');
+            const scoreA11yEl = document.getElementById('scoreAccessibility');
+            const scoreUptimeEl = document.getElementById('scoreUptime');
+            
+            if (scorePerfEl) scorePerfEl.textContent = scorePerformance;
+            if (scoreTechEl) scoreTechEl.textContent = scoreTechnical;
+            if (scoreA11yEl) scoreA11yEl.textContent = scoreAccessibility + ' (automated scan alignment)';
+            if (scoreUptimeEl) scoreUptimeEl.textContent = scoreUptime + '% (current availability check)';
+            
+            // Update score displays in results tab
+            const scorePerfResultsEl = document.getElementById('scorePerformanceResults');
+            const scoreTechResultsEl = document.getElementById('scoreTechnicalResults');
+            const scoreA11yResultsEl = document.getElementById('scoreAccessibilityResults');
+            const scoreUptimeResultsEl = document.getElementById('scoreUptimeResults');
+            
+            if (scorePerfResultsEl) scorePerfResultsEl.textContent = scorePerformance;
+            if (scoreTechResultsEl) scoreTechResultsEl.textContent = scoreTechnical;
+            if (scoreA11yResultsEl) scoreA11yResultsEl.textContent = scoreAccessibility + ' (automated scan alignment)';
+            if (scoreUptimeResultsEl) scoreUptimeResultsEl.textContent = scoreUptime + '% (current availability check)';
             
             // Determine recommended platform
             let recommendation = 'WordPress'; // default
@@ -1992,17 +2049,16 @@ function initModalFormValidation(form) {
             
             // Generate summary
             const summaryText = `Based on your requirements, we recommend a ${recommendation} website. Your site shows ${scorePerformance}% performance score, ${scoreTechnical}% technical score, ${scoreAccessibility}% automated scan alignment for accessibility, and ${scoreUptime}% current availability check.`;
-            auditSummaryText.textContent = summaryText;
-            auditPlatformText.textContent = `Recommended Platform: ${recommendation}`;
+            if (auditSummaryText) auditSummaryText.textContent = summaryText;
+            if (auditPlatformText) auditPlatformText.textContent = `Recommended Platform: ${recommendation}`;
             
-            // Generate deck outline and email draft
-            const deckOutline = generateDeckOutline(intake, recommendation, {
-                performance: scorePerformance,
-                technical: scoreTechnical,
-                accessibility: scoreAccessibility,
-                uptime: scoreUptime
-            });
+            // Update results tab summary
+            const auditSummaryTextResults = document.getElementById('auditSummaryTextResults');
+            const auditPlatformTextResults = document.getElementById('auditPlatformTextResults');
+            if (auditSummaryTextResults) auditSummaryTextResults.textContent = summaryText;
+            if (auditPlatformTextResults) auditPlatformTextResults.textContent = `Recommended Platform: ${recommendation}`;
             
+            // Generate email draft
             const emailDraft = generateEmailDraft(intake, recommendation, {
                 performance: scorePerformance,
                 technical: scoreTechnical,
@@ -2010,8 +2066,8 @@ function initModalFormValidation(form) {
                 uptime: scoreUptime
             });
             
-            // Create audit output object
-            window.__auditOutput = {
+            // Generate ChatGPT prompt
+            const chatGPTPrompt = `Use the following audit data to create a 10-slide presentation deck with speaker notes and an email draft. Use ONLY the provided data - do not invent metrics, do not claim WCAG compliance, do not claim 12-month uptime. Produce a 10-slide deck + speaker notes + email draft.\n\n${JSON.stringify({
                 generatedAt: new Date().toISOString(),
                 source: source,
                 intake: intake,
@@ -2021,65 +2077,108 @@ function initModalFormValidation(form) {
                     accessibility: scoreAccessibility,
                     uptime: scoreUptime
                 },
-                recommendation: recommendation,
-                deckOutline: deckOutline,
-                emailDraft: emailDraft
-            };
+                recommendation: recommendation
+            }, null, 2)}`;
             
-            // Show summary
-            auditSummary.hidden = false;
-            auditSummary.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            
-            // Wire up action buttons
-            const copyPromptBtn = document.getElementById('auditCopyPromptBtn');
-            const downloadJsonBtn = document.getElementById('auditDownloadJsonBtn');
-            const copyDeckBtn = document.getElementById('auditCopyDeckBtn');
-            const copyEmailBtn = document.getElementById('auditCopyEmailBtn');
-            
-            if (copyPromptBtn) {
-                copyPromptBtn.onclick = () => {
-                    const prompt = `Use the following audit data to create a 10-slide presentation deck with speaker notes and an email draft. Use ONLY the provided data - do not invent metrics, do not claim WCAG compliance, do not claim 12-month uptime. Produce a 10-slide deck + speaker notes + email draft.\n\n${JSON.stringify(window.__auditOutput, null, 2)}`;
-                    navigator.clipboard.writeText(prompt).then(() => {
-                        copyPromptBtn.textContent = 'Copied!';
-                        setTimeout(() => {
-                            copyPromptBtn.textContent = 'Copy ChatGPT Prompt';
-                        }, 2000);
-                    });
-                };
+            // Show summary in progress tab
+            if (auditSummaryColumn) {
+                auditSummaryColumn.hidden = false;
             }
             
-            if (downloadJsonBtn) {
-                downloadJsonBtn.onclick = () => {
-                    const blob = new Blob([JSON.stringify(window.__auditOutput, null, 2)], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'audit.json';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                };
-            }
+            // Send email
+            sendAuditEmail(intake, chatGPTPrompt, emailDraft, {
+                performance: scorePerformance,
+                technical: scoreTechnical,
+                accessibility: scoreAccessibility,
+                uptime: scoreUptime
+            }, recommendation);
             
-            if (copyDeckBtn) {
-                copyDeckBtn.onclick = () => {
-                    navigator.clipboard.writeText(deckOutline).then(() => {
-                        copyDeckBtn.textContent = 'Copied!';
-                        setTimeout(() => {
-                            copyDeckBtn.textContent = 'Copy Deck Outline';
-                        }, 2000);
-                    });
-                };
-            }
+            // Switch to results tab after a brief delay
+            setTimeout(() => {
+                if (auditTabResults && auditTabContentResults) {
+                    auditTabResults.classList.add('active');
+                    auditTabProgress.classList.remove('active');
+                    auditTabContentResults.classList.add('active');
+                    auditTabContentProgress.classList.remove('active');
+                }
+            }, 1000);
+        }
+        
+        // Send audit email
+        function sendAuditEmail(intake, chatGPTPrompt, emailDraft, metrics, recommendation) {
+            const clientEmail = intake.contactEmail || intake.url || 'No email provided';
+            const clientName = intake.company || 'Client';
             
-            if (copyEmailBtn) {
-                copyEmailBtn.onclick = () => {
-                    navigator.clipboard.writeText(emailDraft).then(() => {
-                        copyEmailBtn.textContent = 'Copied!';
-                        setTimeout(() => {
-                            copyEmailBtn.textContent = 'Copy Email Draft';
-                        }, 2000);
+            const emailContent = `NEW AUDIT FORM SUBMISSION
+
+Client Information:
+- Company: ${clientName}
+- URL: ${intake.url || 'N/A'}
+- Email: ${clientEmail}
+- Goal: ${intake.goal || 'N/A'}
+- Industry: ${intake.industry || 'N/A'}
+- Current Platform: ${intake.currentPlatform || 'N/A'}
+- Target Audience: ${intake.audience || 'N/A'}
+- Competitors: ${intake.competitors || 'N/A'}
+
+Audit Results:
+- Performance: ${metrics.performance}%
+- Technical: ${metrics.technical}%
+- Accessibility: ${metrics.accessibility}% (automated scan alignment)
+- Uptime: ${metrics.uptime}% (current availability check)
+- Recommended Platform: ${recommendation}
+
+Platform Needs:
+- E-commerce: ${intake.ecommerce || 'N/A'}
+- Inventory: ${intake.inventory || 'N/A'}
+- Self-edit: ${intake.selfEdit || 'N/A'}
+- Blog: ${intake.blog || 'N/A'}
+- Integrations: ${intake.integrations || 'N/A'}
+- Performance Priority: ${intake.perfPriority || 'N/A'}
+- Budget Sensitivity: ${intake.budgetSensitivity || 'N/A'}
+- Timeline: ${intake.timeline || 'N/A'}
+
+---
+
+CHATGPT PROMPT:
+${'='.repeat(60)}
+
+${chatGPTPrompt}
+
+---
+
+CLIENT EMAIL TO SEND:
+${'='.repeat(60)}
+
+To: ${clientEmail}
+Subject: Site Audit Results for ${clientName}
+
+${emailDraft}`;
+            
+            const emailForm = document.getElementById('auditEmailForm');
+            if (emailForm) {
+                const emailTextarea = emailForm.querySelector('textarea[name="email-content"]');
+                if (emailTextarea) {
+                    emailTextarea.value = emailContent;
+                    
+                    const formData = new FormData(emailForm);
+                    
+                    fetch('/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams(formData).toString()
+                    })
+                    .then(() => {
+                        console.log('Audit email sent successfully');
+                    })
+                    .catch((error) => {
+                        console.error('Error sending audit email:', error);
+                        // Fallback to mailto
+                        const subject = encodeURIComponent(`New Audit Submission: ${clientName}`);
+                        const body = encodeURIComponent(emailContent);
+                        window.location.href = `mailto:blake.goble@icloud.com?subject=${subject}&body=${body}`;
                     });
-                };
+                }
             }
         }
         
@@ -2133,18 +2232,20 @@ function initModalFormValidation(form) {
         
         // Generate email draft
         function generateEmailDraft(intake, recommendation, metrics) {
-            return `Subject: Site Audit Results for ${intake.company || 'Your Website'}
+            const clientName = intake.company || 'there';
+            const clientUrl = intake.url || 'your website';
+            const goal = intake.goal || 'your goals';
+            
+            return `Hi ${clientName},
 
-Hi ${intake.company || 'there'},
-
-I've completed the audit of ${intake.url || 'your website'}. Here's a summary of the findings:
+I've completed the audit of ${clientUrl}. Here's a summary of the findings:
 
 PERFORMANCE: ${metrics.performance}%
 TECHNICAL: ${metrics.technical}%
 ACCESSIBILITY: ${metrics.accessibility}% (automated scan alignment)
 UPTIME: ${metrics.uptime}% (current availability check)
 
-Based on your requirements (${intake.goal || 'primary goal'}), I recommend a ${recommendation} website.
+Based on your requirements (${goal}), I recommend a ${recommendation} website.
 
 Key findings:
 - Performance could be improved with optimization

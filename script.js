@@ -571,112 +571,63 @@
     
     // Generate ChatGPT prompt for audit deck
     function generateAuditDeckPrompt() {
-        const name = nameInput.value.trim() || 'Unknown';
-        const email = emailInput.value.trim() || 'Unknown';
-        const website = websiteInput.value.trim() || 'Not provided';
+        const name = nameInput.value.trim() || '';
+        const email = emailInput.value.trim() || '';
+        const website = websiteInput.value.trim() || '';
         const budgetEl = document.getElementById('budget');
         const timelineEl = document.getElementById('timeline');
-        const budget = budgetEl?.value || 'Not specified';
-        const timeline = timelineEl?.value || 'Not specified';
-        const message = messageInput.value.trim() || 'No message provided';
+        const budget = budgetEl?.value || '';
+        const timeline = timelineEl?.value || '';
+        const message = messageInput.value.trim() || '';
         
         // Extract company name from message if possible, otherwise use name
-        let companyName = 'Unknown';
+        let companyName = '';
         const companyMatch = message.match(/(?:company|business|organization|firm):\s*([^\n,]+)/i);
         if (companyMatch) {
             companyName = companyMatch[1].trim();
         }
         
         // Extract industry if mentioned in message
-        let industry = 'Not provided';
+        let industry = '';
         const industryMatch = message.match(/(?:industry|sector|field):\s*([^\n,]+)/i);
         if (industryMatch) {
             industry = industryMatch[1].trim();
         }
         
         // Extract goal if mentioned
-        let goal = 'Not provided';
+        let goal = '';
         const goalMatch = message.match(/(?:goal|objective|need|want|looking for):\s*([^\n,]+)/i);
         if (goalMatch) {
             goal = goalMatch[1].trim();
         }
         
         // Extract platform preference if mentioned
-        let platform = 'Not provided';
+        let platform = '';
         const platformMatch = message.match(/(?:platform|website type|prefer|want|need).*?(wordpress|shopify|html|wix|squarespace|custom)/i);
         if (platformMatch) {
             platform = platformMatch[1];
         }
         
-        const prompt = `Create a 4-slide presentation deck styled like justaweb.agency (dark theme, clean modern design, professional typography). Use the provided client data and follow all instructions exactly.
-
-RULES:
-- Use ONLY the provided data below
-- Do NOT invent metrics
-- Do NOT claim WCAG compliance
-- Do NOT claim 12-month uptime
-- Style the deck with a dark background (similar to justaweb.agency dark theme)
-- Use clean, professional typography
-- Keep design minimal and focused
-
-INPUT DATA:
-- Client Name: ${name}
-- Email: ${email}
-- Company Name: ${companyName}
-- Website URL: ${website}
-- Industry: ${industry}
-- Goal/Objective: ${goal}
-- Platform Preference: ${platform}
-- Budget: ${budget}
-- Timeline: ${timeline}
-- Additional Notes: ${message}
-
-AUDIT METRICS (if available):
-- Performance Score: Not provided
-- Technical Score: Not provided
-- Accessibility Score: Not provided
-- Uptime Score: Not provided
-
-SLIDE STRUCTURE:
-
-Slide 1: Title/Intro
-- Giant justaweb.agency logo at the top (stylized "j" icon or text logo)
-- Title: "Website Audit Summary"
-- Subtitle with client company name: "${companyName}"
-- Footer: "Prepared by justaweb.agency"
-- Dark background with clean, minimal design
-
-Slide 2: Audit Metrics
-- Title: "Current Performance"
-- Display metrics as cards/tiles in a grid layout
-- If metrics are "Not provided", show placeholder cards with "Analysis pending"
-- Each metric card should show:
-  - Metric name (Performance, Technical, Accessibility, Uptime)
-  - Score or "Pending" status
-  - Brief description
-- Dark theme styling
-
-Slide 3: Recommendations
-- Title: "Key Recommendations"
-- Based on the lowest score from metrics (if provided)
-- If no metrics provided, focus on goals/objectives from the client data
-- List 3-4 key recommendations as bullet points
-- Each recommendation should be actionable
-- Derive recommendations ONLY from provided data
-
-Slide 4: Next Steps
-- Title: "Recommended Next Steps"
-- Based on client goal, budget, and timeline
-- Include 2-3 actionable next steps
-- Reference the client's stated objectives
-- Include contact information: justaweb.agency
-
-Remember:
-- Use only the data provided above
-- Do not invent metrics or claims
-- Maintain the justaweb.agency dark theme aesthetic
-- Keep each slide focused and scannable
-- Professional, confident tone`;
+        // Build contact data object similar to audit form structure
+        const contactData = {
+            generatedAt: new Date().toISOString(),
+            source: 'contact-form',
+            intake: {
+                name: name,
+                email: email,
+                company: companyName,
+                url: website,
+                goal: goal,
+                industry: industry,
+                currentPlatform: platform,
+                budget: budget,
+                timeline: timeline,
+                message: message
+            }
+        };
+        
+        // Generate prompt in same format as audit form (10-slide deck with JSON)
+        const prompt = `Use the following contact form data to create a 10-slide presentation deck with speaker notes and an email draft. Use ONLY the provided data - do not invent metrics, do not claim WCAG compliance, do not claim 12-month uptime. Produce a 10-slide deck + speaker notes + email draft.\n\n${JSON.stringify(contactData, null, 2)}`;
 
         return prompt;
     }

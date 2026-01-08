@@ -681,31 +681,77 @@
                 return;
             }
             
-            // Temporarily show the PDF element so html2pdf can render it
-            const originalDisplay = element.style.display;
-            const originalPosition = element.style.position;
-            const originalLeft = element.style.left;
+            // Verify content is populated before generating
+            const testContent = element.querySelector('#pdfClientName');
+            if (!testContent || !testContent.textContent.trim()) {
+                console.error('PDF content not populated!');
+                reject(new Error('PDF content is empty. Please ensure form is filled out correctly.'));
+                return;
+            }
+            
+            console.log('PDF element found, content populated. Starting generation...');
+            
+            // Store original styles
+            const originalStyles = {
+                display: element.style.display,
+                position: element.style.position,
+                left: element.style.left,
+                top: element.style.top,
+                visibility: element.style.visibility,
+                opacity: element.style.opacity,
+                width: element.style.width,
+                height: element.style.height,
+                zIndex: element.style.zIndex
+            };
+            
+            // Add a class to make element visible for PDF generation
+            element.classList.add('pdf-generating');
+            
+            // Also set inline styles as backup
             element.style.display = 'block';
-            element.style.position = 'absolute';
-            element.style.left = '-9999px';
+            element.style.position = 'fixed';
+            element.style.left = '0';
+            element.style.top = '0';
+            element.style.width = '8.5in'; // Standard letter width
             element.style.visibility = 'visible';
             element.style.opacity = '1';
+            element.style.zIndex = '9999';
+            element.style.background = 'white';
+            element.style.boxSizing = 'border-box';
+            
+            // Force a reflow to ensure styles are applied
+            const height = element.offsetHeight;
+            const width = element.offsetWidth;
+            console.log('Element dimensions after showing:', { width, height });
             
             // Wait for images to load before generating PDF
             const images = element.querySelectorAll('img');
-            const imagePromises = Array.from(images).map(img => {
-                if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+            console.log(`Found ${images.length} images in PDF content`);
+            
+            const imagePromises = Array.from(images).map((img, index) => {
+                if (img.complete && img.naturalWidth > 0) {
+                    console.log(`Image ${index} already loaded`);
+                    return Promise.resolve();
+                }
                 return new Promise((res) => {
-                    const timeout = setTimeout(() => res(), 3000); // Timeout after 3 seconds
+                    const timeout = setTimeout(() => {
+                        console.log(`Image ${index} load timeout`);
+                        res();
+                    }, 2000);
+                    
                     img.onload = () => {
                         clearTimeout(timeout);
+                        console.log(`Image ${index} loaded successfully`);
                         res();
                     };
+                    
                     img.onerror = () => {
                         clearTimeout(timeout);
-                        res(); // Continue even if image fails to load
+                        console.warn(`Image ${index} failed to load`);
+                        res(); // Continue even if image fails
                     };
-                    // If image is already loaded but onload didn't fire
+                    
+                    // Trigger load if already complete
                     if (img.complete) {
                         clearTimeout(timeout);
                         res();
@@ -714,63 +760,73 @@
             });
             
             Promise.all(imagePromises).then(() => {
-                // Small delay to ensure rendering
+                // Additional delay to ensure everything is rendered
                 setTimeout(() => {
+                    // Force another reflow
+                    element.scrollHeight;
+                    
                     const opt = {
-                        margin: [0.5, 0.5, 0.5, 0.5],
+                        margin: 0.5,
                         filename: `website-development-contract-${Date.now()}.pdf`,
                         image: { type: 'jpeg', quality: 0.98 },
                         html2canvas: { 
                             scale: 2,
                             useCORS: true,
-                            logging: true, // Enable for debugging
+                            logging: true,
                             allowTaint: false,
-                            width: element.scrollWidth,
-                            height: element.scrollHeight,
-                            windowWidth: element.scrollWidth,
-                            windowHeight: element.scrollHeight
+                            letterRendering: true,
+                            backgroundColor: '#ffffff'
                         },
                         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
                         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
                     };
                     
+                    console.log('Generating PDF with options:', opt);
+                    console.log('Element dimensions:', {
+                        width: element.offsetWidth,
+                        height: element.offsetHeight,
+                        scrollWidth: element.scrollWidth,
+                        scrollHeight: element.scrollHeight
+                    });
+                    
                     // Generate and save PDF
                     html2pdf().set(opt).from(element).save().then(() => {
-                        // Get PDF as blob for email attachment (generate again for blob)
+                        console.log('PDF saved successfully, generating blob...');
+                        // Get PDF as blob for email attachment
                         html2pdf().set(opt).from(element).outputPdf('blob').then((blob) => {
-                            // Restore original display style
-                            element.style.display = originalDisplay;
-                            element.style.position = originalPosition;
-                            element.style.left = originalLeft;
-                            element.style.visibility = '';
-                            element.style.opacity = '';
+                            console.log('PDF blob created, size:', blob.size, 'bytes');
+                            // Restore original styles and remove class
+                            element.classList.remove('pdf-generating');
+                            Object.keys(originalStyles).forEach(key => {
+                                element.style[key] = originalStyles[key] || '';
+                            });
                             resolve(blob);
                         }).catch((err) => {
-                            // Restore original display style even on error
-                            element.style.display = originalDisplay;
-                            element.style.position = originalPosition;
-                            element.style.left = originalLeft;
-                            element.style.visibility = '';
-                            element.style.opacity = '';
+                            console.error('Error creating PDF blob:', err);
+                            // Restore original styles and remove class
+                            element.classList.remove('pdf-generating');
+                            Object.keys(originalStyles).forEach(key => {
+                                element.style[key] = originalStyles[key] || '';
+                            });
                             reject(err);
                         });
                     }).catch((err) => {
-                        // Restore original display style even on error
-                        element.style.display = originalDisplay;
-                        element.style.position = originalPosition;
-                        element.style.left = originalLeft;
-                        element.style.visibility = '';
-                        element.style.opacity = '';
+                        console.error('Error generating PDF:', err);
+                        // Restore original styles and remove class
+                        element.classList.remove('pdf-generating');
+                        Object.keys(originalStyles).forEach(key => {
+                            element.style[key] = originalStyles[key] || '';
+                        });
                         reject(err);
                     });
-                }, 500); // 500ms delay to ensure content is rendered
+                }, 800); // Increased delay to ensure rendering
             }).catch((err) => {
-                // Restore original display style even on error
-                element.style.display = originalDisplay;
-                element.style.position = originalPosition;
-                element.style.left = originalLeft;
-                element.style.visibility = '';
-                element.style.opacity = '';
+                console.error('Error waiting for images:', err);
+                // Restore original styles and remove class
+                element.classList.remove('pdf-generating');
+                Object.keys(originalStyles).forEach(key => {
+                    element.style[key] = originalStyles[key] || '';
+                });
                 reject(err);
             });
         });
@@ -1033,11 +1089,13 @@ A PDF copy of the signed contract is attached as base64 data (contract_pdf field
             });
             
             // Populate PDF content
+            console.log('Populating PDF content...');
             populatePDFContent();
             
             // Ensure provider signature is generated if not already
             const providerCanvas = document.getElementById('providerSignature');
             if (providerCanvas && (!providerSignaturePad || !providerSignaturePad.toDataURL)) {
+                console.log('Generating provider signature...');
                 generateProviderSignature(providerCanvas);
                 // Update PDF with provider signature
                 if (providerSignaturePad && providerSignaturePad.toDataURL) {
@@ -1054,12 +1112,38 @@ A PDF copy of the signed contract is attached as base64 data (contract_pdf field
                 }
             }
             
+            // Verify content was populated
+            const pdfElement = document.getElementById('contractPDF');
+            const clientName = document.getElementById('pdfClientName');
+            if (!clientName || !clientName.textContent.trim()) {
+                console.error('PDF content verification failed!', {
+                    pdfElement: !!pdfElement,
+                    clientName: clientName?.textContent,
+                    allFields: Array.from(document.querySelectorAll('#contractPDF [id^="pdf"]')).map(el => ({
+                        id: el.id,
+                        hasContent: el.textContent.trim().length > 0,
+                        content: el.textContent.substring(0, 50)
+                    }))
+                });
+                showStatus('Error: PDF content not populated correctly. Please check console for details.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.querySelector('.btn-text').style.display = 'inline';
+                submitBtn.querySelector('.btn-loader').style.display = 'none';
+                return;
+            }
+            
+            console.log('PDF content populated successfully:', {
+                clientName: clientName.textContent,
+                totalCost: document.getElementById('pdfTotalCost')?.textContent
+            });
+            
             // Small delay to ensure DOM is fully updated
-            await new Promise(resolve => setTimeout(resolve, 300));
+            await new Promise(resolve => setTimeout(resolve, 500));
             
             // Generate PDF
             showStatus('Generating PDF...', '');
             const pdfBlob = await generatePDF();
+            console.log('PDF generated successfully, blob size:', pdfBlob.size, 'bytes');
             
             // Send email (if configured)
             if (CONFIG.useEmailJS) {

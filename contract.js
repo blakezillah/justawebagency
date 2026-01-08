@@ -119,34 +119,240 @@
             }
         }
         
-        // Auto-fill total cost based on package
+        // Auto-fill total cost based on package and timeline
         const packageSelect = document.getElementById('selectedPackage');
+        const timelineSelect = document.getElementById('projectTimeline');
+        
         if (packageSelect) {
             packageSelect.addEventListener('change', updateCostFromPackage);
+        }
+        
+        if (timelineSelect) {
+            timelineSelect.addEventListener('change', updateCostFromTimeline);
+        }
+        
+        // Calculate initial cost if package is pre-selected
+        if (packageSelect && packageSelect.value) {
+            updateCostFromPackage();
         }
     }
 
     // ============================================
-    // Update Cost Based on Package
+    // Update Cost Based on Package and Timeline
     // ============================================
     
     function updateCostFromPackage() {
         const packageSelect = document.getElementById('selectedPackage');
+        const timelineSelect = document.getElementById('projectTimeline');
         const totalCostInput = document.getElementById('totalProjectCost');
+        const costBreakdown = document.getElementById('costBreakdown');
         
         if (!packageSelect || !totalCostInput) return;
         
         const selectedValue = packageSelect.value;
-        let cost = 0;
+        let baseCost = 0;
         
-        if (selectedValue.includes('Essential')) cost = 2000;
-        else if (selectedValue.includes('Professional')) cost = 5000;
-        else if (selectedValue.includes('Complete')) cost = 8000;
+        // Get base cost from package
+        if (selectedValue.includes('Essential')) baseCost = 2000;
+        else if (selectedValue.includes('Professional')) baseCost = 5000;
+        else if (selectedValue.includes('Complete')) baseCost = 8000;
+        else if (selectedValue === 'Custom') {
+            // For custom packages, allow manual entry
+            const totalCostInput = document.getElementById('totalProjectCost');
+            const costBreakdown = document.getElementById('costBreakdown');
+            if (totalCostInput) {
+                totalCostInput.readOnly = false;
+                totalCostInput.value = '';
+                const timeline = timelineSelect?.value || '';
+                const isRush = timeline.includes('Rush');
+                totalCostInput.placeholder = isRush ? 'Enter base project cost' : 'Enter total project cost';
+            }
+            if (costBreakdown) {
+                const timeline = timelineSelect?.value || '';
+                const isRush = timeline.includes('Rush');
+                if (isRush) {
+                    costBreakdown.textContent = 'Enter the base project cost. A 25% rush fee will be automatically added.';
+                } else {
+                    costBreakdown.textContent = 'Enter the total project cost manually.';
+                }
+            }
+            // Set up event handler for custom cost entry
+            handleCustomPackageCost();
+            return;
+        }
         
-        if (cost > 0) {
-            totalCostInput.value = cost;
+        // Check if rush timeline is selected
+        const timeline = timelineSelect?.value || '';
+        const isRush = timeline.includes('Rush');
+        
+        // Calculate total cost (base + rush fee if applicable)
+        let totalCost = baseCost;
+        let rushFee = 0;
+        
+        if (isRush && baseCost > 0) {
+            rushFee = baseCost * 0.25; // 25% rush fee
+            totalCost = baseCost + rushFee;
+        }
+        
+        // Update total cost input
+        if (baseCost > 0) {
+            totalCostInput.readOnly = true; // Make readonly for standard packages
+            totalCostInput.value = totalCost.toFixed(2);
+            
+            // Update cost breakdown display
+            if (costBreakdown) {
+                if (isRush && rushFee > 0) {
+                    costBreakdown.innerHTML = `
+                        <strong>Cost Breakdown:</strong><br>
+                        Base Cost: $${baseCost.toFixed(2)}<br>
+                        Rush Fee (25%): $${rushFee.toFixed(2)}<br>
+                        <strong>Total (Deposit: $${(totalCost * 0.5).toFixed(2)}): $${totalCost.toFixed(2)}</strong>
+                    `;
+                } else {
+                    costBreakdown.innerHTML = `Base cost: $${baseCost.toFixed(2)} (Deposit: $${(totalCost * 0.5).toFixed(2)})`;
+                }
+            }
+            
             calculatePaymentAmounts();
         }
+    }
+    
+    // ============================================
+    // Update Cost When Timeline Changes
+    // ============================================
+    
+    function updateCostFromTimeline() {
+        const packageSelect = document.getElementById('selectedPackage');
+        const timelineSelect = document.getElementById('projectTimeline');
+        const totalCostInput = document.getElementById('totalProjectCost');
+        const costBreakdown = document.getElementById('costBreakdown');
+        
+        // If custom package, handle rush fee calculation differently
+        if (packageSelect?.value === 'Custom' && totalCostInput) {
+            const currentValue = parseFloat(totalCostInput.value) || 0;
+            const timeline = timelineSelect?.value || '';
+            const isRush = timeline.includes('Rush');
+            
+            if (currentValue > 0) {
+                // If there's already a value, recalculate with or without rush fee
+                if (isRush) {
+                    // Check if current value already includes rush fee (divide by 1.25)
+                    const possibleBase = currentValue / 1.25;
+                    const possibleRush = currentValue - possibleBase;
+                    
+                    // If current value is close to base + 25%, assume it includes rush already
+                    // Otherwise, add rush fee
+                    if (Math.abs(possibleRush - (possibleBase * 0.25)) < 1) {
+                        // Already includes rush fee, keep as is
+                        if (costBreakdown) {
+                            const baseCost = currentValue / 1.25;
+                            const rushFee = currentValue - baseCost;
+                            costBreakdown.innerHTML = `
+                                <strong>Cost Breakdown:</strong><br>
+                                Base Cost: $${baseCost.toFixed(2)}<br>
+                                Rush Fee (25%): $${rushFee.toFixed(2)}<br>
+                                <strong>Total: $${currentValue.toFixed(2)}</strong>
+                            `;
+                        }
+                    } else {
+                        // Add rush fee
+                        const rushFee = currentValue * 0.25;
+                        const totalWithRush = currentValue + rushFee;
+                        totalCostInput.value = totalWithRush.toFixed(2);
+                        if (costBreakdown) {
+                            costBreakdown.innerHTML = `
+                                <strong>Cost Breakdown:</strong><br>
+                                Base Cost: $${currentValue.toFixed(2)}<br>
+                                Rush Fee (25%): $${rushFee.toFixed(2)}<br>
+                                <strong>Total: $${totalWithRush.toFixed(2)}</strong>
+                            `;
+                        }
+                        calculatePaymentAmounts();
+                    }
+                } else {
+                    // Remove rush fee if switching from rush to non-rush
+                    const possibleBase = currentValue / 1.25;
+                    const possibleRush = currentValue - possibleBase;
+                    if (Math.abs(possibleRush - (possibleBase * 0.25)) < 1) {
+                        // Likely includes rush fee, remove it
+                        totalCostInput.value = possibleBase.toFixed(2);
+                        if (costBreakdown) {
+                            costBreakdown.textContent = `Base cost: $${possibleBase.toFixed(2)}`;
+                        }
+                        calculatePaymentAmounts();
+                    }
+                }
+            } else {
+                // No value yet, just update helper text
+                if (costBreakdown) {
+                    if (isRush) {
+                        costBreakdown.textContent = 'Enter the base project cost. A 25% rush fee will be automatically added when you enter an amount.';
+                    } else {
+                        costBreakdown.textContent = 'Enter the total project cost manually.';
+                    }
+                }
+            }
+            return;
+        }
+        
+        // For standard packages, recalculate total cost to include/exclude rush fee
+        updateCostFromPackage();
+    }
+    
+    // ============================================
+    // Handle Custom Package Cost Entry
+    // ============================================
+    
+    function handleCustomPackageCost() {
+        const totalCostInput = document.getElementById('totalProjectCost');
+        const timelineSelect = document.getElementById('projectTimeline');
+        const costBreakdown = document.getElementById('costBreakdown');
+        const packageSelect = document.getElementById('selectedPackage');
+        
+        if (!totalCostInput || packageSelect?.value !== 'Custom') return;
+        
+        // Remove existing event listeners by cloning and replacing
+        const newInput = totalCostInput.cloneNode(true);
+        totalCostInput.parentNode.replaceChild(newInput, totalCostInput);
+        
+        newInput.addEventListener('input', function() {
+            const enteredValue = parseFloat(this.value) || 0;
+            const timeline = timelineSelect?.value || '';
+            const isRush = timeline.includes('Rush');
+            
+            if (enteredValue > 0) {
+                if (isRush) {
+                    // Add rush fee (25%)
+                    const rushFee = enteredValue * 0.25;
+                    const totalWithRush = enteredValue + rushFee;
+                    this.value = totalWithRush.toFixed(2);
+                    
+                    if (costBreakdown) {
+                        costBreakdown.innerHTML = `
+                            <strong>Cost Breakdown:</strong><br>
+                            Base Cost: $${enteredValue.toFixed(2)}<br>
+                            Rush Fee (25%): $${rushFee.toFixed(2)}<br>
+                            <strong>Total (Deposit: $${(totalWithRush * 0.5).toFixed(2)}): $${totalWithRush.toFixed(2)}</strong>
+                        `;
+                    }
+                } else {
+                    if (costBreakdown) {
+                        costBreakdown.innerHTML = `Total cost: $${enteredValue.toFixed(2)} (Deposit: $${(enteredValue * 0.5).toFixed(2)})`;
+                    }
+                }
+                calculatePaymentAmounts();
+            } else {
+                if (costBreakdown) {
+                    const timeline = timelineSelect?.value || '';
+                    const isRush = timeline.includes('Rush');
+                    if (isRush) {
+                        costBreakdown.textContent = 'Enter the base project cost. A 25% rush fee will be automatically added when you enter an amount.';
+                    } else {
+                        costBreakdown.textContent = 'Enter the total project cost manually.';
+                    }
+                }
+            }
+        });
     }
 
     // ============================================
@@ -221,8 +427,12 @@
     // Event Listeners
     // ============================================
     
-    document.getElementById('totalProjectCost')?.addEventListener('input', calculatePaymentAmounts);
-    document.getElementById('projectTimeline')?.addEventListener('change', calculateCompletionDate);
+    // Note: totalProjectCost is now readonly and auto-calculated
+    // Remove input event listener since it's calculated automatically
+    document.getElementById('projectTimeline')?.addEventListener('change', () => {
+        updateCostFromTimeline();
+        calculateCompletionDate();
+    });
     document.getElementById('projectStartDate')?.addEventListener('change', calculateCompletionDate);
 
     // ============================================
@@ -281,7 +491,13 @@
         // Validate total project cost
         const totalCost = parseFloat(document.getElementById('totalProjectCost')?.value || 0);
         if (totalCost <= 0) {
-            errors.totalProjectCost = 'Total project cost must be greater than 0';
+            errors.totalProjectCost = 'Please select a package to calculate the total project cost';
+        }
+        
+        // Validate that package is selected if cost is 0
+        const packageSelect = document.getElementById('selectedPackage');
+        if (!packageSelect?.value || packageSelect.value === '') {
+            errors.selectedPackage = 'Package selection is required to calculate cost';
         }
         
         // Display errors
@@ -327,10 +543,39 @@
         document.getElementById('pdfProjectTimeline').textContent = data.projectTimeline || '';
         document.getElementById('pdfProjectStartDate').textContent = formatDate(data.projectStartDate);
         document.getElementById('pdfEstimatedCompletion').textContent = formatDate(data.estimatedCompletionDate);
-        document.getElementById('pdfTotalCost').textContent = `$${parseFloat(data.totalProjectCost || 0).toFixed(2)}`;
-        document.getElementById('pdfDeposit').textContent = `$${(parseFloat(data.totalProjectCost || 0) * 0.5).toFixed(2)}`;
-        document.getElementById('pdfFinalPayment').textContent = `$${(parseFloat(data.totalProjectCost || 0) * 0.5).toFixed(2)}`;
+        const totalCost = parseFloat(data.totalProjectCost || 0);
+        const deposit = totalCost * 0.5;
+        const finalPayment = totalCost * 0.5;
+        
+        // Check if rush timeline is selected
+        const timeline = data.projectTimeline || '';
+        const isRush = timeline.includes('Rush');
+        
+        // Calculate and display rush fee breakdown if applicable
+        if (isRush && totalCost > 0) {
+            // Calculate base cost (total / 1.25 to get original, then calculate rush fee)
+            const baseCost = totalCost / 1.25;
+            const rushFee = totalCost - baseCost;
+            
+            // Update PDF display with breakdown
+            document.getElementById('pdfTotalCost').innerHTML = `$${totalCost.toFixed(2)}`;
+            document.getElementById('pdfRushFeeRow').style.display = 'table-row';
+            document.getElementById('pdfRushFeeAmount').textContent = `$${rushFee.toFixed(2)} (included in total)`;
+        } else {
+            document.getElementById('pdfTotalCost').textContent = `$${totalCost.toFixed(2)}`;
+            document.getElementById('pdfRushFeeRow').style.display = 'none';
+        }
+        
+        document.getElementById('pdfDeposit').textContent = `$${deposit.toFixed(2)}`;
+        document.getElementById('pdfFinalPayment').textContent = `$${finalPayment.toFixed(2)}`;
         document.getElementById('pdfPaymentMethod').textContent = data.paymentMethod || 'Not specified';
+        
+        // Show Venmo username if Venmo is selected
+        if (data.paymentMethod === 'Venmo') {
+            document.getElementById('pdfVenmoInfoRow').style.display = 'table-row';
+        } else {
+            document.getElementById('pdfVenmoInfoRow').style.display = 'none';
+        }
         
         // Project description
         if (data.projectDescription || data.specialRequirements) {
@@ -633,6 +878,19 @@
         
         // Form submit handler
         document.getElementById('contractForm').addEventListener('submit', handleFormSubmit);
+        
+        // Show/hide Venmo info when payment method changes
+        const paymentMethodSelect = document.getElementById('paymentMethod');
+        const venmoInfo = document.getElementById('venmoInfo');
+        if (paymentMethodSelect && venmoInfo) {
+            paymentMethodSelect.addEventListener('change', function() {
+                if (this.value === 'Venmo') {
+                    venmoInfo.style.display = 'block';
+                } else {
+                    venmoInfo.style.display = 'none';
+                }
+            });
+        }
         
         // Real-time validation
         document.querySelectorAll('#contractForm input, #contractForm select').forEach(field => {

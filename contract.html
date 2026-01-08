@@ -152,13 +152,17 @@
                     <label for="paymentMethod">Preferred Payment Method</label>
                     <select id="paymentMethod" name="paymentMethod">
                         <option value="">Select method</option>
-                        <option value="Credit Card">Credit Card</option>
+                        <option value="Zelle">Zelle</option>
                         <option value="Venmo">Venmo</option>
                         <option value="Check">Check</option>
                     </select>
                     <div id="venmoInfo" class="payment-method-info" style="display: none;">
                         <p><strong>Venmo Username:</strong> @Blake-Goble</p>
                         <p class="helper-text">Send payment to @Blake-Goble via Venmo. Include your business name in the payment note.</p>
+                    </div>
+                    <div id="zelleInfo" class="payment-method-info" style="display: none;">
+                        <p><strong>Zelle Email:</strong> hello@justaweb.agency</p>
+                        <p class="helper-text">Send payment to hello@justaweb.agency via Zelle. Include your business name in the payment note.</p>
                     </div>
                 </div>
             </section>
@@ -352,6 +356,10 @@
                         <tr id="pdfVenmoInfoRow" style="display: none;">
                             <td><strong>Venmo Username:</strong></td>
                             <td>@Blake-Goble</td>
+                        </tr>
+                        <tr id="pdfZelleInfoRow" style="display: none;">
+                            <td><strong>Zelle Email:</strong></td>
+                            <td>hello@justaweb.agency</td>
                         </tr>
                     </table>
                 </div>

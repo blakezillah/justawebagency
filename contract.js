@@ -577,6 +577,13 @@
             document.getElementById('pdfVenmoInfoRow').style.display = 'none';
         }
         
+        // Show Zelle email if Zelle is selected
+        if (data.paymentMethod === 'Zelle') {
+            document.getElementById('pdfZelleInfoRow').style.display = 'table-row';
+        } else {
+            document.getElementById('pdfZelleInfoRow').style.display = 'none';
+        }
+        
         // Project description
         if (data.projectDescription || data.specialRequirements) {
             document.getElementById('pdfProjectDescriptionSection').style.display = 'block';
@@ -879,15 +886,17 @@
         // Form submit handler
         document.getElementById('contractForm').addEventListener('submit', handleFormSubmit);
         
-        // Show/hide Venmo info when payment method changes
+        // Show/hide payment method info when payment method changes
         const paymentMethodSelect = document.getElementById('paymentMethod');
         const venmoInfo = document.getElementById('venmoInfo');
-        if (paymentMethodSelect && venmoInfo) {
+        const zelleInfo = document.getElementById('zelleInfo');
+        if (paymentMethodSelect) {
             paymentMethodSelect.addEventListener('change', function() {
-                if (this.value === 'Venmo') {
-                    venmoInfo.style.display = 'block';
-                } else {
-                    venmoInfo.style.display = 'none';
+                if (venmoInfo) {
+                    venmoInfo.style.display = this.value === 'Venmo' ? 'block' : 'none';
+                }
+                if (zelleInfo) {
+                    zelleInfo.style.display = this.value === 'Zelle' ? 'block' : 'none';
                 }
             });
         }

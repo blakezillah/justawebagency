@@ -644,14 +644,28 @@
         document.getElementById('pdfClientSignatureName').textContent = data.clientSignatureName || '';
         document.getElementById('pdfClientSignatureDate').textContent = formatDate(data.clientSignatureDate);
         document.getElementById('pdfProviderSignatureDate').textContent = formatDate(data.providerSignatureDate);
-        
-        // Ensure provider signature is generated and included
-        const providerCanvas = document.getElementById('providerSignature');
-        if (providerCanvas && (!providerSignaturePad || providerSignaturePad.isEmpty())) {
-            generateProviderSignature(providerCanvas);
-        }
-        
         document.getElementById('pdfGeneratedDate').textContent = new Date().toLocaleString();
+        
+        // Ensure provider signature is generated and included in PDF
+        if (!providerSignaturePad || !providerSignaturePad.toDataURL) {
+            const providerCanvas = document.getElementById('providerSignature');
+            if (providerCanvas) {
+                generateProviderSignature(providerCanvas);
+                // Re-populate provider signature in PDF after generation
+                if (providerSignaturePad && providerSignaturePad.toDataURL) {
+                    const providerSignatureData = providerSignaturePad.toDataURL();
+                    const providerSigImg = document.createElement('img');
+                    providerSigImg.src = providerSignatureData;
+                    providerSigImg.style.maxWidth = '100%';
+                    providerSigImg.style.maxHeight = '80px';
+                    const pdfProviderSig = document.getElementById('pdfProviderSignature');
+                    if (pdfProviderSig) {
+                        pdfProviderSig.innerHTML = '';
+                        pdfProviderSig.appendChild(providerSigImg);
+                    }
+                }
+            }
+        }
     }
 
     // ============================================
@@ -662,40 +676,103 @@
         return new Promise((resolve, reject) => {
             const element = document.getElementById('contractPDF');
             
+            if (!element) {
+                reject(new Error('PDF element not found'));
+                return;
+            }
+            
+            // Temporarily show the PDF element so html2pdf can render it
+            const originalDisplay = element.style.display;
+            const originalPosition = element.style.position;
+            const originalLeft = element.style.left;
+            element.style.display = 'block';
+            element.style.position = 'absolute';
+            element.style.left = '-9999px';
+            element.style.visibility = 'visible';
+            element.style.opacity = '1';
+            
             // Wait for images to load before generating PDF
             const images = element.querySelectorAll('img');
             const imagePromises = Array.from(images).map(img => {
-                if (img.complete) return Promise.resolve();
+                if (img.complete && img.naturalWidth > 0) return Promise.resolve();
                 return new Promise((res) => {
-                    img.onload = res;
-                    img.onerror = res;
-                    setTimeout(res, 5000); // Timeout after 5 seconds
+                    const timeout = setTimeout(() => res(), 3000); // Timeout after 3 seconds
+                    img.onload = () => {
+                        clearTimeout(timeout);
+                        res();
+                    };
+                    img.onerror = () => {
+                        clearTimeout(timeout);
+                        res(); // Continue even if image fails to load
+                    };
+                    // If image is already loaded but onload didn't fire
+                    if (img.complete) {
+                        clearTimeout(timeout);
+                        res();
+                    }
                 });
             });
             
             Promise.all(imagePromises).then(() => {
-                const opt = {
-                    margin: 0.5,
-                    filename: `website-development-contract-${Date.now()}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { 
-                        scale: 2, 
-                        useCORS: true,
-                        logging: false,
-                        windowWidth: element.scrollWidth,
-                        windowHeight: element.scrollHeight
-                    },
-                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-                };
-                
-                // Generate and save PDF
-                html2pdf().set(opt).from(element).save().then(() => {
-                    // Get PDF as blob for email attachment
-                    html2pdf().set(opt).from(element).outputPdf('blob').then((blob) => {
-                        resolve(blob);
-                    }).catch(reject);
-                }).catch(reject);
-            }).catch(reject);
+                // Small delay to ensure rendering
+                setTimeout(() => {
+                    const opt = {
+                        margin: [0.5, 0.5, 0.5, 0.5],
+                        filename: `website-development-contract-${Date.now()}.pdf`,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { 
+                            scale: 2,
+                            useCORS: true,
+                            logging: true, // Enable for debugging
+                            allowTaint: false,
+                            width: element.scrollWidth,
+                            height: element.scrollHeight,
+                            windowWidth: element.scrollWidth,
+                            windowHeight: element.scrollHeight
+                        },
+                        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+                        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                    };
+                    
+                    // Generate and save PDF
+                    html2pdf().set(opt).from(element).save().then(() => {
+                        // Get PDF as blob for email attachment (generate again for blob)
+                        html2pdf().set(opt).from(element).outputPdf('blob').then((blob) => {
+                            // Restore original display style
+                            element.style.display = originalDisplay;
+                            element.style.position = originalPosition;
+                            element.style.left = originalLeft;
+                            element.style.visibility = '';
+                            element.style.opacity = '';
+                            resolve(blob);
+                        }).catch((err) => {
+                            // Restore original display style even on error
+                            element.style.display = originalDisplay;
+                            element.style.position = originalPosition;
+                            element.style.left = originalLeft;
+                            element.style.visibility = '';
+                            element.style.opacity = '';
+                            reject(err);
+                        });
+                    }).catch((err) => {
+                        // Restore original display style even on error
+                        element.style.display = originalDisplay;
+                        element.style.position = originalPosition;
+                        element.style.left = originalLeft;
+                        element.style.visibility = '';
+                        element.style.opacity = '';
+                        reject(err);
+                    });
+                }, 500); // 500ms delay to ensure content is rendered
+            }).catch((err) => {
+                // Restore original display style even on error
+                element.style.display = originalDisplay;
+                element.style.position = originalPosition;
+                element.style.left = originalLeft;
+                element.style.visibility = '';
+                element.style.opacity = '';
+                reject(err);
+            });
         });
     }
 
@@ -728,9 +805,35 @@
             const deposit = totalCost * 0.5;
             const finalPayment = totalCost * 0.5;
             
+            // Create formatted contract summary
+            const contractSummary = `Website Development Contract Signed
+
+CLIENT INFORMATION:
+Name: ${formData.clientName || 'Not provided'}
+Email: ${formData.clientEmail || 'Not provided'}
+Business: ${formData.clientBusiness || 'Not provided'}
+
+PROJECT DETAILS:
+Package: ${formData.selectedPackage || 'Not specified'}
+Timeline: ${formData.projectTimeline || 'Not specified'}
+Start Date: ${formatDate(formData.projectStartDate) || 'Not specified'}
+Estimated Completion: ${formatDate(formData.estimatedCompletionDate) || 'Not specified'}
+
+PAYMENT INFORMATION:
+Total Cost: $${totalCost.toFixed(2)}
+Deposit (50%): $${deposit.toFixed(2)}
+Final Payment (50%): $${finalPayment.toFixed(2)}
+Payment Method: ${formData.paymentMethod || 'Not specified'}
+
+CONTRACT INFORMATION:
+Contract Date: ${formatDate(formData.contractDate) || 'Not specified'}
+Client Signature Date: ${formatDate(formData.clientSignatureDate) || 'Not specified'}
+
+A PDF copy of the signed contract is attached.`;
+            
             const templateParams = {
                 to_agency: CONFIG.emailJS.agencyEmail,
-                to_client: formData.clientEmail,
+                to_client: formData.clientEmail || '',
                 client_name: formData.clientName || 'Client',
                 client_email: formData.clientEmail || '',
                 client_business: formData.clientBusiness || '',
@@ -743,41 +846,26 @@
                 completion_date: formatDate(formData.estimatedCompletionDate) || '',
                 contract_date: formatDate(formData.contractDate) || '',
                 payment_method: formData.paymentMethod || 'Not specified',
-                contract_summary: `
-Website Development Contract Signed
-
-Client: ${formData.clientName || ''}
-Business: ${formData.clientBusiness || ''}
-Email: ${formData.clientEmail || ''}
-
-Package: ${formData.selectedPackage || ''}
-Timeline: ${formData.projectTimeline || ''}
-Total Cost: $${totalCost.toFixed(2)}
-Deposit (50%): $${deposit.toFixed(2)}
-Final Payment (50%): $${finalPayment.toFixed(2)}
-Payment Method: ${formData.paymentMethod || 'Not specified'}
-
-Start Date: ${formatDate(formData.projectStartDate) || ''}
-Estimated Completion: ${formatDate(formData.estimatedCompletionDate) || ''}
-
-Contract Date: ${formatDate(formData.contractDate) || ''}
-
-A PDF copy of the signed contract is attached.
-                `.trim(),
-                pdf_attachment: base64PDF,
-                pdf_filename: `website-development-contract-${Date.now()}.pdf`
+                contract_summary: contractSummary,
+                message: contractSummary, // Alternative variable name
+                reply_to: formData.clientEmail || CONFIG.emailJS.agencyEmail
             };
+            
+            // Log template params for debugging (remove in production)
+            console.log('EmailJS Template Parameters:', templateParams);
             
             // Send email via EmailJS
             // Note: EmailJS free tier doesn't support attachments directly
-            // You'll need to use their paid plan or send a download link
-            // For now, we'll send the email with contract details and download link
+            // The PDF is sent as base64 in pdf_attachment, but you'll need paid plan to attach
+            // For now, the email includes contract_summary with all details
             
-            await emailjs.send(
+            const response = await emailjs.send(
                 CONFIG.emailJS.serviceID,
                 CONFIG.emailJS.templateID,
                 templateParams
             );
+            
+            console.log('EmailJS Response:', response);
             
             return true;
         } catch (error) {
@@ -903,12 +991,18 @@ A PDF copy of the signed contract is attached as base64 data (contract_pdf field
     
     function formatDate(dateString) {
         if (!dateString) return '';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString; // Return original if invalid
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        } catch (error) {
+            console.error('Date formatting error:', error, dateString);
+            return dateString; // Return original if error
+        }
     }
 
     // ============================================
@@ -940,6 +1034,28 @@ A PDF copy of the signed contract is attached as base64 data (contract_pdf field
             
             // Populate PDF content
             populatePDFContent();
+            
+            // Ensure provider signature is generated if not already
+            const providerCanvas = document.getElementById('providerSignature');
+            if (providerCanvas && (!providerSignaturePad || !providerSignaturePad.toDataURL)) {
+                generateProviderSignature(providerCanvas);
+                // Update PDF with provider signature
+                if (providerSignaturePad && providerSignaturePad.toDataURL) {
+                    const providerSignatureData = providerSignaturePad.toDataURL();
+                    const providerSigImg = document.createElement('img');
+                    providerSigImg.src = providerSignatureData;
+                    providerSigImg.style.maxWidth = '100%';
+                    providerSigImg.style.maxHeight = '80px';
+                    const pdfProviderSig = document.getElementById('pdfProviderSignature');
+                    if (pdfProviderSig) {
+                        pdfProviderSig.innerHTML = '';
+                        pdfProviderSig.appendChild(providerSigImg);
+                    }
+                }
+            }
+            
+            // Small delay to ensure DOM is fully updated
+            await new Promise(resolve => setTimeout(resolve, 300));
             
             // Generate PDF
             showStatus('Generating PDF...', '');

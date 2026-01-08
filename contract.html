@@ -214,13 +214,15 @@
                         <label>Service Provider Signature</label>
                         <div class="signature-container">
                             <canvas id="providerSignature" class="signature-canvas"></canvas>
-                            <button type="button" class="btn btn-secondary" id="clearProviderSignature">Clear</button>
+                            <p class="helper-text" style="margin-top: var(--space-sm); color: var(--color-text-muted); font-style: italic;">
+                                Service provider signature will be automatically generated.
+                            </p>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="providerSignatureName">Service Provider Name</label>
-                        <input type="text" id="providerSignatureName" name="providerSignatureName" value="justaweb.agency" readonly>
+                        <input type="text" id="providerSignatureName" name="providerSignatureName" value="Blake Goble" readonly>
                     </div>
                     
                     <div class="form-group">
@@ -273,7 +275,7 @@
                     <div class="submit-status" id="submitStatus"></div>
                     
                     <p class="helper-text">
-                        By submitting, you will generate a PDF contract that will be emailed to both you and justaweb.agency.
+                        By submitting, you will generate a PDF contract that will be emailed to both you and Blake Goble.
                         You can also download a copy after submission.
                     </p>
                 </div>
@@ -382,7 +384,7 @@
                         <div class="pdf-signature-block">
                             <p><strong>Service Provider Signature:</strong></p>
                             <div class="pdf-signature-image" id="pdfProviderSignature"></div>
-                            <p>Name: justaweb.agency</p>
+                            <p>Name: Blake Goble</p>
                             <p>Date: <span id="pdfProviderSignatureDate"></span></p>
                         </div>
                     </div>

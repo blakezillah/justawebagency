@@ -53,23 +53,8 @@
         }
         
         if (providerCanvas) {
-            providerSignaturePad = new SignaturePad(providerCanvas, {
-                backgroundColor: 'rgb(255, 255, 255)',
-                penColor: 'rgb(0, 0, 0)',
-                minWidth: 1,
-                maxWidth: 3,
-            });
-            
-            function resizeCanvas(canvas, signaturePad) {
-                const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                canvas.width = canvas.offsetWidth * ratio;
-                canvas.height = canvas.offsetHeight * ratio;
-                canvas.getContext('2d').scale(ratio, ratio);
-                signaturePad.clear();
-            }
-            
-            resizeCanvas(providerCanvas, providerSignaturePad);
-            window.addEventListener('resize', () => resizeCanvas(providerCanvas, providerSignaturePad));
+            // Auto-generate service provider signature
+            generateProviderSignature(providerCanvas);
         }
     }
 
@@ -77,11 +62,51 @@
     document.getElementById('clearClientSignature')?.addEventListener('click', () => {
         if (clientSignaturePad) clientSignaturePad.clear();
     });
-    
-    document.getElementById('clearProviderSignature')?.addEventListener('click', () => {
-        if (providerSignaturePad) providerSignaturePad.clear();
-    });
 
+    // ============================================
+    // Generate Service Provider Signature
+    // ============================================
+    
+    function generateProviderSignature(canvas) {
+        const ctx = canvas.getContext('2d');
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        
+        // Set canvas size
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        ctx.scale(ratio, ratio);
+        
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Set signature style - use a cursive-like font or styled text
+        ctx.fillStyle = '#000000';
+        ctx.font = 'italic 28px "Brush Script MT", "Lucida Handwriting", cursive, serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        // Draw the signature
+        const centerX = canvas.offsetWidth / 2;
+        const centerY = canvas.offsetHeight / 2;
+        
+        // Draw "Blake Goble" signature style
+        ctx.fillText('Blake Goble', centerX, centerY);
+        
+        // Add a subtle underline for signature effect
+        ctx.beginPath();
+        ctx.moveTo(centerX - 80, centerY + 15);
+        ctx.lineTo(centerX + 80, centerY + 12);
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        
+        // Store the signature as a data URL for PDF generation
+        providerSignaturePad = {
+            isEmpty: () => false,
+            toDataURL: () => canvas.toDataURL('image/png')
+        };
+    }
+    
     // ============================================
     // Initialize EmailJS (if using)
     // ============================================
@@ -532,7 +557,8 @@
         
         // Get signature images
         const clientSignatureData = clientSignaturePad ? clientSignaturePad.toDataURL() : '';
-        const providerSignatureData = providerSignaturePad ? providerSignaturePad.toDataURL() : '';
+        // Provider signature is auto-generated, so it's always available
+        const providerSignatureData = providerSignaturePad && providerSignaturePad.toDataURL ? providerSignaturePad.toDataURL() : '';
         
         // Populate PDF fields
         document.getElementById('pdfContractDate').textContent = formatDate(data.contractDate);
@@ -601,18 +627,30 @@
             document.getElementById('pdfClientSignature').appendChild(clientSigImg);
         }
         
-        if (providerSignatureData) {
+        // Always include provider signature (auto-generated)
+        if (providerSignaturePad && providerSignaturePad.toDataURL) {
+            const providerSignatureData = providerSignaturePad.toDataURL();
             const providerSigImg = document.createElement('img');
             providerSigImg.src = providerSignatureData;
             providerSigImg.style.maxWidth = '100%';
             providerSigImg.style.maxHeight = '80px';
             document.getElementById('pdfProviderSignature').innerHTML = '';
             document.getElementById('pdfProviderSignature').appendChild(providerSigImg);
+        } else {
+            // Fallback: create a text-based signature
+            document.getElementById('pdfProviderSignature').innerHTML = '<p style="font-style: italic; font-size: 14pt; margin: 0; padding: 1rem 0;">Blake Goble</p>';
         }
         
         document.getElementById('pdfClientSignatureName').textContent = data.clientSignatureName || '';
         document.getElementById('pdfClientSignatureDate').textContent = formatDate(data.clientSignatureDate);
         document.getElementById('pdfProviderSignatureDate').textContent = formatDate(data.providerSignatureDate);
+        
+        // Ensure provider signature is generated and included
+        const providerCanvas = document.getElementById('providerSignature');
+        if (providerCanvas && (!providerSignaturePad || providerSignaturePad.isEmpty())) {
+            generateProviderSignature(providerCanvas);
+        }
+        
         document.getElementById('pdfGeneratedDate').textContent = new Date().toLocaleString();
     }
 
@@ -686,19 +724,46 @@
             const base64PDF = await base64Promise;
             
             // Prepare email template parameters
+            const totalCost = parseFloat(formData.totalProjectCost || 0);
+            const deposit = totalCost * 0.5;
+            const finalPayment = totalCost * 0.5;
+            
             const templateParams = {
                 to_agency: CONFIG.emailJS.agencyEmail,
                 to_client: formData.clientEmail,
-                client_name: formData.clientName,
-                client_email: formData.clientEmail,
-                client_business: formData.clientBusiness,
-                package: formData.selectedPackage,
-                total_cost: `$${parseFloat(formData.totalProjectCost || 0).toFixed(2)}`,
-                deposit: `$${(parseFloat(formData.totalProjectCost || 0) * 0.5).toFixed(2)}`,
-                final_payment: `$${(parseFloat(formData.totalProjectCost || 0) * 0.5).toFixed(2)}`,
-                project_timeline: formData.projectTimeline,
-                start_date: formatDate(formData.projectStartDate),
-                contract_date: formatDate(formData.contractDate),
+                client_name: formData.clientName || 'Client',
+                client_email: formData.clientEmail || '',
+                client_business: formData.clientBusiness || '',
+                package: formData.selectedPackage || '',
+                total_cost: `$${totalCost.toFixed(2)}`,
+                deposit: `$${deposit.toFixed(2)}`,
+                final_payment: `$${finalPayment.toFixed(2)}`,
+                project_timeline: formData.projectTimeline || '',
+                start_date: formatDate(formData.projectStartDate) || '',
+                completion_date: formatDate(formData.estimatedCompletionDate) || '',
+                contract_date: formatDate(formData.contractDate) || '',
+                payment_method: formData.paymentMethod || 'Not specified',
+                contract_summary: `
+Website Development Contract Signed
+
+Client: ${formData.clientName || ''}
+Business: ${formData.clientBusiness || ''}
+Email: ${formData.clientEmail || ''}
+
+Package: ${formData.selectedPackage || ''}
+Timeline: ${formData.projectTimeline || ''}
+Total Cost: $${totalCost.toFixed(2)}
+Deposit (50%): $${deposit.toFixed(2)}
+Final Payment (50%): $${finalPayment.toFixed(2)}
+Payment Method: ${formData.paymentMethod || 'Not specified'}
+
+Start Date: ${formatDate(formData.projectStartDate) || ''}
+Estimated Completion: ${formatDate(formData.estimatedCompletionDate) || ''}
+
+Contract Date: ${formatDate(formData.contractDate) || ''}
+
+A PDF copy of the signed contract is attached.
+                `.trim(),
                 pdf_attachment: base64PDF,
                 pdf_filename: `website-development-contract-${Date.now()}.pdf`
             };
@@ -741,12 +806,56 @@
         form.action = '/';
         form.style.display = 'none';
         
-        // Add all form fields
-        Object.keys(formData).forEach(key => {
+        // Create a readable summary for Netlify form
+        const contractSummary = `
+Website Development Contract - Signed
+
+CLIENT INFORMATION:
+- Name: ${formData.clientName || ''}
+- Email: ${formData.clientEmail || ''}
+- Business: ${formData.clientBusiness || ''}
+
+PROJECT DETAILS:
+- Package: ${formData.selectedPackage || ''}
+- Timeline: ${formData.projectTimeline || ''}
+- Start Date: ${formatDate(formData.projectStartDate) || ''}
+- Estimated Completion: ${formatDate(formData.estimatedCompletionDate) || ''}
+
+PAYMENT INFORMATION:
+- Total Cost: $${parseFloat(formData.totalProjectCost || 0).toFixed(2)}
+- Deposit (50%): $${(parseFloat(formData.totalProjectCost || 0) * 0.5).toFixed(2)}
+- Final Payment (50%): $${(parseFloat(formData.totalProjectCost || 0) * 0.5).toFixed(2)}
+- Payment Method: ${formData.paymentMethod || 'Not specified'}
+
+CONTRACT:
+- Contract Date: ${formatDate(formData.contractDate) || ''}
+- Client Signature Date: ${formatDate(formData.clientSignatureDate) || ''}
+
+A PDF copy of the signed contract is attached as base64 data (contract_pdf field).
+        `.trim();
+        
+        // Add form fields as individual inputs
+        const fieldsToInclude = {
+            'client_name': formData.clientName || '',
+            'client_email': formData.clientEmail || '',
+            'client_business': formData.clientBusiness || '',
+            'package': formData.selectedPackage || '',
+            'timeline': formData.projectTimeline || '',
+            'total_cost': `$${parseFloat(formData.totalProjectCost || 0).toFixed(2)}`,
+            'deposit': `$${(parseFloat(formData.totalProjectCost || 0) * 0.5).toFixed(2)}`,
+            'final_payment': `$${(parseFloat(formData.totalProjectCost || 0) * 0.5).toFixed(2)}`,
+            'payment_method': formData.paymentMethod || '',
+            'start_date': formatDate(formData.projectStartDate) || '',
+            'completion_date': formatDate(formData.estimatedCompletionDate) || '',
+            'contract_date': formatDate(formData.contractDate) || '',
+            'contract_summary': contractSummary
+        };
+        
+        Object.keys(fieldsToInclude).forEach(key => {
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = key;
-            input.value = formData[key];
+            input.value = fieldsToInclude[key];
             form.appendChild(input);
         });
         
@@ -754,8 +863,15 @@
         const pdfInput = document.createElement('input');
         pdfInput.type = 'hidden';
         pdfInput.name = 'contract_pdf';
-        pdfInput.value = base64PDF;
+        pdfInput.value = base64PDF.substring(0, 1000) + '... [truncated for display]';
         form.appendChild(pdfInput);
+        
+        // Add full PDF as a separate field (note field for large data)
+        const pdfFullInput = document.createElement('textarea');
+        pdfFullInput.style.display = 'none';
+        pdfFullInput.name = 'contract_pdf_full';
+        pdfFullInput.value = base64PDF;
+        form.appendChild(pdfFullInput);
         
         // Add form name
         const formNameInput = document.createElement('input');
@@ -846,7 +962,11 @@
             setTimeout(() => {
                 document.getElementById('contractForm').reset();
                 if (clientSignaturePad) clientSignaturePad.clear();
-                if (providerSignaturePad) providerSignaturePad.clear();
+                // Provider signature is auto-generated, so regenerate it after reset
+                const providerCanvas = document.getElementById('providerSignature');
+                if (providerCanvas) {
+                    generateProviderSignature(providerCanvas);
+                }
                 submitBtn.disabled = false;
                 submitBtn.querySelector('.btn-text').style.display = 'inline';
                 submitBtn.querySelector('.btn-loader').style.display = 'none';

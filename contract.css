@@ -1,0 +1,439 @@
+/* Contract Page Styles */
+
+.contract-container {
+    min-height: 100vh;
+    background-color: var(--color-bg);
+    padding: var(--space-lg) 0;
+}
+
+.contract-header {
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+    color: white;
+    padding: var(--space-2xl) 0;
+    margin-bottom: var(--space-2xl);
+}
+
+.contract-header h1 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--space-sm);
+    color: white;
+}
+
+.contract-subtitle {
+    font-size: var(--font-size-lg);
+    opacity: 0.95;
+    color: white;
+}
+
+.contract-form {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+}
+
+.contract-section {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-xl);
+    box-shadow: var(--shadow-md);
+}
+
+.contract-section h2 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-lg);
+    color: var(--color-text);
+    border-bottom: 2px solid var(--color-accent);
+    padding-bottom: var(--space-sm);
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: var(--space-md);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.form-group label {
+    display: block;
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-xs);
+    color: var(--color-text);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-base);
+    font-family: inherit;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="number"]:focus,
+.form-group input[type="date"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+
+.form-group input[readonly] {
+    background: var(--color-bg-alt);
+    cursor: not-allowed;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.helper-text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-top: var(--space-xs);
+}
+
+.form-error {
+    display: block;
+    color: var(--color-error);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-xs);
+    min-height: 20px;
+}
+
+/* Payment Info */
+.payment-info {
+    background: var(--color-bg-alt);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+}
+
+.payment-info p {
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-sm);
+}
+
+.payment-info ul {
+    margin-left: var(--space-lg);
+    color: var(--color-text-alt);
+}
+
+/* Signature Section */
+.signature-section {
+    margin-bottom: var(--space-xl);
+    padding: var(--space-lg);
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-md);
+}
+
+.signature-group {
+    margin-bottom: var(--space-lg);
+}
+
+.signature-group label {
+    display: block;
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-sm);
+}
+
+.signature-container {
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: white;
+    padding: var(--space-md);
+    margin-bottom: var(--space-sm);
+}
+
+.signature-canvas {
+    width: 100%;
+    height: 150px;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: crosshair;
+    background: white;
+    touch-action: none;
+}
+
+.signature-container button {
+    margin-top: var(--space-sm);
+}
+
+/* Checkbox Styles */
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: var(--space-md);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: var(--space-sm);
+    margin-top: 0.25rem;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.checkbox-label span {
+    line-height: var(--line-height-relaxed);
+}
+
+/* Terms Box */
+.terms-box {
+    background: var(--color-bg-alt);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-lg);
+}
+
+.terms-box ul {
+    margin-left: var(--space-lg);
+    margin-top: var(--space-sm);
+    color: var(--color-text-alt);
+}
+
+.terms-box li {
+    margin-bottom: var(--space-xs);
+}
+
+/* Submit Section */
+.submit-section {
+    text-align: center;
+    padding: var(--space-xl);
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-lg);
+}
+
+.btn {
+    display: inline-block;
+    padding: var(--space-sm) var(--space-xl);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    background: var(--color-accent);
+    color: white;
+}
+
+.btn:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: var(--color-accent);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--color-accent-hover);
+}
+
+.btn-secondary {
+    background: var(--color-surface-alt);
+    color: var(--color-text);
+}
+
+.btn-secondary:hover {
+    background: var(--color-border);
+}
+
+.btn-large {
+    padding: var(--space-md) var(--space-2xl);
+    font-size: var(--font-size-lg);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-loader {
+    display: inline-block;
+}
+
+.submit-status {
+    margin-top: var(--space-md);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    font-weight: var(--font-weight-medium);
+}
+
+.submit-status.success {
+    background: var(--color-success);
+    color: white;
+}
+
+.submit-status.error {
+    background: var(--color-error);
+    color: white;
+}
+
+/* PDF Preview Styles (hidden, used for PDF generation) */
+#contractPDF {
+    max-width: 8.5in;
+    margin: 0 auto;
+    padding: 1in;
+    background: white;
+    font-family: 'Times New Roman', serif;
+}
+
+.pdf-content {
+    color: #000;
+}
+
+.pdf-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #000;
+    padding-bottom: 1rem;
+}
+
+.pdf-header h1 {
+    font-size: 24pt;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.pdf-section {
+    margin-bottom: 2rem;
+    page-break-inside: avoid;
+}
+
+.pdf-section h2 {
+    font-size: 18pt;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.5rem;
+}
+
+.pdf-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.pdf-table td {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.pdf-table td:first-child {
+    width: 40%;
+    font-weight: bold;
+    background: #f5f5f5;
+}
+
+.pdf-signatures {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.pdf-signature-block {
+    border: 1px solid #ddd;
+    padding: 1rem;
+}
+
+.pdf-signature-image {
+    height: 80px;
+    border: 1px solid #ddd;
+    margin: 1rem 0;
+    background: white;
+}
+
+.pdf-signature-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.pdf-footer {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid #000;
+    font-size: 10pt;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .pdf-signatures {
+        grid-template-columns: 1fr;
+    }
+    
+    .contract-header h1 {
+        font-size: var(--font-size-2xl);
+    }
+    
+    .contract-section {
+        padding: var(--space-md);
+    }
+}
+
+/* Loading State */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Success Message */
+.success-message {
+    background: var(--color-success);
+    color: white;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-md);
+    text-align: center;
+}
+
+.success-message a {
+    color: white;
+    text-decoration: underline;
+    font-weight: var(--font-weight-medium);
+}
+

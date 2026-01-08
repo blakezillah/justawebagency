@@ -1,10 +1,13 @@
 # robots.txt for justaweb.agency
-# Block search engines from indexing the intake form
+# Block search engines from indexing the intake form and contract page
 
 User-agent: *
 Disallow: /intake.html
 Disallow: /intake.css
 Disallow: /intake.js
+Disallow: /contract.html
+Disallow: /contract.css
+Disallow: /contract.js
 
 # Allow main site
 Allow: /index.html

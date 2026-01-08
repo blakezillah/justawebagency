@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<!--
+    CONTRACT SIGNING PAGE
+    This page allows clients to fill out and sign the website development contract.
+    Generates a PDF and emails it to both the agency and client.
+    
+    SETUP REQUIRED:
+    1. EmailJS: Sign up at https://www.emailjs.com (free tier available)
+       - Create an email service (Gmail, Outlook, etc.)
+       - Create an email template
+       - Add your Service ID, Template ID, and Public Key below
+    2. OR: Use Netlify Functions for email (requires serverless function)
+    3. Update YOUR_EMAIL and CLIENT_EMAIL placeholders below
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Website Development Contract - justaweb.agency">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    
+    <title>Website Development Contract — justaweb.agency</title>
+    
+    <!-- EmailJS for sending emails -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    
+    <!-- Signature Pad Library -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.4/dist/signature_pad.umd.min.js"></script>
+    
+    <!-- html2pdf.js for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="contract.css">
+</head>
+<body>
+    <div class="contract-container">
+        <!-- Header -->
+        <header class="contract-header">
+            <div class="container">
+                <h1>Website Development Service Agreement</h1>
+                <p class="contract-subtitle">Fill out the form below to sign your contract. All fields marked with * are required.</p>
+            </div>
+        </header>
+
+        <!-- Contract Form -->
+        <form class="contract-form" id="contractForm" novalidate>
+            <input type="hidden" name="form-name" value="contract">
+            
+            <!-- Basic Information Section -->
+            <section class="contract-section">
+                <h2>1. Project Overview</h2>
+                
+                <div class="form-group">
+                    <label for="contractDate">Contract Date *</label>
+                    <input type="date" id="contractDate" name="contractDate" required>
+                    <span class="form-error" id="contractDateError"></span>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="clientName">Client Name *</label>
+                        <input type="text" id="clientName" name="clientName" required placeholder="John Doe">
+                        <span class="form-error" id="clientNameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="clientEmail">Client Email *</label>
+                        <input type="email" id="clientEmail" name="clientEmail" required placeholder="client@example.com">
+                        <span class="form-error" id="clientEmailError"></span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="clientBusiness">Client Business *</label>
+                    <input type="text" id="clientBusiness" name="clientBusiness" required placeholder="Acme Corporation">
+                    <span class="form-error" id="clientBusinessError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="selectedPackage">Selected Package *</label>
+                    <select id="selectedPackage" name="selectedPackage" required>
+                        <option value="">Select package</option>
+                        <option value="Essential - $2,000">Essential Package - $2,000 (1-3 pages, HTML, 1 month support)</option>
+                        <option value="Professional - $5,000">Professional Package - $5,000 (WordPress, up to 8 pages, 3 months support)</option>
+                        <option value="Complete - $8,000">Complete Package - $8,000 (WordPress or Shopify, up to 15 pages, 6 months support)</option>
+                        <option value="Custom">Custom Package (see details below)</option>
+                    </select>
+                    <span class="form-error" id="selectedPackageError"></span>
+                </div>
+                
+                <div class="form-group" id="customPackageGroup" style="display: none;">
+                    <label for="customPackageDetails">Custom Package Details</label>
+                    <textarea id="customPackageDetails" name="customPackageDetails" rows="3" placeholder="Describe the custom package and pricing..."></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="projectTimeline">Project Timeline *</label>
+                        <select id="projectTimeline" name="projectTimeline" required>
+                            <option value="">Select timeline</option>
+                            <option value="Rush Delivery - 2-3 weeks (+25% rush fee)">Rush Delivery - 2-3 weeks (+25% rush fee)</option>
+                            <option value="Standard Delivery - 4-6 weeks">Standard Delivery - 4-6 weeks</option>
+                            <option value="Flexible Delivery - 8+ weeks">Flexible Delivery - 8+ weeks</option>
+                        </select>
+                        <span class="form-error" id="projectTimelineError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectStartDate">Project Start Date *</label>
+                        <input type="date" id="projectStartDate" name="projectStartDate" required>
+                        <span class="form-error" id="projectStartDateError"></span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="estimatedCompletionDate">Estimated Completion Date</label>
+                    <input type="date" id="estimatedCompletionDate" name="estimatedCompletionDate" readonly>
+                    <p class="helper-text">This will be calculated based on your timeline selection.</p>
+                </div>
+            </section>
+
+            <!-- Payment Information Section -->
+            <section class="contract-section">
+                <h2>2. Payment Terms</h2>
+                
+                <div class="payment-info">
+                    <p><strong>Payment Schedule:</strong></p>
+                    <ul>
+                        <li>50% deposit due upon contract signing</li>
+                        <li>50% final payment due prior to launch</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label for="totalProjectCost">Total Project Cost *</label>
+                    <input type="number" id="totalProjectCost" name="totalProjectCost" required min="0" step="0.01" placeholder="2000.00">
+                    <span class="form-error" id="totalProjectCostError"></span>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="depositAmount">Deposit Amount (50%)</label>
+                        <input type="text" id="depositAmount" name="depositAmount" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="finalAmount">Final Payment (50%)</label>
+                        <input type="text" id="finalAmount" name="finalAmount" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentMethod">Preferred Payment Method</label>
+                    <select id="paymentMethod" name="paymentMethod">
+                        <option value="">Select method</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Check">Check</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Additional Details Section -->
+            <section class="contract-section">
+                <h2>3. Additional Project Details</h2>
+                
+                <div class="form-group">
+                    <label for="projectDescription">Project Description</label>
+                    <textarea id="projectDescription" name="projectDescription" rows="4" placeholder="Brief description of the website project..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="specialRequirements">Special Requirements or Notes</label>
+                    <textarea id="specialRequirements" name="specialRequirements" rows="3" placeholder="Any special requirements, integrations, or notes..."></textarea>
+                </div>
+            </section>
+
+            <!-- Digital Signatures Section -->
+            <section class="contract-section">
+                <h2>4. Digital Signatures</h2>
+                
+                <div class="signature-section">
+                    <div class="signature-group">
+                        <label>Client Signature *</label>
+                        <div class="signature-container">
+                            <canvas id="clientSignature" class="signature-canvas"></canvas>
+                            <button type="button" class="btn btn-secondary" id="clearClientSignature">Clear</button>
+                        </div>
+                        <span class="form-error" id="clientSignatureError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="clientSignatureName">Client Name (Printed) *</label>
+                        <input type="text" id="clientSignatureName" name="clientSignatureName" required placeholder="Type your full name">
+                        <span class="form-error" id="clientSignatureNameError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="clientSignatureDate">Date *</label>
+                        <input type="date" id="clientSignatureDate" name="clientSignatureDate" required>
+                        <span class="form-error" id="clientSignatureDateError"></span>
+                    </div>
+                </div>
+                
+                <div class="signature-section">
+                    <div class="signature-group">
+                        <label>Service Provider Signature</label>
+                        <div class="signature-container">
+                            <canvas id="providerSignature" class="signature-canvas"></canvas>
+                            <button type="button" class="btn btn-secondary" id="clearProviderSignature">Clear</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="providerSignatureName">Service Provider Name</label>
+                        <input type="text" id="providerSignatureName" name="providerSignatureName" value="justaweb.agency" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="providerSignatureDate">Date</label>
+                        <input type="date" id="providerSignatureDate" name="providerSignatureDate" readonly>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Terms Acceptance Section -->
+            <section class="contract-section">
+                <h2>5. Terms and Conditions</h2>
+                
+                <div class="terms-box">
+                    <p>By signing this contract, you agree to:</p>
+                    <ul>
+                        <li>The payment terms outlined above (50% deposit, 50% prior to launch)</li>
+                        <li>The project timeline and milestones as specified</li>
+                        <li>Provide content and feedback within agreed deadlines</li>
+                        <li>All terms and conditions in the full Website Development Service Agreement</li>
+                        <li>That this digital signature has the same legal effect as a handwritten signature</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="termsAccepted" name="termsAccepted" required>
+                        <span>I have read and agree to all terms and conditions *</span>
+                    </label>
+                    <span class="form-error" id="termsAcceptedError"></span>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="signatureAccepted" name="signatureAccepted" required>
+                        <span>I acknowledge that my digital signature is legally binding *</span>
+                    </label>
+                    <span class="form-error" id="signatureAcceptedError"></span>
+                </div>
+            </section>
+
+            <!-- Submit Section -->
+            <section class="contract-section">
+                <div class="submit-section">
+                    <button type="submit" class="btn btn-primary btn-large" id="submitContract">
+                        <span class="btn-text">Sign and Submit Contract</span>
+                        <span class="btn-loader" style="display: none;">Processing...</span>
+                    </button>
+                    
+                    <div class="submit-status" id="submitStatus"></div>
+                    
+                    <p class="helper-text">
+                        By submitting, you will generate a PDF contract that will be emailed to both you and justaweb.agency.
+                        You can also download a copy after submission.
+                    </p>
+                </div>
+            </section>
+        </form>
+
+        <!-- Hidden Netlify Form for Backup Submission -->
+        <form name="contract" netlify netlify-honeypot="bot-field" hidden>
+            <input type="hidden" name="form-name" value="contract">
+            <input type="text" name="bot-field">
+            <input type="hidden" name="contract-data">
+            <input type="hidden" name="contract-pdf">
+        </form>
+
+        <!-- PDF Preview Section (hidden, used for PDF generation) -->
+        <div id="contractPDF" style="display: none;">
+            <div class="pdf-content">
+                <div class="pdf-header">
+                    <h1>Website Development Service Agreement</h1>
+                    <p>Contract Date: <span id="pdfContractDate"></span></p>
+                </div>
+                
+                <div class="pdf-section">
+                    <h2>1. Project Overview</h2>
+                    <table class="pdf-table">
+                        <tr>
+                            <td><strong>Client Name:</strong></td>
+                            <td id="pdfClientName"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Client Email:</strong></td>
+                            <td id="pdfClientEmail"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Client Business:</strong></td>
+                            <td id="pdfClientBusiness"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Selected Package:</strong></td>
+                            <td id="pdfSelectedPackage"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Project Timeline:</strong></td>
+                            <td id="pdfProjectTimeline"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Project Start Date:</strong></td>
+                            <td id="pdfProjectStartDate"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Estimated Completion:</strong></td>
+                            <td id="pdfEstimatedCompletion"></td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="pdf-section">
+                    <h2>2. Payment Terms</h2>
+                    <table class="pdf-table">
+                        <tr>
+                            <td><strong>Total Project Cost:</strong></td>
+                            <td id="pdfTotalCost"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Deposit (50%):</strong></td>
+                            <td id="pdfDeposit"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Final Payment (50%):</strong></td>
+                            <td id="pdfFinalPayment"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Method:</strong></td>
+                            <td id="pdfPaymentMethod"></td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="pdf-section" id="pdfProjectDescriptionSection" style="display: none;">
+                    <h2>3. Project Details</h2>
+                    <p id="pdfProjectDescription"></p>
+                    <p id="pdfSpecialRequirements"></p>
+                </div>
+                
+                <div class="pdf-section">
+                    <h2>4. Signatures</h2>
+                    <div class="pdf-signatures">
+                        <div class="pdf-signature-block">
+                            <p><strong>Client Signature:</strong></p>
+                            <div class="pdf-signature-image" id="pdfClientSignature"></div>
+                            <p>Name: <span id="pdfClientSignatureName"></span></p>
+                            <p>Date: <span id="pdfClientSignatureDate"></span></p>
+                        </div>
+                        <div class="pdf-signature-block">
+                            <p><strong>Service Provider Signature:</strong></p>
+                            <div class="pdf-signature-image" id="pdfProviderSignature"></div>
+                            <p>Name: justaweb.agency</p>
+                            <p>Date: <span id="pdfProviderSignatureDate"></span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pdf-footer">
+                    <p><strong>Full Contract Terms:</strong></p>
+                    <p>This is a summary contract. The full Website Development Service Agreement terms apply. By signing this contract, both parties agree to all terms and conditions outlined in the full agreement.</p>
+                    <p style="margin-top: 2rem;"><em>Generated on <span id="pdfGeneratedDate"></span></em></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="contract.js"></script>
+</body>
+</html>
+

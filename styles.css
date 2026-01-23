@@ -345,6 +345,11 @@ section .container {
     color: var(--color-accent);
 }
 
+/* Dark blue for gradient-text on colored backgrounds */
+.lead-magnet .gradient-text {
+    color: #1e40af;
+}
+
 .logo:hover .logo-text {
     background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
     -webkit-background-clip: text;

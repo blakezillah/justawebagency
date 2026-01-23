@@ -1366,6 +1366,7 @@ section .container {
     font-weight: var(--font-weight-bold);
     margin-bottom: var(--space-md);
     color: var(--color-text);
+    white-space: nowrap;
 }
 
 .pricing-price {

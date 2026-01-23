@@ -793,18 +793,16 @@
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams(formData).toString()
             })
-            .then(() => {
-                submitBtn.textContent = 'Message sent!';
-                
-                // Track Google Ads conversion
+            .then((response) => {
+                // Track Google Ads conversion immediately
                 if (typeof gtagSendConversionEvent !== 'undefined') {
                     gtagSendConversionEvent();
                 }
                 
-                // Redirect to thank you page after a brief delay
-                setTimeout(() => {
-                    window.location.href = 'thank-you.html';
-                }, 1000);
+                submitBtn.textContent = 'Message sent!';
+                
+                // Redirect to thank you page - use replace to avoid back button issues
+                window.location.replace('thank-you');
             })
             .catch((error) => {
                 console.error('Form submission error:', error);
@@ -1159,18 +1157,16 @@ Remember:
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams(formData).toString()
                 })
-                .then(() => {
-                    submitBtn.textContent = 'Submitted!';
-                    
-                    // Track Google Ads conversion
+                .then((response) => {
+                    // Track Google Ads conversion immediately
                     if (typeof gtagSendConversionEvent !== 'undefined') {
                         gtagSendConversionEvent();
                     }
                     
-                    // Redirect to thank you page after a brief delay
-                    setTimeout(() => {
-                        window.location.href = 'thank-you.html';
-                    }, 1000);
+                    submitBtn.textContent = 'Submitted!';
+                    
+                    // Redirect to thank you page - use replace to avoid back button issues
+                    window.location.replace('thank-you');
                 })
                 .catch((error) => {
                     console.error('Form submission error:', error);
@@ -1731,18 +1727,16 @@ function initModalFormValidation(form) {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams(formData).toString()
             })
-            .then(() => {
-                submitBtn.textContent = 'Message sent!';
-                
-                // Track Google Ads conversion
+            .then((response) => {
+                // Track Google Ads conversion immediately
                 if (typeof gtagSendConversionEvent !== 'undefined') {
                     gtagSendConversionEvent();
                 }
                 
-                // Redirect to thank you page after a brief delay
-                setTimeout(() => {
-                    window.location.href = 'thank-you.html';
-                }, 1000);
+                submitBtn.textContent = 'Message sent!';
+                
+                // Redirect to thank you page - use replace to avoid back button issues
+                window.location.replace('thank-you');
             })
             .catch((error) => {
                 console.error('Form submission error:', error);

@@ -2,7 +2,13 @@
   # Static site - no build command needed
   publish = "."
 
-# Redirect rules for clean URLs (removing .html)
+# Rewrite rules for clean URLs (removing .html)
+[[redirects]]
+  from = "/thank-you"
+  to = "/thank-you.html"
+  status = 200
+
+# Redirect rules for other .html files
 [[redirects]]
   from = "/*.html"
   to = "/:splat"

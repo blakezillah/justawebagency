@@ -36,6 +36,14 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='%23fff' font-family='system-ui'>j</text></svg>">
     
     <link rel="stylesheet" href="styles.css">
+    <script>
+        // Apply theme immediately to prevent flash
+        (function() {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+            const savedTheme = localStorage.getItem('theme') || (prefersDark.matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
     <style>
         .thank-you-page {
             min-height: 100vh;
@@ -49,7 +57,18 @@
         .thank-you-header {
             padding: var(--space-lg) 0;
             border-bottom: 1px solid var(--color-border);
-            background: var(--color-surface);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: background-color var(--transition-base), border-color var(--transition-base);
+        }
+
+        [data-theme="dark"] .thank-you-header {
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--color-accent);
+            background: var(--color-surface-alt);
         }
 
         .thank-you-content {
@@ -340,7 +359,7 @@
         
         <!-- Header -->
         <header class="thank-you-header">
-            <div class="container">
+            <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
                 <a href="index.html" class="logo" aria-label="justaweb.agency home">
                     <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <rect x="4" y="6" width="24" height="16" rx="2" stroke="currentColor" stroke-width="2" class="logo-screen"/>
@@ -350,6 +369,22 @@
                     </svg>
                     <span class="logo-text">justaweb.agency</span>
                 </a>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" style="background: none; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-sm); cursor: pointer; color: var(--color-text); transition: all var(--transition-base);">
+                    <svg class="theme-icon-light" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display: block;">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="theme-icon-dark" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display: none;">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
             </div>
         </header>
 
@@ -468,5 +503,43 @@
             </div>
         </footer>
     </div>
+
+    <script>
+        // Theme Toggle Functionality
+        (function initTheme() {
+            const themeToggle = document.getElementById('themeToggle');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+            const savedTheme = localStorage.getItem('theme') || (prefersDark.matches ? 'dark' : 'light');
+            
+            // Apply saved theme
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+            
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const currentTheme = document.documentElement.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    updateThemeIcon(newTheme);
+                });
+            }
+
+            function updateThemeIcon(theme) {
+                const lightIcon = document.querySelector('.theme-icon-light');
+                const darkIcon = document.querySelector('.theme-icon-dark');
+                if (theme === 'dark') {
+                    if (lightIcon) lightIcon.style.display = 'none';
+                    if (darkIcon) darkIcon.style.display = 'block';
+                } else {
+                    if (lightIcon) lightIcon.style.display = 'block';
+                    if (darkIcon) darkIcon.style.display = 'none';
+                }
+            }
+
+            // Update icon on initial load
+            updateThemeIcon(savedTheme);
+        })();
+    </script>
 </body>
 </html>

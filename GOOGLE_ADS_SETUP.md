@@ -67,3 +67,24 @@ This will work with both Google Ads and Google Analytics 4 (since you already ha
 - **Not seeing conversions?** Make sure you've replaced both the Conversion ID and Label in all locations
 - **Testing in incognito?** Google Ads may not show test conversions immediately - wait a few hours
 - **Using an ad blocker?** Disable it when testing, as it may block the conversion tracking script
+
+## Cross-Domain Linking with Netlify Preview URLs
+
+If you're seeing new suggested domains appear every time you deploy (like `69730fea8b0cf600081c7933--justawebagency.netlify.app`), you need to configure cross-domain linking in Google Analytics/Ads to handle Netlify's preview URLs.
+
+### Solution: Configure Pattern Matching in Google Analytics
+
+1. Go to **Google Analytics** → **Admin** → **Data Streams**
+2. Click on your data stream
+3. Scroll down to **Enhanced measurement** → **Configure tag settings**
+4. Go to **Configure your domains** → **Cross-domain linking**
+5. In the "Include domains that match the following conditions" section:
+   - Change "Match type" from "Exactly matches" to **"Contains"**
+   - Set "Domain" to: `justawebagency.netlify.app`
+   - This will match all Netlify preview URLs (with hash prefixes)
+
+Alternatively, you can:
+- Use **"Ends with"** match type with `--justawebagency.netlify.app` to match only preview URLs
+- Or use **"Contains"** with `netlify.app` to match all Netlify domains
+
+The code already includes linker configuration for the main domains (`justaweb.agency` and `justawebagency.netlify.app`), but the UI configuration is needed to handle the dynamic preview URL hashes.

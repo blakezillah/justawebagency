@@ -569,6 +569,31 @@
     const websiteError = document.getElementById('websiteError');
     const messageError = document.getElementById('messageError');
     
+    // Domain question elements
+    const hasDomainYes = document.getElementById('hasDomainYes');
+    const hasDomainNo = document.getElementById('hasDomainNo');
+    const websiteGroup = document.getElementById('websiteGroup');
+    const domainPreferencesGroup = document.getElementById('domainPreferencesGroup');
+    
+    // Handle domain question toggle
+    function handleDomainToggle() {
+        if (hasDomainYes && hasDomainNo && websiteGroup && domainPreferencesGroup) {
+            if (hasDomainYes.checked) {
+                websiteGroup.style.display = 'block';
+                websiteInput.required = true;
+                domainPreferencesGroup.style.display = 'none';
+            } else if (hasDomainNo.checked) {
+                websiteGroup.style.display = 'none';
+                websiteInput.required = false;
+                websiteInput.value = '';
+                domainPreferencesGroup.style.display = 'block';
+            }
+        }
+    }
+    
+    if (hasDomainYes) hasDomainYes.addEventListener('change', handleDomainToggle);
+    if (hasDomainNo) hasDomainNo.addEventListener('change', handleDomainToggle);
+    
     // Generate ChatGPT prompt for audit deck
     function generateAuditDeckPrompt() {
         const name = nameInput.value.trim() || '';
@@ -668,22 +693,29 @@
     }
     
     function validateWebsite() {
-        const value = websiteInput.value.trim();
-        if (value) {
-            try {
-                new URL(value);
-                websiteError.textContent = '';
-                websiteInput.classList.remove('error');
-                return true;
-            } catch {
-                websiteError.textContent = 'Please enter a valid URL';
-                websiteInput.classList.add('error');
-                return false;
-            }
+        // If they don't have a domain, website is not required
+        if (hasDomainNo && hasDomainNo.checked) {
+            websiteError.textContent = '';
+            websiteInput.classList.remove('error');
+            return true;
         }
-        websiteError.textContent = '';
-        websiteInput.classList.remove('error');
-        return true;
+        
+        const value = websiteInput.value.trim();
+        if (!value) {
+            websiteError.textContent = 'Website URL is required';
+            websiteInput.classList.add('error');
+            return false;
+        }
+        try {
+            new URL(value);
+            websiteError.textContent = '';
+            websiteInput.classList.remove('error');
+            return true;
+        } catch {
+            websiteError.textContent = 'Please enter a valid URL';
+            websiteInput.classList.add('error');
+            return false;
+        }
     }
     
     function validateMessage() {
@@ -1004,6 +1036,31 @@ Remember:
         const emailError = document.getElementById('leadEmailError');
         const websiteError = document.getElementById('leadWebsiteError');
         
+        // Domain question elements for lead magnet
+        const leadHasDomainYes = document.getElementById('leadHasDomainYes');
+        const leadHasDomainNo = document.getElementById('leadHasDomainNo');
+        const leadWebsiteGroup = document.getElementById('leadWebsiteGroup');
+        const leadDomainPreferencesGroup = document.getElementById('leadDomainPreferencesGroup');
+        
+        // Handle domain question toggle for lead magnet
+        function handleLeadDomainToggle() {
+            if (leadHasDomainYes && leadHasDomainNo && leadWebsiteGroup && leadDomainPreferencesGroup) {
+                if (leadHasDomainYes.checked) {
+                    leadWebsiteGroup.style.display = 'block';
+                    websiteInput.required = true;
+                    leadDomainPreferencesGroup.style.display = 'none';
+                } else if (leadHasDomainNo.checked) {
+                    leadWebsiteGroup.style.display = 'none';
+                    websiteInput.required = false;
+                    websiteInput.value = '';
+                    leadDomainPreferencesGroup.style.display = 'block';
+                }
+            }
+        }
+        
+        if (leadHasDomainYes) leadHasDomainYes.addEventListener('change', handleLeadDomainToggle);
+        if (leadHasDomainNo) leadHasDomainNo.addEventListener('change', handleLeadDomainToggle);
+        
         function validateLeadName() {
             const value = nameInput.value.trim();
             if (!value) {
@@ -1035,6 +1092,13 @@ Remember:
         }
         
         function validateLeadWebsite() {
+            // If they don't have a domain, website is not required
+            if (leadHasDomainNo && leadHasDomainNo.checked) {
+                websiteError.textContent = '';
+                websiteInput.classList.remove('error');
+                return true;
+            }
+            
             const value = websiteInput.value.trim();
             if (!value) {
                 websiteError.textContent = 'Website URL is required';
@@ -1514,6 +1578,33 @@ function initModalFormValidation(form) {
     const websiteError = document.getElementById('modalWebsiteError');
     const messageError = document.getElementById('modalMessageError');
     
+    // Domain question elements for modal
+    const modalHasDomainYes = document.getElementById('modalHasDomainYes');
+    const modalHasDomainNo = document.getElementById('modalHasDomainNo');
+    const modalWebsiteGroup = document.getElementById('modalWebsiteGroup');
+    const modalDomainPreferencesGroup = document.getElementById('modalDomainPreferencesGroup');
+    
+    // Handle domain question toggle for modal
+    function handleModalDomainToggle() {
+        if (modalHasDomainYes && modalHasDomainNo && modalWebsiteGroup && modalDomainPreferencesGroup) {
+            if (modalHasDomainYes.checked) {
+                modalWebsiteGroup.style.display = 'block';
+                if (websiteInput) websiteInput.required = true;
+                modalDomainPreferencesGroup.style.display = 'none';
+            } else if (modalHasDomainNo.checked) {
+                modalWebsiteGroup.style.display = 'none';
+                if (websiteInput) {
+                    websiteInput.required = false;
+                    websiteInput.value = '';
+                }
+                modalDomainPreferencesGroup.style.display = 'block';
+            }
+        }
+    }
+    
+    if (modalHasDomainYes) modalHasDomainYes.addEventListener('change', handleModalDomainToggle);
+    if (modalHasDomainNo) modalHasDomainNo.addEventListener('change', handleModalDomainToggle);
+    
     function validateName() {
         const value = nameInput.value.trim();
         if (!value) {
@@ -1550,22 +1641,29 @@ function initModalFormValidation(form) {
     }
     
     function validateWebsite() {
-        const value = websiteInput.value.trim();
-        if (value) {
-            try {
-                new URL(value);
-                websiteError.textContent = '';
-                websiteInput.classList.remove('error');
-                return true;
-            } catch {
-                websiteError.textContent = 'Please enter a valid URL';
-                websiteInput.classList.add('error');
-                return false;
-            }
+        // If they don't have a domain, website is not required
+        if (modalHasDomainNo && modalHasDomainNo.checked) {
+            websiteError.textContent = '';
+            if (websiteInput) websiteInput.classList.remove('error');
+            return true;
         }
-        websiteError.textContent = '';
-        websiteInput.classList.remove('error');
-        return true;
+        
+        const value = websiteInput?.value.trim() || '';
+        if (!value) {
+            websiteError.textContent = 'Website URL is required';
+            if (websiteInput) websiteInput.classList.add('error');
+            return false;
+        }
+        try {
+            new URL(value);
+            websiteError.textContent = '';
+            if (websiteInput) websiteInput.classList.remove('error');
+            return true;
+        } catch {
+            websiteError.textContent = 'Please enter a valid URL';
+            if (websiteInput) websiteInput.classList.add('error');
+            return false;
+        }
     }
     
     function validateMessage() {

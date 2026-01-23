@@ -1813,6 +1813,43 @@ a:focus-visible {
     min-height: 20px;
 }
 
+.form-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.form-radio {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    cursor: pointer;
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+}
+
+.form-radio:hover {
+    background-color: var(--color-surface-alt);
+}
+
+.form-radio input[type="radio"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+.form-radio span {
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text);
+    user-select: none;
+}
+
+.form-radio input[type="radio"]:checked + span {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-accent);
+}
+
 /* ============================================
    Footer
    ============================================ */

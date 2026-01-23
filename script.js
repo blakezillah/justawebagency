@@ -795,17 +795,16 @@
             })
             .then(() => {
                 submitBtn.textContent = 'Message sent!';
-                form.reset();
                 
                 // Track Google Ads conversion
                 if (typeof gtagSendConversionEvent !== 'undefined') {
                     gtagSendConversionEvent();
                 }
                 
+                // Redirect to thank you page after a brief delay
                 setTimeout(() => {
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                }, 3000);
+                    window.location.href = 'thank-you.html';
+                }, 1000);
             })
             .catch((error) => {
                 console.error('Form submission error:', error);
@@ -1162,18 +1161,16 @@ Remember:
                 })
                 .then(() => {
                     submitBtn.textContent = 'Submitted!';
-                    form.reset();
-                    closeModal();
                     
                     // Track Google Ads conversion
                     if (typeof gtagSendConversionEvent !== 'undefined') {
                         gtagSendConversionEvent();
                     }
                     
+                    // Redirect to thank you page after a brief delay
                     setTimeout(() => {
-                        submitBtn.textContent = originalText;
-                        submitBtn.disabled = false;
-                    }, 2000);
+                        window.location.href = 'thank-you.html';
+                    }, 1000);
                 })
                 .catch((error) => {
                     console.error('Form submission error:', error);
@@ -1736,24 +1733,16 @@ function initModalFormValidation(form) {
             })
             .then(() => {
                 submitBtn.textContent = 'Message sent!';
-                form.reset();
                 
                 // Track Google Ads conversion
                 if (typeof gtagSendConversionEvent !== 'undefined') {
                     gtagSendConversionEvent();
                 }
                 
+                // Redirect to thank you page after a brief delay
                 setTimeout(() => {
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                    // Close modal after success
-                    const contactModal = document.getElementById('contactModal');
-                    if (contactModal) {
-                        contactModal.classList.remove('active');
-                        contactModal.setAttribute('aria-hidden', 'true');
-                        document.body.style.overflow = '';
-                    }
-                }, 2000);
+                    window.location.href = 'thank-you.html';
+                }, 1000);
             })
             .catch((error) => {
                 console.error('Form submission error:', error);

@@ -334,10 +334,7 @@ section .container {
 
 /* Gradient text class for highlighting important words in headings */
 .gradient-text {
-    background: linear-gradient(135deg, var(--color-text) 0%, var(--color-accent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--color-accent);
     transition: all var(--transition-base);
     position: relative;
     z-index: 1;
@@ -345,10 +342,7 @@ section .container {
 
 /* Dark theme adjustments for gradient text */
 [data-theme="dark"] .gradient-text {
-    background: linear-gradient(135deg, var(--color-text) 0%, var(--color-accent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--color-accent);
 }
 
 .logo:hover .logo-text {

@@ -357,7 +357,7 @@
         const integrations = integrationsSelect.value;
         const includeMaintenance = maintenanceCheckbox.checked;
         
-        // Base pricing logic for small businesses
+        // Base pricing logic for businesses
         let basePrice = 0;
         let plan = 'Essential';
         

@@ -3,12 +3,21 @@
   publish = "."
 
 # Rewrite rules for clean URLs (removing .html)
+# Specific rule for thank-you page - serves content at clean URL
 [[redirects]]
   from = "/thank-you"
   to = "/thank-you.html"
   status = 200
 
+# Redirect /thank-you.html to clean URL (if accessed directly)
+[[redirects]]
+  from = "/thank-you.html"
+  to = "/thank-you"
+  status = 301
+  force = true
+
 # Redirect rules for other .html files
+# Note: thank-you.html is handled above with force: true, so it won't match this rule
 [[redirects]]
   from = "/*.html"
   to = "/:splat"

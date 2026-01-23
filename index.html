@@ -16,6 +16,49 @@
       gtag('config', 'G-K58RVS4CZQ');
     </script>
     
+    <!-- Google Ads Conversion Tracking -->
+    <!-- TODO: Replace AW-XXXXXXXXX with your Google Ads conversion ID -->
+    <!-- TODO: Replace YYYYYYYYYY with your conversion label -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-XXXXXXXXX');
+    </script>
+    
+    <!-- Google tag (gtag.js) event - delayed navigation helper -->
+    <script>
+      // Helper function to delay opening a URL until a gtag event is sent.
+      // Call it in response to an action that should navigate to a URL.
+      function gtagSendEvent(url) {
+        var callback = function () {
+          if (typeof url === 'string') {
+            window.location = url;
+          }
+        };
+        gtag('event', 'ads_conversion_submit_lead_form', {
+          'event_callback': callback,
+          'event_timeout': 2000,
+          'send_to': 'AW-XXXXXXXXX/YYYYYYYYYY',
+          'value': 1.0,
+          'currency': 'USD'
+        });
+        return false;
+      }
+      
+      // Helper function for form submissions (no navigation)
+      function gtagSendConversionEvent(callback) {
+        gtag('event', 'ads_conversion_submit_lead_form', {
+          'event_callback': callback || function() {},
+          'event_timeout': 2000,
+          'send_to': 'AW-XXXXXXXXX/YYYYYYYYYY',
+          'value': 1.0,
+          'currency': 'USD'
+        });
+      }
+    </script>
+    
     <!-- Inline SVG Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='%23fff' font-family='system-ui'>j</text></svg>">
     

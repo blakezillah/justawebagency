@@ -765,6 +765,11 @@
                 submitBtn.textContent = 'Message sent!';
                 form.reset();
                 
+                // Track Google Ads conversion
+                if (typeof gtagSendConversionEvent !== 'undefined') {
+                    gtagSendConversionEvent();
+                }
+                
                 setTimeout(() => {
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
@@ -1095,6 +1100,11 @@ Remember:
                     submitBtn.textContent = 'Submitted!';
                     form.reset();
                     closeModal();
+                    
+                    // Track Google Ads conversion
+                    if (typeof gtagSendConversionEvent !== 'undefined') {
+                        gtagSendConversionEvent();
+                    }
                     
                     setTimeout(() => {
                         submitBtn.textContent = originalText;
@@ -1629,6 +1639,11 @@ function initModalFormValidation(form) {
             .then(() => {
                 submitBtn.textContent = 'Message sent!';
                 form.reset();
+                
+                // Track Google Ads conversion
+                if (typeof gtagSendConversionEvent !== 'undefined') {
+                    gtagSendConversionEvent();
+                }
                 
                 setTimeout(() => {
                     submitBtn.textContent = originalText;

@@ -2101,6 +2101,16 @@ function initModalFormValidation(form) {
             const companyError = document.getElementById('auditCompanyError');
             const urlError = document.getElementById('auditUrlError');
             const goalError = document.getElementById('auditGoalError');
+            const industryInput = document.getElementById('auditIndustry');
+            const industryError = document.getElementById('auditIndustryError');
+            const currentPlatformSelect = document.getElementById('auditCurrentPlatform');
+            const currentPlatformError = document.getElementById('auditCurrentPlatformError');
+            const contactEmailInput = document.getElementById('auditContactEmail');
+            const contactEmailError = document.getElementById('auditContactEmailError');
+            const audienceInput = document.getElementById('auditAudience');
+            const audienceError = document.getElementById('auditAudienceError');
+            const competitorsInput = document.getElementById('auditCompetitors');
+            const competitorsError = document.getElementById('auditCompetitorsError');
             
             function validateName() {
                 const value = nameInput.value.trim();
@@ -2169,6 +2179,72 @@ function initModalFormValidation(form) {
                 return true;
             }
             
+            function validateIndustry() {
+                const value = industryInput?.value.trim() || '';
+                if (!value) {
+                    industryError.textContent = 'Industry is required';
+                    industryInput?.classList.add('error');
+                    return false;
+                }
+                industryError.textContent = '';
+                industryInput?.classList.remove('error');
+                return true;
+            }
+            
+            function validateCurrentPlatform() {
+                const value = currentPlatformSelect?.value || '';
+                if (!value) {
+                    currentPlatformError.textContent = 'Current platform is required';
+                    currentPlatformSelect?.classList.add('error');
+                    return false;
+                }
+                currentPlatformError.textContent = '';
+                currentPlatformSelect?.classList.remove('error');
+                return true;
+            }
+            
+            function validateContactEmail() {
+                const value = contactEmailInput?.value.trim() || '';
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!value) {
+                    contactEmailError.textContent = 'Contact email is required';
+                    contactEmailInput?.classList.add('error');
+                    return false;
+                }
+                if (!emailRegex.test(value)) {
+                    contactEmailError.textContent = 'Please enter a valid email address';
+                    contactEmailInput?.classList.add('error');
+                    return false;
+                }
+                contactEmailError.textContent = '';
+                contactEmailInput?.classList.remove('error');
+                return true;
+            }
+            
+            function validateAudience() {
+                const value = audienceInput?.value.trim() || '';
+                if (!value) {
+                    audienceError.textContent = 'Target audience is required';
+                    audienceInput?.classList.add('error');
+                    return false;
+                }
+                audienceError.textContent = '';
+                audienceInput?.classList.remove('error');
+                return true;
+            }
+            
+            function validateCompetitors() {
+                const value = competitorsInput?.value.trim() || '';
+                if (!value) {
+                    competitorsError.textContent = 'Main competitors is required';
+                    competitorsInput?.classList.add('error');
+                    return false;
+                }
+                competitorsError.textContent = '';
+                competitorsInput?.classList.remove('error');
+                return true;
+            }
+            
             // Remove error on input
             nameInput.addEventListener('input', () => {
                 if (nameInput.classList.contains('error')) {
@@ -2205,6 +2281,42 @@ function initModalFormValidation(form) {
                 }
             });
             
+            // Add error clearing for all new required fields
+            industryInput?.addEventListener('input', () => {
+                if (industryInput.classList.contains('error')) {
+                    industryInput.classList.remove('error');
+                    industryError.textContent = '';
+                }
+            });
+            
+            currentPlatformSelect?.addEventListener('change', () => {
+                if (currentPlatformSelect.classList.contains('error')) {
+                    currentPlatformSelect.classList.remove('error');
+                    currentPlatformError.textContent = '';
+                }
+            });
+            
+            contactEmailInput?.addEventListener('input', () => {
+                if (contactEmailInput.classList.contains('error')) {
+                    contactEmailInput.classList.remove('error');
+                    contactEmailError.textContent = '';
+                }
+            });
+            
+            audienceInput?.addEventListener('input', () => {
+                if (audienceInput.classList.contains('error')) {
+                    audienceInput.classList.remove('error');
+                    audienceError.textContent = '';
+                }
+            });
+            
+            competitorsInput?.addEventListener('input', () => {
+                if (competitorsInput.classList.contains('error')) {
+                    competitorsInput.classList.remove('error');
+                    competitorsError.textContent = '';
+                }
+            });
+            
             // Form submission
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -2214,8 +2326,15 @@ function initModalFormValidation(form) {
                 const isCompanyValid = validateCompany();
                 const isUrlValid = validateUrl();
                 const isGoalValid = validateGoal();
+                const isIndustryValid = validateIndustry();
+                const isCurrentPlatformValid = validateCurrentPlatform();
+                const isContactEmailValid = validateContactEmail();
+                const isAudienceValid = validateAudience();
+                const isCompetitorsValid = validateCompetitors();
                 
-                if (isNameValid && isTitleValid && isCompanyValid && isUrlValid && isGoalValid) {
+                if (isNameValid && isTitleValid && isCompanyValid && isUrlValid && isGoalValid &&
+                    isIndustryValid && isCurrentPlatformValid && isContactEmailValid && isAudienceValid &&
+                    isCompetitorsValid) {
                     // Close modal
                     closeAuditModal();
                     

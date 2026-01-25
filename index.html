@@ -403,26 +403,6 @@
                     </ul>
                     <button type="button" class="btn btn-secondary btn-block" data-open-contact data-tier="Hosting" data-budget="hosting">Learn more</button>
                 </div>
-                <div class="pricing-card reveal">
-                    <div class="pricing-card-header">
-                        <h3><span class="gradient-text">CUSTOM WEBSITE</span></h3>
-                        <div class="pricing-price">
-                            <span class="pricing-amount">Custom</span>
-                            <span class="pricing-period">quote</span>
-                        </div>
-                    </div>
-                    <ul class="pricing-features">
-                        <li>E-commerce functionality</li>
-                        <li>Content management systems</li>
-                        <li>Custom integrations & APIs</li>
-                        <li>Advanced features & functionality</li>
-                        <li>Multi-page complex sites</li>
-                        <li>Database-driven applications</li>
-                        <li>Custom development work</li>
-                        <li>Scoped to your needs</li>
-                    </ul>
-                    <button type="button" class="btn btn-secondary btn-block" data-open-contact data-tier="Custom Website" data-budget="custom">Get a quote</button>
-                </div>
             </div>
             
             <!-- OPTIMIZED: Additional CTA after pricing section to capture leads at decision point -->
@@ -667,9 +647,7 @@
                             <label for="budget">Budget range</label>
                             <select id="budget" name="budget">
                             <option value="">Select range</option>
-                            <option value="essential">Essential ($2,000)</option>
-                            <option value="professional">Professional ($5,000)</option>
-                            <option value="complete">Complete ($8,000)</option>
+                            <option value="static">Fast, Reliable Website ($1,000)</option>
                             <option value="custom">Custom quote</option>
                             </select>
                         </div>
@@ -965,15 +943,16 @@
                     <span class="form-error" id="auditGoalError" role="alert" aria-live="polite"></span>
                 </div>
                 
-                <!-- Optional Fields -->
+                <!-- Required Fields -->
                 <div class="form-group">
-                    <label for="auditIndustry">Industry (optional)</label>
-                    <input type="text" id="auditIndustry" name="industry" placeholder="e.g., Retail, Healthcare, Legal">
+                    <label for="auditIndustry">Industry *</label>
+                    <input type="text" id="auditIndustry" name="industry" placeholder="e.g., Retail, Healthcare, Legal" required aria-describedby="auditIndustryError">
+                    <span class="form-error" id="auditIndustryError" role="alert" aria-live="polite"></span>
                 </div>
                 
                 <div class="form-group">
-                    <label for="auditCurrentPlatform">Current Platform (optional)</label>
-                    <select id="auditCurrentPlatform" name="currentPlatform">
+                    <label for="auditCurrentPlatform">Current Platform *</label>
+                    <select id="auditCurrentPlatform" name="currentPlatform" required aria-describedby="auditCurrentPlatformError">
                         <option value="">Select platform</option>
                         <option value="none">No website yet</option>
                         <option value="html">HTML/CSS/JS</option>
@@ -983,103 +962,25 @@
                         <option value="squarespace">Squarespace</option>
                         <option value="other">Other</option>
                     </select>
+                    <span class="form-error" id="auditCurrentPlatformError" role="alert" aria-live="polite"></span>
                 </div>
                 
                 <div class="form-group">
-                    <label for="auditContactEmail">Contact Email (optional)</label>
-                    <input type="email" id="auditContactEmail" name="contactEmail" placeholder="your@email.com">
+                    <label for="auditContactEmail">Contact Email *</label>
+                    <input type="email" id="auditContactEmail" name="contactEmail" placeholder="your@email.com" required aria-describedby="auditContactEmailError">
+                    <span class="form-error" id="auditContactEmailError" role="alert" aria-live="polite"></span>
                 </div>
                 
                 <div class="form-group">
-                    <label for="auditAudience">Target Audience (optional)</label>
-                    <input type="text" id="auditAudience" name="audience" placeholder="e.g., Business owners, Local customers">
+                    <label for="auditAudience">Target Audience *</label>
+                    <input type="text" id="auditAudience" name="audience" placeholder="e.g., Business owners, Local customers" required aria-describedby="auditAudienceError">
+                    <span class="form-error" id="auditAudienceError" role="alert" aria-live="polite"></span>
                 </div>
                 
                 <div class="form-group">
-                    <label for="auditCompetitors">Main Competitors (optional)</label>
-                    <input type="text" id="auditCompetitors" name="competitors" placeholder="e.g., competitor1.com, competitor2.com">
-                </div>
-                
-                <!-- Platform Needs -->
-                <div class="form-group">
-                    <label for="auditEcommerce">Do you need e-commerce? (optional)</label>
-                    <select id="auditEcommerce" name="ecommerce">
-                        <option value="">Not sure</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="auditInventory">Product/Inventory Type (optional)</label>
-                    <select id="auditInventory" name="inventory">
-                        <option value="">Select type</option>
-                        <option value="none">No products</option>
-                        <option value="few">Few products (1-20)</option>
-                        <option value="many">Many products (20+)</option>
-                        <option value="digital">Digital products</option>
-                        <option value="services">Services</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="auditSelfEdit">Need to edit content yourself? (optional)</label>
-                    <select id="auditSelfEdit" name="selfEdit">
-                        <option value="">Not sure</option>
-                        <option value="yes">Yes, frequently</option>
-                        <option value="sometimes">Sometimes</option>
-                        <option value="no">No, I'll hire help</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="auditBlog">Need a blog? (optional)</label>
-                    <select id="auditBlog" name="blog">
-                        <option value="">Not sure</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="auditIntegrations">Need third-party integrations? (optional)</label>
-                    <select id="auditIntegrations" name="integrations">
-                        <option value="">Not sure</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="auditPerfPriority">Is performance a priority? (optional)</label>
-                    <select id="auditPerfPriority" name="perfPriority">
-                        <option value="">Not sure</option>
-                        <option value="yes">Yes, very important</option>
-                        <option value="somewhat">Somewhat important</option>
-                        <option value="no">Not a priority</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="auditBudgetSensitivity">Budget sensitivity (optional)</label>
-                    <select id="auditBudgetSensitivity" name="budgetSensitivity">
-                        <option value="">Select</option>
-                        <option value="very">Very budget-conscious</option>
-                        <option value="moderate">Moderate budget</option>
-                        <option value="flexible">Flexible budget</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="auditTimeline">Timeline (optional)</label>
-                    <select id="auditTimeline" name="timeline">
-                        <option value="">Select timeline</option>
-                        <option value="asap">ASAP</option>
-                        <option value="1month">Within 1 month</option>
-                        <option value="3months">Within 3 months</option>
-                        <option value="6months">Within 6 months</option>
-                        <option value="flexible">Flexible</option>
-                    </select>
+                    <label for="auditCompetitors">Main Competitors *</label>
+                    <input type="text" id="auditCompetitors" name="competitors" placeholder="e.g., competitor1.com, competitor2.com" required aria-describedby="auditCompetitorsError">
+                    <span class="form-error" id="auditCompetitorsError" role="alert" aria-live="polite"></span>
                 </div>
                 
                 <button type="submit" class="btn btn-primary btn-large btn-block">Run Audit</button>

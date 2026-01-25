@@ -1307,7 +1307,7 @@ section .container {
 
 .pricing-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 60% 40%;
     gap: var(--space-xl);
     margin-bottom: var(--space-3xl);
     position: relative;

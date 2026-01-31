@@ -177,35 +177,38 @@
         <form class="intake-form" id="intakeForm" novalidate>
             <!-- Step 1: Basics -->
             <div class="form-step active" id="step1" data-step="1">
-                <h2>Basics</h2>
+                <h2>About you</h2>
+                <p class="step-intro">Your business and contact details so we can reach you and build the right site.</p>
                 <div class="form-group">
-                    <label for="businessName">Business Name *</label>
-                    <input type="text" id="businessName" name="businessName" required>
+                    <label for="businessName">Business or project name *</label>
+                    <input type="text" id="businessName" name="businessName" required placeholder="e.g. Acme Consulting">
                     <span class="form-error" id="businessNameError"></span>
                 </div>
                 <div class="form-group">
-                    <label>Do you have a domain ready? *</label>
+                    <label>Do you already have a website address (domain)? *</label>
+                    <p class="helper-text">A domain is what people type to find you — like yourbusiness.com.</p>
                     <div class="radio-group">
                         <label class="radio-label">
                             <input type="radio" name="hasDomain" value="yes" required>
-                            <span>Yes</span>
+                            <span>Yes — I have one</span>
                         </label>
                         <label class="radio-label">
                             <input type="radio" name="hasDomain" value="no" required>
-                            <span>No</span>
+                            <span>No — I need help with this</span>
                         </label>
                     </div>
                     <span class="form-error" id="hasDomainError"></span>
                 </div>
                 <div class="form-group domain-fields" id="domainFieldsGroup" style="display: none;">
-                    <label for="domain">Domain *</label>
-                    <input type="text" id="domain" name="domain" placeholder="example.com">
+                    <label for="domain">Your website address *</label>
+                    <input type="text" id="domain" name="domain" placeholder="yourbusiness.com">
                     <span class="form-error" id="domainError"></span>
                 </div>
                 <div class="form-group domain-fields" id="hostingGroup" style="display: none;">
                     <label for="currentHosting">Where is it currently hosted? *</label>
+                    <p class="helper-text">The company that keeps your site online (e.g. GoDaddy, Namecheap).</p>
                     <select id="currentHosting" name="currentHosting">
-                        <option value="">Select host</option>
+                        <option value="">Choose one</option>
                         <option value="godaddy">GoDaddy</option>
                         <option value="namecheap">Namecheap</option>
                         <option value="cloudflare">Cloudflare</option>
@@ -219,25 +222,25 @@
                     <span class="form-error" id="currentHostingError"></span>
                 </div>
                 <div class="form-group domain-fields" id="currentHostingOtherGroup" style="display: none;">
-                    <label for="currentHostingOther">Please specify host</label>
-                    <input type="text" id="currentHostingOther" name="currentHostingOther" placeholder="e.g., Bluehost, HostGator">
+                    <label for="currentHostingOther">Which company?</label>
+                    <input type="text" id="currentHostingOther" name="currentHostingOther" placeholder="e.g. Bluehost, HostGator">
                 </div>
                 <div class="form-group no-domain-note" id="noDomainNote" style="display: none;">
-                    <p class="helper-text">No problem — we can help you register a domain or use a placeholder (e.g. yourbusiness.com) for the build and point the domain later.</p>
+                    <p class="helper-text">No problem — we can help you get one or use a placeholder for now and connect the real address later.</p>
                 </div>
                 <div class="form-group">
-                    <label for="contactName">Primary Contact Name *</label>
+                    <label for="contactName">Your name (or main contact) *</label>
                     <input type="text" id="contactName" name="contactName" required>
                     <span class="form-error" id="contactNameError"></span>
                 </div>
                 <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" required>
+                    <label for="email">Email address *</label>
+                    <input type="email" id="email" name="email" required placeholder="you@example.com">
                     <span class="form-error" id="emailError"></span>
                 </div>
                 <div class="form-group">
-                    <label for="phone">Phone</label>
-                    <input type="tel" id="phone" name="phone">
+                    <label for="phone">Phone number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Optional">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -245,34 +248,34 @@
                         <input type="text" id="city" name="city">
                     </div>
                     <div class="form-group">
-                        <label for="state">State</label>
+                        <label for="state">State / Province</label>
                         <input type="text" id="state" name="state">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="industry">Industry / Vertical</label>
-                    <input type="text" id="industry" name="industry" placeholder="e.g., Legal, Healthcare, SaaS, E-commerce">
+                    <label for="industry">What type of business?</label>
+                    <input type="text" id="industry" name="industry" placeholder="e.g. Law firm, Restaurant, Online store">
                 </div>
                 <div class="form-group">
                     <label for="tagline">Tagline (optional)</label>
-                    <input type="text" id="tagline" name="tagline" placeholder="Short phrase that appears in hero or header">
+                    <input type="text" id="tagline" name="tagline" placeholder="A short line that sums you up — often on the home page">
                 </div>
                 <div class="form-group">
-                    <label for="businessDescription">One sentence description of the business *</label>
-                    <textarea id="businessDescription" name="businessDescription" rows="3" required placeholder="What does the business do and for whom?"></textarea>
+                    <label for="businessDescription">In one sentence, what do you do? *</label>
+                    <textarea id="businessDescription" name="businessDescription" rows="3" required placeholder="e.g. We help small businesses save time on bookkeeping."></textarea>
                     <span class="form-error" id="businessDescriptionError"></span>
                 </div>
                 <div class="form-group">
-                    <label for="extendedDescription">Extended description (2–3 sentences or paragraph)</label>
-                    <textarea id="extendedDescription" name="extendedDescription" rows="4" placeholder="Used for About section and meta descriptions. Include value proposition and key differentiators."></textarea>
+                    <label for="extendedDescription">Tell us a bit more (optional)</label>
+                    <textarea id="extendedDescription" name="extendedDescription" rows="4" placeholder="A few sentences about your business, who you serve, and what makes you different. We’ll use this for the About section and search descriptions."></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="fullAddress">Full address (for footer / contact)</label>
-                    <textarea id="fullAddress" name="fullAddress" rows="2" placeholder="Street, City, State, ZIP, Country"></textarea>
+                    <label for="fullAddress">Business address (optional)</label>
+                    <textarea id="fullAddress" name="fullAddress" rows="2" placeholder="If you want it on the site — street, city, state, zip"></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Social / external links</label>
-                    <p class="helper-text">URLs for footer or contact. Leave blank if not applicable.</p>
+                    <label>Social or other links (optional)</label>
+                    <p class="helper-text">We can add these to the footer. Leave blank if you don’t use them.</p>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="socialLinkedIn">LinkedIn</label>
@@ -296,133 +299,111 @@
                 </div>
             </div>
 
-            <!-- Step 2: Platform and Scope -->
+            <!-- Step 2: Your website -->
             <div class="form-step" id="step2" data-step="2">
-                <h2>Platform and Scope</h2>
+                <h2>Your website</h2>
+                <p class="step-intro">A few details about what you need.</p>
                 <div class="form-group">
-                    <label>Platform Choice *</label>
-                    <div class="radio-group">
-                        <label class="radio-label">
-                            <input type="radio" name="platform" value="html" required>
-                            <span>HTML</span>
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="platform" value="wordpress" required>
-                            <span>WordPress</span>
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="platform" value="shopify" required>
-                            <span>Shopify</span>
-                        </label>
-                    </div>
-                    <span class="form-error" id="platformError"></span>
-                </div>
-                <div class="form-group">
-                    <label>Pages *</label>
+                    <label>How many pages? *</label>
+                    <p class="helper-text">A single page scrolls through everything; multiple pages have a menu (Home, About, Contact, etc.).</p>
                     <div class="radio-group">
                         <label class="radio-label">
                             <input type="radio" name="pages" value="one" required>
-                            <span>One page only</span>
+                            <span>Single page (everything on one scrollable page)</span>
                         </label>
                         <label class="radio-label">
                             <input type="radio" name="pages" value="multi" required>
-                            <span>Multi page</span>
+                            <span>Multiple pages (separate pages with a menu)</span>
                         </label>
                     </div>
                     <span class="form-error" id="pagesError"></span>
                 </div>
                 <div class="form-group" id="pageCountGroup" style="display: none;">
-                    <label for="pageCount">Number of pages</label>
-                    <input type="number" id="pageCount" name="pageCount" min="2" value="5">
+                    <label for="pageCount">Roughly how many pages?</label>
+                    <input type="number" id="pageCount" name="pageCount" min="2" value="5" placeholder="e.g. 5">
                 </div>
                 <div class="form-group">
-                    <label for="deadline">Deadline / Urgency *</label>
+                    <label for="deadline">When do you need it? *</label>
                     <select id="deadline" name="deadline" required>
-                        <option value="">Select deadline</option>
-                        <option value="flexible">Flexible</option>
-                        <option value="2weeks">2 weeks</option>
-                        <option value="1month">1 month</option>
-                        <option value="asap">ASAP</option>
+                        <option value="">Choose a timeline</option>
+                        <option value="flexible">No rush — flexible</option>
+                        <option value="2weeks">Within 2 weeks</option>
+                        <option value="1month">Within 1 month</option>
+                        <option value="asap">As soon as possible</option>
                     </select>
                     <span class="form-error" id="deadlineError"></span>
                 </div>
                 <div class="form-group">
-                    <label for="budget">Budget Range *</label>
-                    <select id="budget" name="budget" required>
-                        <option value="">Select range</option>
-                        <option value="5k-10k">$5,000 - $10,000</option>
-                        <option value="10k-20k">$10,000 - $20,000</option>
-                        <option value="20k+">$20,000+</option>
-                    </select>
-                    <span class="form-error" id="budgetError"></span>
-                </div>
-                <div class="form-group">
                     <label class="checkbox-label">
-                        <input type="checkbox" id="maintenance" name="maintenance">
-                        <span>Need maintenance included?</span>
+                        <input type="checkbox" id="hostingMaintenance" name="hostingMaintenance">
+                        <span>Yes — include hosting and maintenance ($250/year)</span>
                     </label>
-                    <p class="helper-text">Including maintenance gives you a discount on the build price.</p>
+                    <p class="helper-text">We host your site and handle updates, backups, and small content changes so you don’t have to.</p>
                 </div>
             </div>
 
             <!-- Step 3: Goals and Audience -->
             <div class="form-step" id="step3" data-step="3">
-                <h2>Goals and Audience</h2>
+                <h2>Goals and audience</h2>
+                <p class="step-intro">What should the website do, and who is it for?</p>
                 <div class="form-group">
-                    <label for="primaryGoal">Primary Goal *</label>
+                    <label for="primaryGoal">What’s the main goal of your website? *</label>
                     <select id="primaryGoal" name="primaryGoal" required>
-                        <option value="">Select goal</option>
-                        <option value="leads">Leads</option>
-                        <option value="bookings">Bookings</option>
-                        <option value="ecommerce">E-commerce</option>
-                        <option value="credibility">Credibility</option>
-                        <option value="other">Other</option>
+                        <option value="">Choose one</option>
+                        <option value="leads">Get leads or inquiries (contact form, sign-ups)</option>
+                        <option value="bookings">Get bookings or appointments</option>
+                        <option value="ecommerce">Sell products online</option>
+                        <option value="credibility">Look professional and build trust</option>
+                        <option value="other">Something else</option>
                     </select>
                     <span class="form-error" id="primaryGoalError"></span>
                 </div>
                 <div class="form-group" id="primaryGoalOtherGroup" style="display: none;">
-                    <label for="primaryGoalOther">Please specify</label>
-                    <input type="text" id="primaryGoalOther" name="primaryGoalOther">
+                    <label for="primaryGoalOther">What’s your main goal?</label>
+                    <input type="text" id="primaryGoalOther" name="primaryGoalOther" placeholder="e.g. Show our portfolio">
                 </div>
                 <div class="form-group">
-                    <label for="targetAudience">Target Audience Description *</label>
-                    <textarea id="targetAudience" name="targetAudience" rows="3" required></textarea>
+                    <label for="targetAudience">Who is your website for? *</label>
+                    <p class="helper-text">Describe your ideal visitor — e.g. small business owners, local families, tech-savvy buyers.</p>
+                    <textarea id="targetAudience" name="targetAudience" rows="3" required placeholder="e.g. Small business owners who need bookkeeping help"></textarea>
                     <span class="form-error" id="targetAudienceError"></span>
                 </div>
                 <div class="form-group">
-                    <label for="topActions">Top 3 actions you want visitors to take *</label>
-                    <textarea id="topActions" name="topActions" rows="3" placeholder="1. Book a consultation&#10;2. Download guide&#10;3. Contact us" required></textarea>
+                    <label for="topActions">What should visitors do when they visit? *</label>
+                    <p class="helper-text">List the top 2–3 actions — e.g. book a call, download a guide, contact you.</p>
+                    <textarea id="topActions" name="topActions" rows="3" placeholder="1. Book a free consultation&#10;2. Download our pricing guide&#10;3. Contact us" required></textarea>
                     <span class="form-error" id="topActionsError"></span>
                 </div>
                 <div class="form-group">
-                    <label for="toneOfVoice">Tone of voice *</label>
+                    <label for="toneOfVoice">How should the site sound? *</label>
+                    <p class="helper-text">The overall feel of the writing — formal, friendly, etc.</p>
                     <select id="toneOfVoice" name="toneOfVoice" required>
-                        <option value="">Select tone</option>
-                        <option value="professional">Professional</option>
-                        <option value="friendly">Friendly</option>
-                        <option value="casual">Casual</option>
-                        <option value="technical">Technical / Expert</option>
-                        <option value="luxury">Luxury / Premium</option>
-                        <option value="playful">Playful</option>
+                        <option value="">Choose one</option>
+                        <option value="professional">Professional and polished</option>
+                        <option value="friendly">Friendly and approachable</option>
+                        <option value="casual">Casual and relaxed</option>
+                        <option value="technical">Expert / technical</option>
+                        <option value="luxury">Premium / luxury</option>
+                        <option value="playful">Playful and fun</option>
                         <option value="other">Other</option>
                     </select>
                     <span class="form-error" id="toneOfVoiceError"></span>
                 </div>
                 <div class="form-group" id="toneOfVoiceOtherGroup" style="display: none;">
-                    <label for="toneOfVoiceOther">Please specify</label>
+                    <label for="toneOfVoiceOther">Describe the tone</label>
                     <input type="text" id="toneOfVoiceOther" name="toneOfVoiceOther">
                 </div>
                 <div class="form-group">
-                    <label for="keyDifferentiators">Key differentiators / unique selling points</label>
-                    <textarea id="keyDifferentiators" name="keyDifferentiators" rows="3" placeholder="What makes you different? Bullet points or short paragraphs."></textarea>
+                    <label for="keyDifferentiators">What makes you different? (optional)</label>
+                    <textarea id="keyDifferentiators" name="keyDifferentiators" rows="3" placeholder="A few points that set you apart — we’ll use this in the copy."></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="painPoints">Pain points the site should address</label>
-                    <textarea id="painPoints" name="painPoints" rows="3" placeholder="Visitor concerns or objections the copy and design should speak to"></textarea>
+                    <label for="painPoints">What worries or objections should the site address? (optional)</label>
+                    <textarea id="painPoints" name="painPoints" rows="3" placeholder="e.g. Price, trust, complexity — we’ll speak to these in the content."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Competitor Sites (for inspiration reference only)</label>
-                    <p class="helper-text">Add competitor URLs as inspiration references. These are used for design inspiration only, not copied or scraped.</p>
+                    <label>Any websites you like the look of? (optional)</label>
+                    <p class="helper-text">Add links to sites whose style you like. We use them for inspiration only — we won’t copy them.</p>
                     <div id="competitorsContainer">
                         <!-- Competitor fields will be added here dynamically -->
                     </div>
@@ -430,11 +411,13 @@
                 </div>
             </div>
 
-            <!-- Step 4: Branding and Content -->
+            <!-- Step 4: Look and feel -->
             <div class="form-step" id="step4" data-step="4">
-                <h2>Branding and Content</h2>
+                <h2>Look and feel</h2>
+                <p class="step-intro">How should your site look? Pick words that fit your brand.</p>
                 <div class="form-group">
-                    <label>Brand Personality *</label>
+                    <label>Which words describe your brand? *</label>
+                    <p class="helper-text">Check all that apply — we’ll use this to guide the design.</p>
                     <div class="checkbox-group">
                         <label class="checkbox-label">
                             <input type="checkbox" name="brandPersonality" value="modern">
@@ -446,7 +429,7 @@
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="brandPersonality" value="minimal">
-                            <span>Minimal</span>
+                            <span>Minimal / clean</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="brandPersonality" value="playful">
@@ -454,11 +437,11 @@
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="brandPersonality" value="luxury">
-                            <span>Luxury</span>
+                            <span>Luxury / premium</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="brandPersonality" value="rugged">
-                            <span>Rugged</span>
+                            <span>Rugged / sturdy</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="brandPersonality" value="friendly">
@@ -472,37 +455,38 @@
                     <span class="form-error" id="brandPersonalityError"></span>
                 </div>
                 <div class="form-group" id="brandPersonalityOtherGroup" style="display: none;">
-                    <label for="brandPersonalityOther">Please specify</label>
+                    <label for="brandPersonalityOther">Describe in a few words</label>
                     <input type="text" id="brandPersonalityOther" name="brandPersonalityOther">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="primaryColor">Primary color (hex or name)</label>
-                        <input type="text" id="primaryColor" name="primaryColor" placeholder="e.g., #6366f1 or Navy">
+                        <label for="primaryColor">Main color</label>
+                        <input type="text" id="primaryColor" name="primaryColor" placeholder="e.g. Navy, #1e3a5f">
                     </div>
                     <div class="form-group">
-                        <label for="secondaryColor">Secondary color (hex or name)</label>
-                        <input type="text" id="secondaryColor" name="secondaryColor" placeholder="e.g., #10b981 or White">
+                        <label for="secondaryColor">Second color</label>
+                        <input type="text" id="secondaryColor" name="secondaryColor" placeholder="e.g. White, light gray">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="colorPreferences">Additional color notes</label>
-                    <input type="text" id="colorPreferences" name="colorPreferences" placeholder="e.g., Blue and white, avoid red">
+                    <label for="colorPreferences">Any other color notes?</label>
+                    <input type="text" id="colorPreferences" name="colorPreferences" placeholder="e.g. Blue and white, no red">
                 </div>
                 <div class="form-group">
-                    <label for="typographyVibe">Typography Vibe *</label>
+                    <label for="typographyVibe">What style of text/typography? *</label>
+                    <p class="helper-text">How the headings and body text should feel.</p>
                     <select id="typographyVibe" name="typographyVibe" required>
-                        <option value="">Select vibe</option>
-                        <option value="clean">Clean</option>
-                        <option value="editorial">Editorial</option>
-                        <option value="tech">Tech</option>
-                        <option value="classic">Classic</option>
+                        <option value="">Choose one</option>
+                        <option value="clean">Clean and simple</option>
+                        <option value="editorial">Editorial / magazine-style</option>
+                        <option value="tech">Tech / modern</option>
+                        <option value="classic">Classic / traditional</option>
                         <option value="other">Other</option>
                     </select>
                     <span class="form-error" id="typographyVibeError"></span>
                 </div>
                 <div class="form-group" id="typographyVibeOtherGroup" style="display: none;">
-                    <label for="typographyVibeOther">Please specify</label>
+                    <label for="typographyVibeOther">Describe the style</label>
                     <input type="text" id="typographyVibeOther" name="typographyVibeOther">
                 </div>
                 <div class="form-group">
@@ -514,18 +498,19 @@
                         </label>
                         <label class="radio-label">
                             <input type="radio" name="hasLogo" value="no" required>
-                            <span>No</span>
+                            <span>No — I need one or will add later</span>
                         </label>
                     </div>
                     <span class="form-error" id="hasLogoError"></span>
                 </div>
                 <div class="form-group" id="logoUrlGroup" style="display: none;">
-                    <label for="logoUrl">Logo URL (hosted image link)</label>
-                    <input type="url" id="logoUrl" name="logoUrl" placeholder="https://example.com/logo.svg or direct image URL">
-                    <p class="helper-text">Use a publicly accessible URL so the build can reference it.</p>
+                    <label for="logoUrl">Link to your logo</label>
+                    <input type="url" id="logoUrl" name="logoUrl" placeholder="Paste a link to your logo image (must be publicly viewable)">
+                    <p class="helper-text">Use a link that opens to the image — e.g. from your current site or a shared folder.</p>
                 </div>
                 <div class="form-group">
-                    <label>Do you have brand assets? *</label>
+                    <label>Do you have brand assets (images, guidelines)? *</label>
+                    <p class="helper-text">Logos, photos, or a brand guide in a folder we can access.</p>
                     <div class="radio-group">
                         <label class="radio-label">
                             <input type="radio" name="hasBrandAssets" value="yes" required>
@@ -539,42 +524,44 @@
                     <span class="form-error" id="hasBrandAssetsError"></span>
                 </div>
                 <div class="form-group" id="assetLinkGroup" style="display: none;">
-                    <label for="assetLink">Asset package link (Google Drive, Dropbox, etc.)</label>
-                    <input type="url" id="assetLink" name="assetLink" placeholder="https://drive.google.com/... or shared folder URL">
-                    <p class="helper-text">Link to folder containing logos, images, brand guidelines, or copy.</p>
+                    <label for="assetLink">Link to your assets folder</label>
+                    <input type="url" id="assetLink" name="assetLink" placeholder="e.g. Google Drive or Dropbox link">
+                    <p class="helper-text">A shared link to a folder with logos, images, or copy.</p>
                 </div>
                 <div class="form-group">
-                    <label for="contentStatus">Content Status *</label>
+                    <label for="contentStatus">How’s your content? *</label>
+                    <p class="helper-text">Text and images you’ll put on the site.</p>
                     <select id="contentStatus" name="contentStatus" required>
-                        <option value="">Select status</option>
-                        <option value="ready">Ready</option>
-                        <option value="partial">Partial</option>
-                        <option value="needHelp">Need help writing</option>
+                        <option value="">Choose one</option>
+                        <option value="ready">I have it ready (or most of it)</option>
+                        <option value="partial">I have some — need to finish</option>
+                        <option value="needHelp">I need help writing it</option>
                     </select>
                     <span class="form-error" id="contentStatusError"></span>
                 </div>
                 <div class="form-group">
-                    <label>Sections Desired *</label>
+                    <label>What sections do you want on the site? *</label>
+                    <p class="helper-text">Check the areas you want. We’ll build these into the layout.</p>
                     <div class="checkbox-group">
                         <label class="checkbox-label">
                             <input type="checkbox" name="sections" value="hero">
-                            <span>Hero</span>
+                            <span>Big headline area at the top (hero)</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="sections" value="proof">
-                            <span>Proof</span>
+                            <span>Proof / results / testimonials</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="sections" value="services">
-                            <span>Services</span>
+                            <span>Services or offerings</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="sections" value="work">
-                            <span>Work</span>
+                            <span>Work / portfolio / case studies</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="sections" value="process">
-                            <span>Process</span>
+                            <span>How it works / process</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="sections" value="pricing">
@@ -586,64 +573,64 @@
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="sections" value="contact">
-                            <span>Contact</span>
+                            <span>Contact / get in touch</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="sections" value="other" id="sectionsOther">
-                            <span>Other</span>
+                            <span>Something else</span>
                         </label>
                     </div>
                     <span class="form-error" id="sectionsError"></span>
                 </div>
                 <div class="form-group" id="sectionsOtherGroup" style="display: none;">
-                    <label for="sectionsOtherText">Please specify other sections</label>
-                    <input type="text" id="sectionsOtherText" name="sectionsOtherText">
+                    <label for="sectionsOtherText">What section?</label>
+                    <input type="text" id="sectionsOtherText" name="sectionsOtherText" placeholder="e.g. Team, Blog">
                 </div>
                 <div class="form-group">
-                    <label for="heroHeadline">Hero headline (optional)</label>
-                    <input type="text" id="heroHeadline" name="heroHeadline" placeholder="Main headline above the fold">
+                    <label for="requiredCTAs">Main buttons or links you want (optional)</label>
+                    <textarea id="requiredCTAs" name="requiredCTAs" rows="2" placeholder="e.g. Book a call, Download guide (one per line)"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="heroSubhead">Hero subhead (optional)</label>
-                    <textarea id="heroSubhead" name="heroSubhead" rows="2" placeholder="Supporting line under the headline"></textarea>
+                    <label for="heroHeadline">Home page headline (optional)</label>
+                    <input type="text" id="heroHeadline" name="heroHeadline" placeholder="The main line visitors see first">
                 </div>
                 <div class="form-group">
-                    <label for="fontPreference">Font preference</label>
-                    <input type="text" id="fontPreference" name="fontPreference" placeholder="e.g., Inter, system fallback — or leave blank for system fonts only">
+                    <label for="heroSubhead">Subheadline under it (optional)</label>
+                    <textarea id="heroSubhead" name="heroSubhead" rows="2" placeholder="A short line that supports the headline"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="imageStyle">Image / visual style</label>
+                    <label for="fontPreference">Font preference (optional)</label>
+                    <input type="text" id="fontPreference" name="fontPreference" placeholder="e.g. Inter — or leave blank and we’ll choose">
+                </div>
+                <div class="form-group">
+                    <label for="imageStyle">What kind of images?</label>
                     <select id="imageStyle" name="imageStyle">
-                        <option value="">Select style</option>
-                        <option value="photography">Photography (real photos)</option>
-                        <option value="illustration">Illustration</option>
-                        <option value="mixed">Mixed (photos + graphics)</option>
-                        <option value="stock">Stock imagery OK</option>
-                        <option value="custom">Custom / client-provided only</option>
-                        <option value="minimal">Minimal (few or no images)</option>
+                        <option value="">Choose one</option>
+                        <option value="photography">Real photos</option>
+                        <option value="illustration">Illustrations / graphics</option>
+                        <option value="mixed">Mix of photos and graphics</option>
+                        <option value="stock">Stock photos are fine</option>
+                        <option value="custom">I’ll provide my own only</option>
+                        <option value="minimal">Few or no images</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="requiredCTAs">Required CTAs</label>
-                    <textarea id="requiredCTAs" name="requiredCTAs" rows="3" placeholder="e.g., Book a call, Download guide, Get started"></textarea>
                 </div>
             </div>
 
             <!-- Step 5: Content & Assets -->
             <div class="form-step" id="step5" data-step="5">
-                <h2>Content & Assets</h2>
-                <p class="step-intro">Provide copy and asset links so we can generate a fully fleshed-out site. All fields are optional but improve the final prompt.</p>
+                <h2>Your content</h2>
+                <p class="step-intro">Paste or write the text you want on the site. All fields are optional — the more you add, the closer we get to your final site.</p>
                 <div class="form-group">
                     <label for="aboutCopy">About us (full paragraph)</label>
-                    <textarea id="aboutCopy" name="aboutCopy" rows="5" placeholder="Paste or write the main About section copy. Used for About page or About section."></textarea>
+                    <textarea id="aboutCopy" name="aboutCopy" rows="5" placeholder="Paste or write the main About section. We’ll use this on the About page or section."></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="keyMessaging">Key messaging / value props (bullets)</label>
+                    <label for="keyMessaging">Key points or selling points (one per line)</label>
                     <textarea id="keyMessaging" name="keyMessaging" rows="4" placeholder="One per line, e.g.:&#10;• Trusted by 500+ companies&#10;• 24/7 support&#10;• No long-term contracts"></textarea>
                 </div>
                 <div class="form-group">
                     <label>Services or offerings</label>
-                    <p class="helper-text">Add each service or product with a short description. Used for Services section or pricing tiers.</p>
+                    <p class="helper-text">Add each service or product with a short description. We’ll use these for the Services section or pricing.</p>
                     <div id="servicesContainer">
                         <!-- Service items added dynamically -->
                     </div>
@@ -651,128 +638,89 @@
                 </div>
                 <div class="form-group">
                     <label>Team members</label>
-                    <p class="helper-text">Name, title, and short bio for each. Used for Team or About section.</p>
+                    <p class="helper-text">Name, job title, and a short bio for each. We’ll use these for the Team or About section.</p>
                     <div id="teamContainer"></div>
                     <button type="button" class="btn btn-secondary" id="addTeamBtn" style="margin-top: var(--space-md);">Add team member</button>
                 </div>
                 <div class="form-group">
                     <label>Testimonials</label>
-                    <p class="helper-text">Quote, author name, and title/company. Used for social proof section.</p>
+                    <p class="helper-text">A quote, the person’s name, and their title or company. We’ll use these for reviews or social proof.</p>
                     <div id="testimonialsContainer"></div>
                     <button type="button" class="btn btn-secondary" id="addTestimonialBtn" style="margin-top: var(--space-md);">Add testimonial</button>
                 </div>
                 <div class="form-group">
                     <label>FAQ (questions and answers)</label>
-                    <p class="helper-text">Used for FAQ section. Add question and answer pairs.</p>
+                    <p class="helper-text">Add question and answer pairs. We’ll use these for the FAQ section.</p>
                     <div id="faqContainer"></div>
                     <button type="button" class="btn btn-secondary" id="addFaqBtn" style="margin-top: var(--space-md);">Add FAQ</button>
                 </div>
                 <div class="form-group">
-                    <label for="seoKeywords">SEO focus keywords (optional)</label>
-                    <input type="text" id="seoKeywords" name="seoKeywords" placeholder="e.g., web design Austin, small business website">
+                    <label for="seoKeywords">Search keywords (optional)</label>
+                    <input type="text" id="seoKeywords" name="seoKeywords" placeholder="e.g. web design Austin, small business website">
                 </div>
                 <div class="form-group">
-                    <label for="metaDescription">Meta description (optional)</label>
-                    <textarea id="metaDescription" name="metaDescription" rows="2" placeholder="155 characters or less for search results"></textarea>
+                    <label for="metaDescription">Short description for search results (optional)</label>
+                    <textarea id="metaDescription" name="metaDescription" rows="2" placeholder="One or two sentences (about 155 characters) that show up in Google. Leave blank and we’ll write one."></textarea>
                 </div>
             </div>
 
-            <!-- Step 6: Features and Integrations -->
+            <!-- Step 6: Extras -->
             <div class="form-step" id="step6" data-step="6">
-                <h2>Features and Integrations</h2>
+                <h2>Extras</h2>
+                <p class="step-intro">Optional add-ons. Skip any you don’t need.</p>
                 <div class="form-group">
-                    <label>Feature Toggles</label>
+                    <label>Website features (optional)</label>
+                    <p class="helper-text">Check anything you’d like on your site.</p>
                     <div class="checkbox-group">
                         <label class="checkbox-label">
                             <input type="checkbox" name="features" value="themeToggle">
-                            <span>Theme toggle</span>
+                            <span>Light/dark mode switch — visitors can choose</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="features" value="commandPalette">
-                            <span>Command palette</span>
+                            <span>Quick search (keyboard shortcut to find pages)</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="features" value="pricingCalculator">
-                            <span>Pricing calculator</span>
+                            <span>Pricing calculator or quote tool</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="features" value="portfolioFilter">
-                            <span>Portfolio filter</span>
+                            <span>Filterable portfolio or project gallery</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="features" value="testimonialsSlider">
-                            <span>Testimonials slider</span>
+                            <span>Sliding testimonials / reviews section</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="features" value="contactForm">
-                            <span>Contact form validation</span>
+                            <span>Contact form with validation</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="features" value="leadMagnet">
-                            <span>Lead magnet modal</span>
+                            <span>Popup or form to capture emails (e.g. for a guide)</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="features" value="siteHealth">
-                            <span>Site Health Demo widget</span>
+                            <span>Site health / audit demo widget</span>
                         </label>
                     </div>
                 </div>
-
-                <!-- WordPress Specific -->
-                <div class="platform-specific" id="wordpressFields" style="display: none;">
-                    <h3>WordPress Specific</h3>
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="wpBlog" name="wpBlog">
-                            <span>Blog needed?</span>
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <label for="wpFormsPlugin">Forms plugin preference</label>
-                        <input type="text" id="wpFormsPlugin" name="wpFormsPlugin" placeholder="e.g., Contact Form 7, Gravity Forms">
-                    </div>
-                    <div class="form-group">
-                        <label for="wpHosting">Hosting preference</label>
-                        <input type="text" id="wpHosting" name="wpHosting" placeholder="e.g., WP Engine, Kinsta">
-                    </div>
-                </div>
-
-                <!-- Shopify Specific -->
-                <div class="platform-specific" id="shopifyFields" style="display: none;">
-                    <h3>Shopify Specific</h3>
-                    <div class="form-group">
-                        <label for="shopifyProducts">Number of products</label>
-                        <input type="number" id="shopifyProducts" name="shopifyProducts" min="0" value="0">
-                    </div>
-                    <div class="form-group">
-                        <label for="shopifyCollections">Collections complexity</label>
-                        <select id="shopifyCollections" name="shopifyCollections">
-                            <option value="">Select complexity</option>
-                            <option value="simple">Simple</option>
-                            <option value="medium">Medium</option>
-                            <option value="complex">Complex</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="shopifyApps">Apps needed</label>
-                        <input type="text" id="shopifyApps" name="shopifyApps" placeholder="e.g., Product reviews, Email marketing">
-                    </div>
-                </div>
-
                 <div class="form-group">
-                    <label>Integrations</label>
+                    <label>Connect to other tools (optional)</label>
+                    <p class="helper-text">We can wire your site to these services if you use them.</p>
                     <div class="checkbox-group">
                         <label class="checkbox-label">
                             <input type="checkbox" name="integrations" value="ga4">
-                            <span>GA4</span>
+                            <span>Google Analytics</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="integrations" value="gtm">
-                            <span>GTM</span>
+                            <span>Google Tag Manager</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="integrations" value="mailchimp">
-                            <span>Mailchimp</span>
+                            <span>Mailchimp (email list)</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="integrations" value="hubspot">
@@ -780,24 +728,25 @@
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="integrations" value="calendly">
-                            <span>Calendly</span>
+                            <span>Calendly (scheduling)</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="integrations" value="stripe">
-                            <span>Stripe</span>
+                            <span>Stripe (payments)</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="integrations" value="other" id="integrationsOther">
-                            <span>Other</span>
+                            <span>Something else</span>
                         </label>
                     </div>
                 </div>
                 <div class="form-group" id="integrationsOtherGroup" style="display: none;">
-                    <label for="integrationsOtherText">Please specify other integrations</label>
-                    <input type="text" id="integrationsOtherText" name="integrationsOtherText">
+                    <label for="integrationsOtherText">Which tool or service?</label>
+                    <input type="text" id="integrationsOtherText" name="integrationsOtherText" placeholder="e.g. Zapier, Drip">
                 </div>
                 <div class="form-group">
-                    <label>Legal Needs</label>
+                    <label>Legal pages (optional)</label>
+                    <p class="helper-text">Standard pages many sites need.</p>
                     <div class="checkbox-group">
                         <label class="checkbox-label">
                             <input type="checkbox" name="legalNeeds" value="privacy">
@@ -809,7 +758,7 @@
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="legalNeeds" value="accessibility">
-                            <span>Accessibility Note</span>
+                            <span>Accessibility statement</span>
                         </label>
                     </div>
                 </div>
@@ -819,22 +768,14 @@
             <div class="form-step" id="step7" data-step="7">
                 <div class="confirmation-content">
                     <h2>You're all set</h2>
-                    <p class="confirmation-message">Your website build request has been prepared. We'll review it and get back to you soon.</p>
+                    <p class="confirmation-message">Your website build request has been prepared. Submit below to send it to us.</p>
                     
                     <div class="summary-card" id="summaryCard">
                         <!-- Summary will be populated here -->
                     </div>
 
                     <div class="privacy-note">
-                        <p><strong>Privacy note:</strong> Do not include passwords in this form. Competitor URLs are used as inspiration references only, not copied or scraped.</p>
-                    </div>
-
-                    <div class="endpoint-option">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="useEndpoint" name="useEndpoint">
-                            <span>Send securely (optional)</span>
-                        </label>
-                        <p class="helper-text" id="endpointHelper">Not available right now</p>
+                        <p><strong>Privacy note:</strong> Do not include passwords in this form. Site links you add are used as inspiration only, not copied or scraped.</p>
                     </div>
 
                     <div class="submit-section">
@@ -868,17 +809,16 @@
         </form>
     </div>
 
-    <!-- Modal for long email content -->
+    <!-- Modal when email body would be too long -->
     <div class="modal" id="emailModal" role="dialog" aria-label="Email content too long" aria-hidden="true">
         <div class="modal-overlay"></div>
         <div class="modal-content">
             <button class="modal-close" aria-label="Close modal" id="modalClose">×</button>
-            <h2>Your email app cannot fit the full details</h2>
-            <p>The request details are too long for a single email. Please use one of these options:</p>
+            <h2>Attach your intake file</h2>
+            <p>Your full request has been saved as intake.txt. Please attach that file to the email that opened and click Send to complete your submission.</p>
             <div class="modal-actions">
-                <button type="button" class="btn btn-primary" id="modalDownloadBtn">Download intake.txt</button>
-                <button type="button" class="btn btn-secondary" id="modalCopyPromptBtn">Copy Cursor Prompt</button>
-                <button type="button" class="btn btn-secondary" id="modalCopySummaryBtn">Copy Short Summary Email</button>
+                <button type="button" class="btn btn-primary" id="modalDownloadBtn">Download intake.txt again</button>
+                <button type="button" class="btn btn-secondary" id="modalCopySummaryBtn">Copy short summary for email</button>
                 <button type="button" class="btn btn-secondary" id="modalCloseBtn">Close</button>
             </div>
         </div>

@@ -17,8 +17,7 @@
 // ============================================
 
 const PASCODE = 'intake'; // Change this to your desired passcode
-const EMAIL_ADDRESS = 'blake.goble@icloud.com'; // Your email address
-const ENDPOINT_URL = ''; // Set this to your endpoint URL, or leave empty to disable
+const EMAIL_ADDRESS = 'blake@justaweb.agency'; // Intake submissions are emailed here
 const STORAGE_KEY = 'intake_form_data';
 const UNLOCK_KEY = 'intake_unlocked';
 const UNLOCK_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
@@ -350,6 +349,17 @@ function validateCurrentStep() {
             isValid = false;
             const errorEl = document.getElementById('sectionsError');
             if (errorEl) errorEl.textContent = 'Please select at least one section';
+        }
+    }
+
+    // Scroll to first item that failed validation so the user sees what to fix
+    if (!isValid) {
+        const firstErrorField = stepEl.querySelector('.error');
+        const firstErrorEl = stepEl.querySelector('.form-error');
+        const hasErrorText = firstErrorEl && firstErrorEl.textContent.trim();
+        const scrollTarget = (firstErrorField && firstErrorField.closest('.form-group')) || (hasErrorText ? firstErrorEl.closest('.form-group') : null);
+        if (scrollTarget) {
+            scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
 
@@ -1072,24 +1082,7 @@ function handleConditionalFields(field) {
         }
     }
 
-    // Show/hide platform-specific fields
-    const platform = document.querySelector('[name="platform"]:checked');
-    if (platform) {
-        const wpFields = document.getElementById('wordpressFields');
-        const shopifyFields = document.getElementById('shopifyFields');
-        
-        if (platform.value === 'wordpress') {
-            wpFields.style.display = 'block';
-            shopifyFields.style.display = 'none';
-        } else if (platform.value === 'shopify') {
-            shopifyFields.style.display = 'block';
-            wpFields.style.display = 'none';
-        } else {
-            wpFields.style.display = 'none';
-            shopifyFields.style.display = 'none';
-        }
     }
-}
 
 // ============================================
 // Confirmation Page Generation
@@ -1107,11 +1100,9 @@ function generateConfirmation() {
         ? `${data.domain} (${data.currentHosting ? (data.currentHosting === 'other' && data.currentHostingOther ? data.currentHostingOther : formatHosting(data.currentHosting)) : 'host not specified'})`
         : (data.hasDomain === 'no' ? 'No domain yet (placeholder / register later)' : 'Not specified');
     html += `<div class="summary-item"><span class="summary-item-label">Domain</span><span class="summary-item-value">${domainSummary}</span></div>`;
-    html += `<div class="summary-item"><span class="summary-item-label">Platform</span><span class="summary-item-value">${data.platform ? data.platform.toUpperCase() : 'Not provided'}</span></div>`;
-    html += `<div class="summary-item"><span class="summary-item-label">Pages</span><span class="summary-item-value">${data.pages === 'one' ? 'One page' : data.pages === 'multi' ? `${data.pageCount || 'N/A'} pages` : 'Not provided'}</span></div>`;
+    html += `<div class="summary-item"><span class="summary-item-label">Pages</span><span class="summary-item-value">${data.pages === 'one' ? 'Single page' : data.pages === 'multi' ? `${data.pageCount || 'N/A'} pages` : 'Not provided'}</span></div>`;
     html += `<div class="summary-item"><span class="summary-item-label">Timeline</span><span class="summary-item-value">${formatDeadline(data.deadline) || 'Not provided'}</span></div>`;
-    html += `<div class="summary-item"><span class="summary-item-label">Budget</span><span class="summary-item-value">${formatBudget(data.budget) || 'Not provided'}</span></div>`;
-    html += `<div class="summary-item"><span class="summary-item-label">Maintenance</span><span class="summary-item-value">${data.maintenance_included ? 'Yes (discount applied)' : 'No'}</span></div>`;
+    html += `<div class="summary-item"><span class="summary-item-label">Hosting & maintenance</span><span class="summary-item-value">${data.hosting_maintenance ? 'Yes ($250/year)' : 'No'}</span></div>`;
     html += `<div class="summary-item"><span class="summary-item-label">Primary Goal</span><span class="summary-item-value">${formatGoal(data.primaryGoal, data.primaryGoalOther) || 'Not provided'}</span></div>`;
     
     summaryCard.innerHTML = html;
@@ -1122,24 +1113,7 @@ function generateConfirmation() {
         promptPreview.value = prompt;
     }
 
-    // Update endpoint option
-    const endpointCheckbox = document.getElementById('useEndpoint');
-    const endpointHelper = document.getElementById('endpointHelper');
-    
-    if (!ENDPOINT_URL) {
-        if (endpointCheckbox) {
-            endpointCheckbox.disabled = true;
-            endpointCheckbox.checked = false;
-        }
-        if (endpointHelper) {
-            endpointHelper.textContent = 'Not available right now';
-        }
-    } else {
-        if (endpointHelper) {
-            endpointHelper.textContent = 'Send via secure endpoint instead of email';
-        }
     }
-}
 
 function formatDeadline(value) {
     const map = {
@@ -1209,9 +1183,7 @@ function getCompleteFormData() {
 
     const data = { ...formData };
 
-    data.platform = data.platform || null;
-    data.maintenance_included = data.maintenance === 'on' || data.maintenance === true;
-    data.build_discount_applied = data.maintenance_included;
+    data.hosting_maintenance = data.hostingMaintenance === 'on' || data.hostingMaintenance === true;
     data.selected_features = Array.isArray(data.features) ? data.features : (data.features ? [data.features] : []);
 
     if (!Array.isArray(data.brandPersonality)) {
@@ -1269,7 +1241,7 @@ function formatTone(value, other) {
 function generateCursorPrompt() {
     const data = getCompleteFormData();
 
-    let prompt = `You are an expert creative front end engineer and designer. Build a premium ${data.pages === 'one' ? 'one page' : 'multi-page'} marketing site for ${data.businessName || 'this business'}${data.hasDomain === 'yes' && data.domain ? ` (${data.domain})` : ''} using ${data.platform === 'html' ? 'ONLY vanilla HTML, CSS, and JavaScript (no frameworks, no build tools, no external libraries)' : data.platform === 'wordpress' ? 'WordPress with a custom theme' : 'Shopify with a custom theme'}.\n\n`;
+    let prompt = `You are an expert creative front end engineer and designer. Build a premium ${data.pages === 'one' ? 'one page' : 'multi-page'} marketing site for ${data.businessName || 'this business'}${data.hasDomain === 'yes' && data.domain ? ` (${data.domain})` : ''} using ONLY vanilla HTML, CSS, and JavaScript (no frameworks, no build tools, no external libraries).\n\n`;
 
     // Business context
     prompt += `Business context\n\n`;
@@ -1355,7 +1327,7 @@ function generateCursorPrompt() {
     if (sections.includes('services')) prompt += `\t\t•\tServices\n`;
     if (sections.includes('work')) prompt += `\t\t•\tWork (case study style cards)\n`;
     if (sections.includes('process')) prompt += `\t\t•\tProcess\n`;
-    if (sections.includes('pricing')) prompt += `\t\t•\tPricing${data.platform === 'shopify' ? ' (if applicable)' : ''}\n`;
+    if (sections.includes('pricing')) prompt += `\t\t•\tPricing\n`;
     if (sections.includes('faq')) prompt += `\t\t•\tFAQ\n`;
     if (sections.includes('contact')) prompt += `\t\t•\tContact / CTA\n`;
     if (data.sectionsOtherText) prompt += `\t\t•\t${data.sectionsOtherText}\n`;
@@ -1391,23 +1363,6 @@ function generateCursorPrompt() {
         prompt += `\t•\tRequired CTAs: ${data.requiredCTAs}\n`;
     }
     prompt += `\n`;
-
-    // Platform specific
-    if (data.platform === 'wordpress') {
-        prompt += `WordPress Requirements\n\n`;
-        if (data.wpBlog) prompt += `\t•\tInclude blog functionality\n`;
-        if (data.wpFormsPlugin) prompt += `\t•\tForms plugin preference: ${data.wpFormsPlugin}\n`;
-        if (data.wpHosting) prompt += `\t•\tHosting preference: ${data.wpHosting}\n`;
-        prompt += `\n`;
-    }
-
-    if (data.platform === 'shopify') {
-        prompt += `Shopify Requirements\n\n`;
-        if (data.shopifyProducts) prompt += `\t•\tNumber of products: ${data.shopifyProducts}\n`;
-        if (data.shopifyCollections) prompt += `\t•\tCollections complexity: ${data.shopifyCollections}\n`;
-        if (data.shopifyApps) prompt += `\t•\tApps needed: ${data.shopifyApps}\n`;
-        prompt += `\n`;
-    }
 
     // Integrations
     const integrations = Array.isArray(data.integrations) ? data.integrations : [];
@@ -1508,10 +1463,10 @@ function generateCursorPrompt() {
     // Important notes
     prompt += `Important Notes\n\n`;
     prompt += `\t•\tBuild fast and secure websites\n`;
-    prompt += `\t•\tPlatform: ${data.platform ? data.platform.toUpperCase() : 'HTML'}\n`;
-    prompt += `\t•\tNO SEO maintenance services (ok to include SEO foundations during build)\n`;
-    if (data.maintenance_included) {
-        prompt += `\t•\tMaintenance included - build discount applied\n`;
+    prompt += `\t•\tBuild with vanilla HTML, CSS, and JavaScript only\n`;
+    prompt += `\t•\tNO ongoing SEO maintenance (ok to include SEO foundations during build)\n`;
+    if (data.hosting_maintenance) {
+        prompt += `\t•\tClient wants hosting and maintenance ($250/year) — include in handoff notes\n`;
     }
     prompt += `\t•\tFocus on conversion optimization\n`;
     prompt += `\t•\tEnsure all code is clean, maintainable, and well-commented\n\n`;
@@ -1524,88 +1479,69 @@ function generateCursorPrompt() {
 // ============================================
 
 function submitRequest() {
-    // Validate all steps
     if (!validateCurrentStep()) {
         return;
     }
-    
-    // Save competitor data
+
     saveCompetitorData();
     saveFormData();
-    
+
     const data = getCompleteFormData();
-    const useEndpoint = document.getElementById('useEndpoint')?.checked && ENDPOINT_URL;
-    
-    // If endpoint is enabled, try that first
-    if (useEndpoint) {
-        postToEndpoint(data);
-        return;
-    }
-    
-    // Otherwise, send email
     sendEmailWithPrompt(data);
 }
 
 function sendEmailWithPrompt(data) {
-    const prompt = generateCursorPrompt();
-    
-    // Generate email body with prompt and metadata
-    let emailBody = prompt;
-    emailBody += `\n\n${'='.repeat(50)}\n`;
-    emailBody += `METADATA\n`;
-    emailBody += `${'='.repeat(50)}\n\n`;
-    emailBody += `Platform: ${data.platform ? data.platform.toUpperCase() : 'Not specified'}\n`;
-    emailBody += `Domain: ${data.hasDomain === 'yes' && data.domain ? `${data.domain} (host: ${data.currentHosting === 'other' && data.currentHostingOther ? data.currentHostingOther : formatHosting(data.currentHosting)})` : data.hasDomain === 'no' ? 'No domain yet' : 'Not specified'}\n`;
-    emailBody += `Timeline: ${formatDeadline(data.deadline) || 'Not specified'}\n`;
-    emailBody += `Budget: ${formatBudget(data.budget) || 'Not specified'}\n`;
-    emailBody += `Maintenance: ${data.maintenance_included ? 'Yes (discount applied)' : 'No'}\n`;
-    emailBody += `Contact Email: ${data.email || 'Not provided'}\n`;
-    if (data.phone) {
-        emailBody += `Phone: ${data.phone}\n`;
-    }
-    
+    // Condensed body for email (fits in mailto) — full prompt is in the downloaded .txt file
+    const condensedBody = generateCondensedEmailBody(data);
     const subject = encodeURIComponent(`Website Intake: ${data.businessName || 'New Client'}`);
-    const body = encodeURIComponent(emailBody);
-    
-    // Check mailto length limit (approximately 2000 characters for the full URL)
+    const body = encodeURIComponent(condensedBody);
     const mailtoLink = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
-    
+
+    // Always download the full intake as .txt (prompt + metadata) so customer can attach it
+    downloadFormData();
+
     if (mailtoLink.length > 2000) {
-        // Show modal for too long
         showLongEmailModal(data);
-    } else {
-        // Open email draft
-        try {
-            window.location.href = mailtoLink;
-            showSubmitStatus('Email draft opened. Please press Send.', 'success');
-            
-            // Add retry button in case popup blocker
-            setTimeout(() => {
-                const statusEl = document.getElementById('submitStatus');
-                if (statusEl) {
-                    const retryBtn = document.createElement('button');
-                    retryBtn.className = 'btn btn-primary';
-                    retryBtn.textContent = 'Open email draft';
-                    retryBtn.style.marginTop = 'var(--space-md)';
-                    retryBtn.addEventListener('click', () => {
-                        window.location.href = mailtoLink;
-                    });
-                    statusEl.appendChild(retryBtn);
-                }
-            }, 1000);
-        } catch (e) {
-            showSubmitStatus('Could not open email. Please use "Download .txt" and send manually.', 'error');
-        }
+        return;
     }
+
+    try {
+        window.location.href = mailtoLink;
+        showSubmitStatus('Your request has been sent. We\'ll follow up with next steps shortly.', 'success');
+        setTimeout(() => {
+            const statusEl = document.getElementById('submitStatus');
+            if (statusEl) {
+                const retryBtn = document.createElement('button');
+                retryBtn.className = 'btn btn-primary';
+                retryBtn.textContent = 'Open email again';
+                retryBtn.style.marginTop = 'var(--space-md)';
+                retryBtn.addEventListener('click', () => {
+                    window.location.href = mailtoLink;
+                });
+                statusEl.appendChild(retryBtn);
+            }
+        }, 1000);
+    } catch (e) {
+        showSubmitStatus('Your intake file was downloaded. Please email it to ' + EMAIL_ADDRESS + ' to complete your submission.', 'success');
+    }
+}
+
+function generateCondensedEmailBody(data) {
+    let body = `New website intake from: ${data.businessName || 'New Client'}\n\n`;
+    body += `Contact: ${data.contactName || ''} — ${data.email || ''}\n`;
+    if (data.phone) body += `Phone: ${data.phone}\n`;
+    body += `Pages: ${data.pages === 'one' ? 'Single page' : data.pages === 'multi' ? (data.pageCount || 'N/A') + ' pages' : '—'}\n`;
+    body += `Timeline: ${formatDeadline(data.deadline) || '—'}\n`;
+    body += `Hosting & maintenance: ${data.hosting_maintenance ? 'Yes ($250/yr)' : 'No'}\n\n`;
+    body += `Full details and Cursor prompt are in the attached intake.txt file.`;
+    return body;
 }
 
 function generateShortSummaryEmail(data) {
     let summary = `Website Build Request: ${data.businessName || 'New Client'}\n\n`;
-    summary += `Platform: ${data.platform ? data.platform.toUpperCase() : 'Not specified'}\n`;
-    summary += `Pages: ${data.pages === 'one' ? 'One page' : data.pages === 'multi' ? `${data.pageCount || 'N/A'} pages` : 'Not specified'}\n`;
+    summary += `Pages: ${data.pages === 'one' ? 'Single page' : data.pages === 'multi' ? `${data.pageCount || 'N/A'} pages` : 'Not specified'}\n`;
     summary += `Timeline: ${formatDeadline(data.deadline) || 'Not specified'}\n`;
-    summary += `Budget: ${formatBudget(data.budget) || 'Not specified'}\n`;
-    summary += `Maintenance: ${data.maintenance_included ? 'Yes (discount applied)' : 'No'}\n`;
+    summary += `Hosting & maintenance: ${data.hosting_maintenance ? 'Yes ($250/yr)' : 'No'}\n`;
     summary += `Primary Goal: ${formatGoal(data.primaryGoal, data.primaryGoalOther) || 'Not specified'}\n\n`;
     summary += `The full Cursor Prompt is included in the attached intake.txt file.`;
     
@@ -1615,9 +1551,8 @@ function generateShortSummaryEmail(data) {
 function showLongEmailModal(data) {
     const modal = document.getElementById('emailModal');
     modal.classList.add('active');
-    
-    // Store data for modal buttons
     window._modalData = data;
+    showSubmitStatus('Your intake file was downloaded. Please attach it to the email and send to complete your submission.', 'success');
 }
 
 // ============================================
@@ -1657,7 +1592,6 @@ function initExportHandlers() {
         const closeModal = () => modal.classList.remove('active');
         
         const modalDownloadBtn = document.getElementById('modalDownloadBtn');
-        const modalCopyPromptBtn = document.getElementById('modalCopyPromptBtn');
         const modalCopySummaryBtn = document.getElementById('modalCopySummaryBtn');
         const modalCloseBtn = document.getElementById('modalCloseBtn');
         const modalClose = document.getElementById('modalClose');
@@ -1666,13 +1600,6 @@ function initExportHandlers() {
             modalDownloadBtn.addEventListener('click', () => {
                 downloadFormData();
                 closeModal();
-            });
-        }
-        
-        if (modalCopyPromptBtn) {
-            modalCopyPromptBtn.addEventListener('click', () => {
-                const prompt = generateCursorPrompt();
-                copyToClipboard(prompt, 'Cursor Prompt copied to clipboard!');
             });
         }
         
@@ -1725,45 +1652,6 @@ function downloadFormData() {
     URL.revokeObjectURL(url);
     
     showStatus('File downloaded successfully!', 'success');
-}
-
-function postToEndpoint(data) {
-    if (!ENDPOINT_URL) {
-        showSubmitStatus('Endpoint URL not configured.', 'error');
-        return;
-    }
-
-    if (!data) {
-        data = getCompleteFormData();
-    }
-    
-    const prompt = generateCursorPrompt();
-    const payload = {
-        ...data,
-        cursor_prompt: prompt,
-        submitted_at: new Date().toISOString()
-    };
-    
-    showSubmitStatus('Sending securely...', 'success');
-    
-    fetch(ENDPOINT_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(response => {
-        if (response.ok) {
-            showSubmitStatus('Successfully sent! We\'ll be in touch soon.', 'success');
-        } else {
-            showSubmitStatus('Error sending. Please try the email option instead.', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showSubmitStatus('Error sending. Please try the email option instead.', 'error');
-    });
 }
 
 function showStatus(message, type) {

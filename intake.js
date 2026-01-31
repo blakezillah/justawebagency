@@ -28,7 +28,7 @@ const UNLOCK_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
 // ============================================
 
 let currentStep = 1;
-const totalSteps = 6;
+const totalSteps = 7;
 let formData = {};
 
 // ============================================
@@ -134,8 +134,8 @@ function saveFormData() {
 function populateForm() {
     // Populate all form fields from formData
     Object.keys(formData).forEach(key => {
-        // Skip competitors (handled separately)
-        if (key === 'competitors') return;
+        // Skip dynamic arrays (handled separately)
+        if (['competitors', 'services', 'team', 'testimonials', 'faq'].includes(key)) return;
         
         const element = document.querySelector(`[name="${key}"]`);
         if (!element) return;
@@ -159,6 +159,20 @@ function populateForm() {
         formData.competitors.forEach(comp => {
             addCompetitorField(comp.url, comp.likes);
         });
+    }
+
+    // Populate services, team, testimonials, faq
+    if (formData.services && Array.isArray(formData.services)) {
+        formData.services.forEach(s => addServiceField(s.title, s.description));
+    }
+    if (formData.team && Array.isArray(formData.team)) {
+        formData.team.forEach(t => addTeamField(t.name, t.title, t.bio));
+    }
+    if (formData.testimonials && Array.isArray(formData.testimonials)) {
+        formData.testimonials.forEach(t => addTestimonialField(t.quote, t.author, t.titleCompany));
+    }
+    if (formData.faq && Array.isArray(formData.faq)) {
+        formData.faq.forEach(f => addFaqField(f.question, f.answer));
     }
 
     // Trigger change events to show/hide conditional fields
@@ -210,22 +224,34 @@ function showStep(step) {
 
 function nextStep() {
     if (validateCurrentStep()) {
-        // Save competitor data before moving
         if (currentStep === 3) {
             saveCompetitorData();
             saveFormData();
         }
-        
+        if (currentStep === 5) {
+            saveServiceData();
+            saveTeamData();
+            saveTestimonialData();
+            saveFaqData();
+            saveFormData();
+        }
+
         if (currentStep < totalSteps) {
             currentStep++;
             showStep(currentStep);
             
-            // Re-initialize competitor fields when entering step 3
             if (currentStep === 3) {
                 initCompetitorFields();
             }
-            
+            if (currentStep === 5) {
+                initContentBlockFields();
+            }
             if (currentStep === totalSteps) {
+                saveServiceData();
+                saveTeamData();
+                saveTestimonialData();
+                saveFaqData();
+                saveFormData();
                 generateConfirmation();
             }
         }
@@ -466,6 +492,377 @@ function saveCompetitorData() {
 window.removeCompetitor = removeCompetitor;
 
 // ============================================
+// Content Blocks (Services, Team, Testimonials, FAQ)
+// ============================================
+
+const MAX_SERVICES = 10;
+const MAX_TEAM = 8;
+const MAX_TESTIMONIALS = 8;
+const MAX_FAQ = 12;
+
+let serviceCount = 0;
+let teamCount = 0;
+let testimonialCount = 0;
+let faqCount = 0;
+
+function initContentBlockFields() {
+    initServiceFields();
+    initTeamFields();
+    initTestimonialFields();
+    initFaqFields();
+}
+
+// Services
+function initServiceFields() {
+    const container = document.getElementById('servicesContainer');
+    const addBtn = document.getElementById('addServiceBtn');
+    if (!container || !addBtn) return;
+    serviceCount = container.querySelectorAll('.service-item').length;
+    if (serviceCount === 0 && formData.services && formData.services.length > 0) {
+        formData.services.forEach(s => addServiceField(s.title, s.description));
+    }
+    const newBtn = addBtn.cloneNode(true);
+    addBtn.parentNode.replaceChild(newBtn, addBtn);
+    document.getElementById('addServiceBtn').addEventListener('click', () => {
+        if (serviceCount < MAX_SERVICES) addServiceField();
+        else alert(`Maximum ${MAX_SERVICES} services allowed.`);
+    });
+}
+
+function addServiceField(title = '', description = '') {
+    serviceCount++;
+    const container = document.getElementById('servicesContainer');
+    const id = serviceCount;
+    const item = document.createElement('div');
+    item.className = 'service-item';
+    item.dataset.index = id;
+    item.innerHTML = `
+        <div class="service-item-header">
+            <span class="competitor-item-number">Service ${id}</span>
+            <button type="button" class="repeatable-remove-btn" data-remove="service" data-index="${id}">Remove</button>
+        </div>
+        <div class="form-group">
+            <label>Title</label>
+            <input type="text" name="service_${id}_title" placeholder="e.g., Web Design" value="${(title || '').replace(/"/g, '&quot;')}">
+        </div>
+        <div class="form-group">
+            <label>Short description</label>
+            <textarea name="service_${id}_description" rows="2" placeholder="Brief description">${(description || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+        </div>
+    `;
+    container.appendChild(item);
+    item.querySelector('.repeatable-remove-btn').addEventListener('click', () => removeService(id));
+    item.querySelectorAll('input, textarea').forEach(el => {
+        el.addEventListener('input', () => { saveServiceData(); saveFormData(); });
+    });
+}
+
+function removeService(index) {
+    const item = document.querySelector(`.service-item[data-index="${index}"]`);
+    if (item) {
+        item.remove();
+        serviceCount--;
+        saveServiceData();
+        saveFormData();
+        renumberServices();
+    }
+}
+
+function renumberServices() {
+    document.querySelectorAll('.service-item').forEach((item, idx) => {
+        const newId = idx + 1;
+        item.dataset.index = newId;
+        const numEl = item.querySelector('.competitor-item-number');
+        if (numEl) numEl.textContent = `Service ${newId}`;
+        const titleInput = item.querySelector('input[type="text"]');
+        const descInput = item.querySelector('textarea');
+        if (titleInput) { titleInput.name = `service_${newId}_title`; }
+        if (descInput) { descInput.name = `service_${newId}_description`; }
+        const btn = item.querySelector('.repeatable-remove-btn');
+        if (btn) { btn.dataset.index = newId; }
+    });
+    serviceCount = document.querySelectorAll('.service-item').length;
+}
+
+function saveServiceData() {
+    const services = [];
+    document.querySelectorAll('.service-item').forEach(item => {
+        const titleInput = item.querySelector('input[type="text"]');
+        const descInput = item.querySelector('textarea');
+        const title = titleInput ? titleInput.value.trim() : '';
+        const description = descInput ? descInput.value.trim() : '';
+        if (title || description) services.push({ title, description });
+    });
+    formData.services = services;
+}
+
+// Team
+function initTeamFields() {
+    const container = document.getElementById('teamContainer');
+    const addBtn = document.getElementById('addTeamBtn');
+    if (!container || !addBtn) return;
+    teamCount = container.querySelectorAll('.team-item').length;
+    if (teamCount === 0 && formData.team && formData.team.length > 0) {
+        formData.team.forEach(t => addTeamField(t.name, t.title, t.bio));
+    }
+    const newBtn = addBtn.cloneNode(true);
+    addBtn.parentNode.replaceChild(newBtn, addBtn);
+    document.getElementById('addTeamBtn').addEventListener('click', () => {
+        if (teamCount < MAX_TEAM) addTeamField();
+        else alert(`Maximum ${MAX_TEAM} team members allowed.`);
+    });
+}
+
+function addTeamField(name = '', title = '', bio = '') {
+    teamCount++;
+    const container = document.getElementById('teamContainer');
+    const id = teamCount;
+    const item = document.createElement('div');
+    item.className = 'team-item';
+    item.dataset.index = id;
+    item.innerHTML = `
+        <div class="team-item-header">
+            <span class="competitor-item-number">Team ${id}</span>
+            <button type="button" class="repeatable-remove-btn" data-remove="team" data-index="${id}">Remove</button>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="team_${id}_name" placeholder="Full name" value="${(name || '').replace(/"/g, '&quot;')}">
+            </div>
+            <div class="form-group">
+                <label>Title / role</label>
+                <input type="text" name="team_${id}_title" placeholder="e.g., CEO" value="${(title || '').replace(/"/g, '&quot;')}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Short bio</label>
+            <textarea name="team_${id}_bio" rows="2" placeholder="Brief bio">${(bio || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+        </div>
+    `;
+    container.appendChild(item);
+    item.querySelector('.repeatable-remove-btn').addEventListener('click', () => removeTeam(id));
+    item.querySelectorAll('input, textarea').forEach(el => {
+        el.addEventListener('input', () => { saveTeamData(); saveFormData(); });
+    });
+}
+
+function removeTeam(index) {
+    const item = document.querySelector(`.team-item[data-index="${index}"]`);
+    if (item) {
+        item.remove();
+        teamCount--;
+        saveTeamData();
+        saveFormData();
+        renumberTeam();
+    }
+}
+
+function renumberTeam() {
+    document.querySelectorAll('.team-item').forEach((item, idx) => {
+        const newId = idx + 1;
+        item.dataset.index = newId;
+        const numEl = item.querySelector('.competitor-item-number');
+        if (numEl) numEl.textContent = `Team ${newId}`;
+        const nameInput = item.querySelector('input[name*="_name"]');
+        const titleInput = item.querySelector('input[name*="_title"]');
+        const bioInput = item.querySelector('textarea');
+        if (nameInput) nameInput.name = `team_${newId}_name`;
+        if (titleInput) titleInput.name = `team_${newId}_title`;
+        if (bioInput) bioInput.name = `team_${newId}_bio`;
+    });
+    teamCount = document.querySelectorAll('.team-item').length;
+}
+
+function saveTeamData() {
+    const team = [];
+    document.querySelectorAll('.team-item').forEach(item => {
+        const nameInput = item.querySelector('input[name*="_name"]');
+        const titleInput = item.querySelector('input[name*="_title"]');
+        const bioInput = item.querySelector('textarea');
+        const name = nameInput ? nameInput.value.trim() : '';
+        const title = titleInput ? titleInput.value.trim() : '';
+        const bio = bioInput ? bioInput.value.trim() : '';
+        if (name || title || bio) team.push({ name, title, bio });
+    });
+    formData.team = team;
+}
+
+// Testimonials
+function initTestimonialFields() {
+    const container = document.getElementById('testimonialsContainer');
+    const addBtn = document.getElementById('addTestimonialBtn');
+    if (!container || !addBtn) return;
+    testimonialCount = container.querySelectorAll('.testimonial-item').length;
+    if (testimonialCount === 0 && formData.testimonials && formData.testimonials.length > 0) {
+        formData.testimonials.forEach(t => addTestimonialField(t.quote, t.author, t.titleCompany));
+    }
+    const newBtn = addBtn.cloneNode(true);
+    addBtn.parentNode.replaceChild(newBtn, addBtn);
+    document.getElementById('addTestimonialBtn').addEventListener('click', () => {
+        if (testimonialCount < MAX_TESTIMONIALS) addTestimonialField();
+        else alert(`Maximum ${MAX_TESTIMONIALS} testimonials allowed.`);
+    });
+}
+
+function addTestimonialField(quote = '', author = '', titleCompany = '') {
+    testimonialCount++;
+    const container = document.getElementById('testimonialsContainer');
+    const id = testimonialCount;
+    const item = document.createElement('div');
+    item.className = 'testimonial-item';
+    item.dataset.index = id;
+    item.innerHTML = `
+        <div class="testimonial-item-header">
+            <span class="competitor-item-number">Testimonial ${id}</span>
+            <button type="button" class="repeatable-remove-btn" data-remove="testimonial" data-index="${id}">Remove</button>
+        </div>
+        <div class="form-group">
+            <label>Quote</label>
+            <textarea name="testimonial_${id}_quote" rows="2" placeholder="Customer quote">${(quote || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Author name</label>
+                <input type="text" name="testimonial_${id}_author" placeholder="Name" value="${(author || '').replace(/"/g, '&quot;')}">
+            </div>
+            <div class="form-group">
+                <label>Title / company</label>
+                <input type="text" name="testimonial_${id}_titleCompany" placeholder="e.g., CEO, Acme Inc." value="${(titleCompany || '').replace(/"/g, '&quot;')}">
+            </div>
+        </div>
+    `;
+    container.appendChild(item);
+    item.querySelector('.repeatable-remove-btn').addEventListener('click', () => removeTestimonial(id));
+    item.querySelectorAll('input, textarea').forEach(el => {
+        el.addEventListener('input', () => { saveTestimonialData(); saveFormData(); });
+    });
+}
+
+function removeTestimonial(index) {
+    const item = document.querySelector(`.testimonial-item[data-index="${index}"]`);
+    if (item) {
+        item.remove();
+        testimonialCount--;
+        saveTestimonialData();
+        saveFormData();
+        renumberTestimonials();
+    }
+}
+
+function renumberTestimonials() {
+    document.querySelectorAll('.testimonial-item').forEach((item, idx) => {
+        const newId = idx + 1;
+        item.dataset.index = newId;
+        const numEl = item.querySelector('.competitor-item-number');
+        if (numEl) numEl.textContent = `Testimonial ${newId}`;
+        const quoteInput = item.querySelector('textarea');
+        const authorInput = item.querySelector('input[name*="_author"]');
+        const titleInput = item.querySelector('input[name*="_titleCompany"]');
+        if (quoteInput) quoteInput.name = `testimonial_${newId}_quote`;
+        if (authorInput) authorInput.name = `testimonial_${newId}_author`;
+        if (titleInput) titleInput.name = `testimonial_${newId}_titleCompany`;
+    });
+    testimonialCount = document.querySelectorAll('.testimonial-item').length;
+}
+
+function saveTestimonialData() {
+    const testimonials = [];
+    document.querySelectorAll('.testimonial-item').forEach(item => {
+        const quoteInput = item.querySelector('textarea');
+        const authorInput = item.querySelector('input[name*="_author"]');
+        const titleInput = item.querySelector('input[name*="_titleCompany"]');
+        const quote = quoteInput ? quoteInput.value.trim() : '';
+        const author = authorInput ? authorInput.value.trim() : '';
+        const titleCompany = titleInput ? titleInput.value.trim() : '';
+        if (quote || author || titleCompany) testimonials.push({ quote, author, titleCompany });
+    });
+    formData.testimonials = testimonials;
+}
+
+// FAQ
+function initFaqFields() {
+    const container = document.getElementById('faqContainer');
+    const addBtn = document.getElementById('addFaqBtn');
+    if (!container || !addBtn) return;
+    faqCount = container.querySelectorAll('.faq-item').length;
+    if (faqCount === 0 && formData.faq && formData.faq.length > 0) {
+        formData.faq.forEach(f => addFaqField(f.question, f.answer));
+    }
+    const newBtn = addBtn.cloneNode(true);
+    addBtn.parentNode.replaceChild(newBtn, addBtn);
+    document.getElementById('addFaqBtn').addEventListener('click', () => {
+        if (faqCount < MAX_FAQ) addFaqField();
+        else alert(`Maximum ${MAX_FAQ} FAQ items allowed.`);
+    });
+}
+
+function addFaqField(question = '', answer = '') {
+    faqCount++;
+    const container = document.getElementById('faqContainer');
+    const id = faqCount;
+    const item = document.createElement('div');
+    item.className = 'faq-item';
+    item.dataset.index = id;
+    item.innerHTML = `
+        <div class="faq-item-header">
+            <span class="competitor-item-number">FAQ ${id}</span>
+            <button type="button" class="repeatable-remove-btn" data-remove="faq" data-index="${id}">Remove</button>
+        </div>
+        <div class="form-group">
+            <label>Question</label>
+            <input type="text" name="faq_${id}_question" placeholder="Question" value="${(question || '').replace(/"/g, '&quot;')}">
+        </div>
+        <div class="form-group">
+            <label>Answer</label>
+            <textarea name="faq_${id}_answer" rows="2" placeholder="Answer">${(answer || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+        </div>
+    `;
+    container.appendChild(item);
+    item.querySelector('.repeatable-remove-btn').addEventListener('click', () => removeFaq(id));
+    item.querySelectorAll('input, textarea').forEach(el => {
+        el.addEventListener('input', () => { saveFaqData(); saveFormData(); });
+    });
+}
+
+function removeFaq(index) {
+    const item = document.querySelector(`.faq-item[data-index="${index}"]`);
+    if (item) {
+        item.remove();
+        faqCount--;
+        saveFaqData();
+        saveFormData();
+        renumberFaq();
+    }
+}
+
+function renumberFaq() {
+    document.querySelectorAll('.faq-item').forEach((item, idx) => {
+        const newId = idx + 1;
+        item.dataset.index = newId;
+        const numEl = item.querySelector('.competitor-item-number');
+        if (numEl) numEl.textContent = `FAQ ${newId}`;
+        const qInput = item.querySelector('input');
+        const aInput = item.querySelector('textarea');
+        if (qInput) qInput.name = `faq_${newId}_question`;
+        if (aInput) aInput.name = `faq_${newId}_answer`;
+    });
+    faqCount = document.querySelectorAll('.faq-item').length;
+}
+
+function saveFaqData() {
+    const faq = [];
+    document.querySelectorAll('.faq-item').forEach(item => {
+        const qInput = item.querySelector('input');
+        const aInput = item.querySelector('textarea');
+        const question = qInput ? qInput.value.trim() : '';
+        const answer = aInput ? aInput.value.trim() : '';
+        if (question || answer) faq.push({ question, answer });
+    });
+    formData.faq = faq;
+}
+
+// ============================================
 // Form Field Handlers
 // ============================================
 
@@ -475,9 +872,9 @@ function initFormHandlers() {
     
     // Auto-save on input
     document.querySelectorAll('input, select, textarea').forEach(field => {
-        // Skip competitor fields (handled separately)
-        if (field.name && field.name.startsWith('competitor')) return;
-        
+        // Skip dynamic block fields (handled by their own save functions)
+        if (field.name && (field.name.startsWith('competitor') || field.name.startsWith('service_') || field.name.startsWith('team_') || field.name.startsWith('testimonial_') || field.name.startsWith('faq_'))) return;
+
         field.addEventListener('input', () => {
             saveFieldData(field);
             saveFormData();
@@ -592,6 +989,36 @@ function handleConditionalFields(field) {
         }
     }
 
+    // Show/hide logo URL when has logo
+    if (field.name === 'hasLogo') {
+        const logoUrlGroup = document.getElementById('logoUrlGroup');
+        if (field.value === 'yes' && field.checked) {
+            if (logoUrlGroup) logoUrlGroup.style.display = 'block';
+        } else if (logoUrlGroup) {
+            logoUrlGroup.style.display = 'none';
+        }
+    }
+
+    // Show/hide asset link when has brand assets
+    if (field.name === 'hasBrandAssets') {
+        const assetLinkGroup = document.getElementById('assetLinkGroup');
+        if (field.value === 'yes' && field.checked) {
+            if (assetLinkGroup) assetLinkGroup.style.display = 'block';
+        } else if (assetLinkGroup) {
+            assetLinkGroup.style.display = 'none';
+        }
+    }
+
+    // Show/hide tone of voice other
+    if (field.name === 'toneOfVoice') {
+        const otherGroup = document.getElementById('toneOfVoiceOtherGroup');
+        if (field.value === 'other') {
+            if (otherGroup) otherGroup.style.display = 'block';
+        } else if (otherGroup) {
+            otherGroup.style.display = 'none';
+        }
+    }
+
     // Show/hide platform-specific fields
     const platform = document.querySelector('[name="platform"]:checked');
     if (platform) {
@@ -702,18 +1129,19 @@ function formatContentStatus(value) {
 // ============================================
 
 function getCompleteFormData() {
-    // Save competitor data before getting complete data
     saveCompetitorData();
-    
+    saveServiceData();
+    saveTeamData();
+    saveTestimonialData();
+    saveFaqData();
+
     const data = { ...formData };
-    
-    // Add computed fields
+
     data.platform = data.platform || null;
     data.maintenance_included = data.maintenance === 'on' || data.maintenance === true;
     data.build_discount_applied = data.maintenance_included;
     data.selected_features = Array.isArray(data.features) ? data.features : (data.features ? [data.features] : []);
-    
-    // Ensure arrays are arrays
+
     if (!Array.isArray(data.brandPersonality)) {
         data.brandPersonality = data.brandPersonality ? [data.brandPersonality] : [];
     }
@@ -729,12 +1157,22 @@ function getCompleteFormData() {
     if (!Array.isArray(data.legalNeeds)) {
         data.legalNeeds = data.legalNeeds ? [data.legalNeeds] : [];
     }
-    
-    // Ensure competitors is an array
     if (!Array.isArray(data.competitors)) {
         data.competitors = [];
     }
-    
+    if (!Array.isArray(data.services)) {
+        data.services = [];
+    }
+    if (!Array.isArray(data.team)) {
+        data.team = [];
+    }
+    if (!Array.isArray(data.testimonials)) {
+        data.testimonials = [];
+    }
+    if (!Array.isArray(data.faq)) {
+        data.faq = [];
+    }
+
     return data;
 }
 
@@ -742,21 +1180,89 @@ function getCompleteFormData() {
 // Cursor Prompt Generation
 // ============================================
 
+function formatTone(value, other) {
+    if (value === 'other' && other) return other;
+    const map = {
+        professional: 'Professional',
+        friendly: 'Friendly',
+        casual: 'Casual',
+        technical: 'Technical / Expert',
+        luxury: 'Luxury / Premium',
+        playful: 'Playful',
+        other: 'Other'
+    };
+    return map[value] || value;
+}
+
 function generateCursorPrompt() {
     const data = getCompleteFormData();
-    
+
     let prompt = `You are an expert creative front end engineer and designer. Build a premium ${data.pages === 'one' ? 'one page' : 'multi-page'} marketing site for ${data.businessName || 'this business'}${data.domain ? ` (${data.domain})` : ''} using ${data.platform === 'html' ? 'ONLY vanilla HTML, CSS, and JavaScript (no frameworks, no build tools, no external libraries)' : data.platform === 'wordpress' ? 'WordPress with a custom theme' : 'Shopify with a custom theme'}.\n\n`;
+
+    // Business context
+    prompt += `Business context\n\n`;
+    prompt += `\t•\tName: ${data.businessName || 'Business name'}\n`;
+    if (data.industry) prompt += `\t•\tIndustry: ${data.industry}\n`;
+    if (data.tagline) prompt += `\t•\tTagline: "${data.tagline}"\n`;
+    prompt += `\t•\tPositioning: "${data.businessDescription || 'Business description'}"\n`;
+    if (data.extendedDescription) {
+        prompt += `\t•\tExtended description: ${data.extendedDescription}\n`;
+    }
+    if (data.fullAddress) prompt += `\t•\tAddress (footer/contact): ${data.fullAddress}\n`;
+    if (data.socialLinkedIn || data.socialInstagram || data.socialTwitter || data.socialFacebook) {
+        prompt += `\t•\tSocial links:`;
+        if (data.socialLinkedIn) prompt += ` LinkedIn ${data.socialLinkedIn}`;
+        if (data.socialInstagram) prompt += ` Instagram ${data.socialInstagram}`;
+        if (data.socialTwitter) prompt += ` Twitter/X ${data.socialTwitter}`;
+        if (data.socialFacebook) prompt += ` Facebook ${data.socialFacebook}`;
+        prompt += `\n`;
+    }
+    prompt += `\n`;
 
     // Brand and vibe
     prompt += `Brand and vibe\n\n`;
-    prompt += `\t•\tName: ${data.businessName || 'Business name'}\n`;
-    prompt += `\t•\tPositioning: "${data.businessDescription || 'Business description'}"\n`;
-    prompt += `\t•\tTone: ${Array.isArray(data.brandPersonality) ? data.brandPersonality.join(', ') : data.brandPersonality || 'professional'}, conversion-focused\n`;
+    prompt += `\t•\tTone of voice: ${formatTone(data.toneOfVoice, data.toneOfVoiceOther) || 'professional'}, conversion-focused\n`;
+    prompt += `\t•\tPersonality: ${Array.isArray(data.brandPersonality) ? data.brandPersonality.join(', ') : data.brandPersonality || 'professional'}\n`;
     prompt += `\t•\tVisual style: ${data.typographyVibe || 'clean'}, modern, smooth motion, excellent typography\n`;
-    if (data.colorPreferences) {
-        prompt += `\t•\tColor: ${data.colorPreferences}\n`;
+    if (data.primaryColor || data.secondaryColor || data.colorPreferences) {
+        prompt += `\t•\tColors:`;
+        if (data.primaryColor) prompt += ` Primary ${data.primaryColor}`;
+        if (data.secondaryColor) prompt += ` Secondary ${data.secondaryColor}`;
+        if (data.colorPreferences) prompt += ` Notes: ${data.colorPreferences}`;
+        prompt += `\n`;
     }
-    prompt += `\t•\tUse system fonts only, but craft a strong type scale and spacing system\n\n`;
+    if (data.fontPreference) {
+        prompt += `\t•\tFonts: ${data.fontPreference}\n`;
+    } else {
+        prompt += `\t•\tUse system fonts only, but craft a strong type scale and spacing system\n`;
+    }
+    if (data.hasLogo === 'yes' && data.logoUrl) {
+        prompt += `\t•\tLogo URL (use this asset): ${data.logoUrl}\n`;
+    }
+    if (data.hasBrandAssets === 'yes' && data.assetLink) {
+        prompt += `\t•\tBrand assets / copy folder: ${data.assetLink}\n`;
+    }
+    if (data.imageStyle) {
+        const imageStyleMap = { photography: 'Real photography', illustration: 'Illustration', mixed: 'Mixed (photos + graphics)', stock: 'Stock imagery OK', custom: 'Client-provided only', minimal: 'Minimal / few images' };
+        prompt += `\t•\tImage style: ${imageStyleMap[data.imageStyle] || data.imageStyle}\n`;
+    }
+    prompt += `\n`;
+
+    // Hero copy (if provided)
+    if (data.heroHeadline || data.heroSubhead) {
+        prompt += `Hero section copy\n\n`;
+        if (data.heroHeadline) prompt += `\t•\tHeadline: "${data.heroHeadline}"\n`;
+        if (data.heroSubhead) prompt += `\t•\tSubhead: ${data.heroSubhead}\n`;
+        prompt += `\n`;
+    }
+
+    // Messaging and differentiators
+    if (data.keyDifferentiators || data.painPoints) {
+        prompt += `Messaging and differentiators\n\n`;
+        if (data.keyDifferentiators) prompt += `\t•\tUSPs / differentiators: ${data.keyDifferentiators}\n`;
+        if (data.painPoints) prompt += `\t•\tPain points to address: ${data.painPoints}\n`;
+        prompt += `\n`;
+    }
 
     // Core requirements
     prompt += `Core requirements\n\n`;
@@ -835,7 +1341,59 @@ function generateCursorPrompt() {
         prompt += `\n`;
     }
 
-    // Content
+    // Content copy (use this to flesh out the site)
+    if (data.aboutCopy || data.keyMessaging) {
+        prompt += `Content copy\n\n`;
+        if (data.aboutCopy) prompt += `\t•\tAbout us: ${data.aboutCopy}\n`;
+        if (data.keyMessaging) prompt += `\t•\tKey messaging (bullets):\n${(data.keyMessaging || '').split('\n').filter(Boolean).map(line => `\t\t•\t${line.trim()}`).join('\n')}\n`;
+        prompt += `\n`;
+    }
+
+    // Services / offerings
+    if (data.services && data.services.length > 0) {
+        prompt += `Services / offerings (use these for Services section or pricing tiers)\n\n`;
+        data.services.forEach(s => {
+            prompt += `\t•\t${s.title || 'Service'}: ${s.description || '—'}\n`;
+        });
+        prompt += `\n`;
+    }
+
+    // Team
+    if (data.team && data.team.length > 0) {
+        prompt += `Team (use for Team or About section)\n\n`;
+        data.team.forEach(t => {
+            prompt += `\t•\t${t.name || 'Name'} — ${t.title || 'Title'}: ${t.bio || '—'}\n`;
+        });
+        prompt += `\n`;
+    }
+
+    // Testimonials
+    if (data.testimonials && data.testimonials.length > 0) {
+        prompt += `Testimonials (use for social proof section)\n\n`;
+        data.testimonials.forEach(t => {
+            prompt += `\t•\t"${t.quote || ''}" — ${t.author || 'Author'}, ${t.titleCompany || ''}\n`;
+        });
+        prompt += `\n`;
+    }
+
+    // FAQ
+    if (data.faq && data.faq.length > 0) {
+        prompt += `FAQ (use for FAQ section)\n\n`;
+        data.faq.forEach(f => {
+            prompt += `\t•\tQ: ${f.question || ''}\n\t\tA: ${f.answer || ''}\n`;
+        });
+        prompt += `\n`;
+    }
+
+    // SEO
+    if (data.seoKeywords || data.metaDescription) {
+        prompt += `SEO\n\n`;
+        if (data.seoKeywords) prompt += `\t•\tFocus keywords: ${data.seoKeywords}\n`;
+        if (data.metaDescription) prompt += `\t•\tMeta description: ${data.metaDescription}\n`;
+        prompt += `\n`;
+    }
+
+    // Content status / placeholders
     if (data.contentStatus !== 'ready') {
         prompt += `Content Placeholders\n\n`;
         prompt += `\t•\tContent status: ${formatContentStatus(data.contentStatus)}\n`;
@@ -1154,7 +1712,8 @@ function resetForm() {
         document.getElementById('intakeForm').reset();
         currentStep = 1;
         showStep(1);
-        document.getElementById('reviewSummary').innerHTML = '';
+        const summaryCard = document.getElementById('summaryCard');
+        if (summaryCard) summaryCard.innerHTML = '';
     }
 }
 

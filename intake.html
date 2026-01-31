@@ -170,7 +170,7 @@
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <p class="progress-text" id="progressText">Step 1 of 6</p>
+            <p class="progress-text" id="progressText">Step 1 of 7</p>
         </div>
 
         <!-- Form Steps -->
@@ -213,9 +213,49 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label for="industry">Industry / Vertical</label>
+                    <input type="text" id="industry" name="industry" placeholder="e.g., Legal, Healthcare, SaaS, E-commerce">
+                </div>
+                <div class="form-group">
+                    <label for="tagline">Tagline (optional)</label>
+                    <input type="text" id="tagline" name="tagline" placeholder="Short phrase that appears in hero or header">
+                </div>
+                <div class="form-group">
                     <label for="businessDescription">One sentence description of the business *</label>
-                    <textarea id="businessDescription" name="businessDescription" rows="3" required></textarea>
+                    <textarea id="businessDescription" name="businessDescription" rows="3" required placeholder="What does the business do and for whom?"></textarea>
                     <span class="form-error" id="businessDescriptionError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="extendedDescription">Extended description (2–3 sentences or paragraph)</label>
+                    <textarea id="extendedDescription" name="extendedDescription" rows="4" placeholder="Used for About section and meta descriptions. Include value proposition and key differentiators."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="fullAddress">Full address (for footer / contact)</label>
+                    <textarea id="fullAddress" name="fullAddress" rows="2" placeholder="Street, City, State, ZIP, Country"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Social / external links</label>
+                    <p class="helper-text">URLs for footer or contact. Leave blank if not applicable.</p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="socialLinkedIn">LinkedIn</label>
+                            <input type="url" id="socialLinkedIn" name="socialLinkedIn" placeholder="https://linkedin.com/company/...">
+                        </div>
+                        <div class="form-group">
+                            <label for="socialInstagram">Instagram</label>
+                            <input type="url" id="socialInstagram" name="socialInstagram" placeholder="https://instagram.com/...">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="socialTwitter">Twitter / X</label>
+                            <input type="url" id="socialTwitter" name="socialTwitter" placeholder="https://twitter.com/...">
+                        </div>
+                        <div class="form-group">
+                            <label for="socialFacebook">Facebook</label>
+                            <input type="url" id="socialFacebook" name="socialFacebook" placeholder="https://facebook.com/...">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -318,6 +358,32 @@
                     <span class="form-error" id="topActionsError"></span>
                 </div>
                 <div class="form-group">
+                    <label for="toneOfVoice">Tone of voice *</label>
+                    <select id="toneOfVoice" name="toneOfVoice" required>
+                        <option value="">Select tone</option>
+                        <option value="professional">Professional</option>
+                        <option value="friendly">Friendly</option>
+                        <option value="casual">Casual</option>
+                        <option value="technical">Technical / Expert</option>
+                        <option value="luxury">Luxury / Premium</option>
+                        <option value="playful">Playful</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <span class="form-error" id="toneOfVoiceError"></span>
+                </div>
+                <div class="form-group" id="toneOfVoiceOtherGroup" style="display: none;">
+                    <label for="toneOfVoiceOther">Please specify</label>
+                    <input type="text" id="toneOfVoiceOther" name="toneOfVoiceOther">
+                </div>
+                <div class="form-group">
+                    <label for="keyDifferentiators">Key differentiators / unique selling points</label>
+                    <textarea id="keyDifferentiators" name="keyDifferentiators" rows="3" placeholder="What makes you different? Bullet points or short paragraphs."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="painPoints">Pain points the site should address</label>
+                    <textarea id="painPoints" name="painPoints" rows="3" placeholder="Visitor concerns or objections the copy and design should speak to"></textarea>
+                </div>
+                <div class="form-group">
                     <label>Competitor Sites (for inspiration reference only)</label>
                     <p class="helper-text">Add competitor URLs as inspiration references. These are used for design inspiration only, not copied or scraped.</p>
                     <div id="competitorsContainer">
@@ -372,9 +438,19 @@
                     <label for="brandPersonalityOther">Please specify</label>
                     <input type="text" id="brandPersonalityOther" name="brandPersonalityOther">
                 </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="primaryColor">Primary color (hex or name)</label>
+                        <input type="text" id="primaryColor" name="primaryColor" placeholder="e.g., #6366f1 or Navy">
+                    </div>
+                    <div class="form-group">
+                        <label for="secondaryColor">Secondary color (hex or name)</label>
+                        <input type="text" id="secondaryColor" name="secondaryColor" placeholder="e.g., #10b981 or White">
+                    </div>
+                </div>
                 <div class="form-group">
-                    <label for="colorPreferences">Color Preferences</label>
-                    <input type="text" id="colorPreferences" name="colorPreferences" placeholder="e.g., Blue and white, or #6366f1">
+                    <label for="colorPreferences">Additional color notes</label>
+                    <input type="text" id="colorPreferences" name="colorPreferences" placeholder="e.g., Blue and white, avoid red">
                 </div>
                 <div class="form-group">
                     <label for="typographyVibe">Typography Vibe *</label>
@@ -406,6 +482,11 @@
                     </div>
                     <span class="form-error" id="hasLogoError"></span>
                 </div>
+                <div class="form-group" id="logoUrlGroup" style="display: none;">
+                    <label for="logoUrl">Logo URL (hosted image link)</label>
+                    <input type="url" id="logoUrl" name="logoUrl" placeholder="https://example.com/logo.svg or direct image URL">
+                    <p class="helper-text">Use a publicly accessible URL so the build can reference it.</p>
+                </div>
                 <div class="form-group">
                     <label>Do you have brand assets? *</label>
                     <div class="radio-group">
@@ -419,6 +500,11 @@
                         </label>
                     </div>
                     <span class="form-error" id="hasBrandAssetsError"></span>
+                </div>
+                <div class="form-group" id="assetLinkGroup" style="display: none;">
+                    <label for="assetLink">Asset package link (Google Drive, Dropbox, etc.)</label>
+                    <input type="url" id="assetLink" name="assetLink" placeholder="https://drive.google.com/... or shared folder URL">
+                    <p class="helper-text">Link to folder containing logos, images, brand guidelines, or copy.</p>
                 </div>
                 <div class="form-group">
                     <label for="contentStatus">Content Status *</label>
@@ -477,13 +563,85 @@
                     <input type="text" id="sectionsOtherText" name="sectionsOtherText">
                 </div>
                 <div class="form-group">
+                    <label for="heroHeadline">Hero headline (optional)</label>
+                    <input type="text" id="heroHeadline" name="heroHeadline" placeholder="Main headline above the fold">
+                </div>
+                <div class="form-group">
+                    <label for="heroSubhead">Hero subhead (optional)</label>
+                    <textarea id="heroSubhead" name="heroSubhead" rows="2" placeholder="Supporting line under the headline"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="fontPreference">Font preference</label>
+                    <input type="text" id="fontPreference" name="fontPreference" placeholder="e.g., Inter, system fallback — or leave blank for system fonts only">
+                </div>
+                <div class="form-group">
+                    <label for="imageStyle">Image / visual style</label>
+                    <select id="imageStyle" name="imageStyle">
+                        <option value="">Select style</option>
+                        <option value="photography">Photography (real photos)</option>
+                        <option value="illustration">Illustration</option>
+                        <option value="mixed">Mixed (photos + graphics)</option>
+                        <option value="stock">Stock imagery OK</option>
+                        <option value="custom">Custom / client-provided only</option>
+                        <option value="minimal">Minimal (few or no images)</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="requiredCTAs">Required CTAs</label>
                     <textarea id="requiredCTAs" name="requiredCTAs" rows="3" placeholder="e.g., Book a call, Download guide, Get started"></textarea>
                 </div>
             </div>
 
-            <!-- Step 5: Features and Integrations -->
+            <!-- Step 5: Content & Assets -->
             <div class="form-step" id="step5" data-step="5">
+                <h2>Content & Assets</h2>
+                <p class="step-intro">Provide copy and asset links so we can generate a fully fleshed-out site. All fields are optional but improve the final prompt.</p>
+                <div class="form-group">
+                    <label for="aboutCopy">About us (full paragraph)</label>
+                    <textarea id="aboutCopy" name="aboutCopy" rows="5" placeholder="Paste or write the main About section copy. Used for About page or About section."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="keyMessaging">Key messaging / value props (bullets)</label>
+                    <textarea id="keyMessaging" name="keyMessaging" rows="4" placeholder="One per line, e.g.:&#10;• Trusted by 500+ companies&#10;• 24/7 support&#10;• No long-term contracts"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Services or offerings</label>
+                    <p class="helper-text">Add each service or product with a short description. Used for Services section or pricing tiers.</p>
+                    <div id="servicesContainer">
+                        <!-- Service items added dynamically -->
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="addServiceBtn" style="margin-top: var(--space-md);">Add service / offering</button>
+                </div>
+                <div class="form-group">
+                    <label>Team members</label>
+                    <p class="helper-text">Name, title, and short bio for each. Used for Team or About section.</p>
+                    <div id="teamContainer"></div>
+                    <button type="button" class="btn btn-secondary" id="addTeamBtn" style="margin-top: var(--space-md);">Add team member</button>
+                </div>
+                <div class="form-group">
+                    <label>Testimonials</label>
+                    <p class="helper-text">Quote, author name, and title/company. Used for social proof section.</p>
+                    <div id="testimonialsContainer"></div>
+                    <button type="button" class="btn btn-secondary" id="addTestimonialBtn" style="margin-top: var(--space-md);">Add testimonial</button>
+                </div>
+                <div class="form-group">
+                    <label>FAQ (questions and answers)</label>
+                    <p class="helper-text">Used for FAQ section. Add question and answer pairs.</p>
+                    <div id="faqContainer"></div>
+                    <button type="button" class="btn btn-secondary" id="addFaqBtn" style="margin-top: var(--space-md);">Add FAQ</button>
+                </div>
+                <div class="form-group">
+                    <label for="seoKeywords">SEO focus keywords (optional)</label>
+                    <input type="text" id="seoKeywords" name="seoKeywords" placeholder="e.g., web design Austin, small business website">
+                </div>
+                <div class="form-group">
+                    <label for="metaDescription">Meta description (optional)</label>
+                    <textarea id="metaDescription" name="metaDescription" rows="2" placeholder="155 characters or less for search results"></textarea>
+                </div>
+            </div>
+
+            <!-- Step 6: Features and Integrations -->
+            <div class="form-step" id="step6" data-step="6">
                 <h2>Features and Integrations</h2>
                 <div class="form-group">
                     <label>Feature Toggles</label>
@@ -620,8 +778,8 @@
                 </div>
             </div>
 
-            <!-- Step 6: Confirmation -->
-            <div class="form-step" id="step6" data-step="6">
+            <!-- Step 7: Confirmation -->
+            <div class="form-step" id="step7" data-step="7">
                 <div class="confirmation-content">
                     <h2>You're all set</h2>
                     <p class="confirmation-message">Your website build request has been prepared. We'll review it and get back to you soon.</p>

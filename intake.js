@@ -271,27 +271,37 @@ function prevStep() {
 
 function validateCurrentStep() {
     const stepEl = document.getElementById(`step${currentStep}`);
+    if (!stepEl) return false;
+
     const requiredFields = stepEl.querySelectorAll('[required]');
     let isValid = true;
+    const validatedGroups = new Set();
 
     requiredFields.forEach(field => {
-        const errorEl = document.getElementById(`${field.name}Error`) || field.parentElement.querySelector('.form-error');
-        
-        // Remove error class
+        // Skip required fields inside a hidden container (e.g. domain when "no domain")
+        const hiddenParent = field.closest('[style*="display: none"]');
+        if (hiddenParent) return;
+
+        const errorEl = document.getElementById(`${field.name}Error`) || (field.closest('.form-group') && field.closest('.form-group').querySelector('.form-error'));
+
+        // Validate each radio/checkbox group only once (avoid clearing error on second element)
+        if (field.type === 'radio' || (field.type === 'checkbox' && field.name && !field.name.includes('[]'))) {
+            if (validatedGroups.has(field.name)) return;
+            validatedGroups.add(field.name);
+        }
+
         field.classList.remove('error');
         if (errorEl) errorEl.textContent = '';
 
-        // Validate field
         if (field.type === 'checkbox' || field.type === 'radio') {
             const group = stepEl.querySelectorAll(`[name="${field.name}"]`);
             const checked = Array.from(group).some(f => f.checked);
             if (!checked) {
                 isValid = false;
-                field.classList.add('error');
+                group.forEach(f => f.classList.add('error'));
                 if (errorEl) errorEl.textContent = 'This field is required';
             }
         } else if (field.type === 'checkbox' && field.name.includes('[]')) {
-            // Handle checkbox groups
             const group = stepEl.querySelectorAll(`[name="${field.name}"]`);
             const checked = Array.from(group).some(f => f.checked);
             if (!checked && field.required) {
@@ -887,17 +897,26 @@ function initFormHandlers() {
         });
     });
 
-    // Navigation buttons
-    document.getElementById('nextBtn').addEventListener('click', nextStep);
-    document.getElementById('prevBtn').addEventListener('click', prevStep);
+    // Form submission: Enter key advances step when not on last step, otherwise submits
+    const intakeForm = document.getElementById('intakeForm');
+    if (intakeForm) {
+        intakeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (currentStep < totalSteps) {
+                nextStep();
+            } else {
+                submitRequest();
+            }
+        });
+    }
 
-    // Form submission - submit request
-    document.getElementById('intakeForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        submitRequest();
-    });
-    
-    // Submit request button
+    // Navigation buttons
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    if (nextBtn) nextBtn.addEventListener('click', (e) => { e.preventDefault(); nextStep(); });
+    if (prevBtn) prevBtn.addEventListener('click', (e) => { e.preventDefault(); prevStep(); });
+
+    // Submit request button (on confirmation step)
     const submitBtn = document.getElementById('submitRequestBtn');
     if (submitBtn) {
         submitBtn.addEventListener('click', (e) => {

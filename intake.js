@@ -31,6 +31,13 @@ let currentStep = 1;
 const totalSteps = 7;
 let formData = {};
 
+// Counters for dynamic blocks (must be declared before initAccessGate runs)
+let competitorCount = 0;
+let serviceCount = 0;
+let teamCount = 0;
+let testimonialCount = 0;
+let faqCount = 0;
+
 // ============================================
 // Access Gate
 // ============================================
@@ -366,7 +373,6 @@ function isValidUrl(url) {
 // Competitor Management
 // ============================================
 
-let competitorCount = 0;
 const MAX_COMPETITORS = 5;
 
 function initCompetitorFields() {
@@ -509,11 +515,6 @@ const MAX_SERVICES = 10;
 const MAX_TEAM = 8;
 const MAX_TESTIMONIALS = 8;
 const MAX_FAQ = 12;
-
-let serviceCount = 0;
-let teamCount = 0;
-let testimonialCount = 0;
-let faqCount = 0;
 
 function initContentBlockFields() {
     initServiceFields();

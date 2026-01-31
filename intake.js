@@ -175,9 +175,9 @@ function populateForm() {
         formData.faq.forEach(f => addFaqField(f.question, f.answer));
     }
 
-    // Trigger change events to show/hide conditional fields
+    // Trigger change events to show/hide conditional fields (for radios, only the checked one)
     document.querySelectorAll('input, select, textarea').forEach(el => {
-        if (el.value && !el.name.startsWith('competitor')) {
+        if (el.value && !el.name.startsWith('competitor') && (el.type !== 'radio' || el.checked)) {
             el.dispatchEvent(new Event('change', { bubbles: true }));
         }
     });
@@ -928,6 +928,39 @@ function saveFieldData(field) {
 }
 
 function handleConditionalFields(field) {
+    // Show/hide domain and hosting fields based on hasDomain
+    if (field.name === 'hasDomain') {
+        const domainFieldsGroup = document.getElementById('domainFieldsGroup');
+        const hostingGroup = document.getElementById('hostingGroup');
+        const currentHostingOtherGroup = document.getElementById('currentHostingOtherGroup');
+        const noDomainNote = document.getElementById('noDomainNote');
+        const domainInput = document.getElementById('domain');
+        const currentHostingSelect = document.getElementById('currentHosting');
+        const hasYes = field.value === 'yes' && field.checked;
+        if (domainFieldsGroup) domainFieldsGroup.style.display = hasYes ? 'block' : 'none';
+        if (hostingGroup) hostingGroup.style.display = hasYes ? 'block' : 'none';
+        if (noDomainNote) noDomainNote.style.display = hasYes ? 'none' : 'block';
+        if (domainInput) {
+            domainInput.required = hasYes;
+            if (!hasYes) domainInput.value = '';
+        }
+        if (currentHostingSelect) {
+            currentHostingSelect.required = hasYes;
+            if (!hasYes) currentHostingSelect.value = '';
+        }
+        if (currentHostingOtherGroup) currentHostingOtherGroup.style.display = 'none';
+    }
+
+    // Show/hide current hosting "other" text
+    if (field.name === 'currentHosting') {
+        const otherGroup = document.getElementById('currentHostingOtherGroup');
+        if (field.value === 'other') {
+            if (otherGroup) otherGroup.style.display = 'block';
+        } else if (otherGroup) {
+            otherGroup.style.display = 'none';
+        }
+    }
+
     // Show/hide page count based on pages selection
     if (field.name === 'pages') {
         const pageCountGroup = document.getElementById('pageCountGroup');
@@ -1050,6 +1083,10 @@ function generateConfirmation() {
     // Generate summary card
     let html = '';
     html += `<div class="summary-item"><span class="summary-item-label">Business Name</span><span class="summary-item-value">${data.businessName || 'Not provided'}</span></div>`;
+    const domainSummary = data.hasDomain === 'yes' && data.domain
+        ? `${data.domain} (${data.currentHosting ? (data.currentHosting === 'other' && data.currentHostingOther ? data.currentHostingOther : formatHosting(data.currentHosting)) : 'host not specified'})`
+        : (data.hasDomain === 'no' ? 'No domain yet (placeholder / register later)' : 'Not specified');
+    html += `<div class="summary-item"><span class="summary-item-label">Domain</span><span class="summary-item-value">${domainSummary}</span></div>`;
     html += `<div class="summary-item"><span class="summary-item-label">Platform</span><span class="summary-item-value">${data.platform ? data.platform.toUpperCase() : 'Not provided'}</span></div>`;
     html += `<div class="summary-item"><span class="summary-item-label">Pages</span><span class="summary-item-value">${data.pages === 'one' ? 'One page' : data.pages === 'multi' ? `${data.pageCount || 'N/A'} pages` : 'Not provided'}</span></div>`;
     html += `<div class="summary-item"><span class="summary-item-label">Timeline</span><span class="summary-item-value">${formatDeadline(data.deadline) || 'Not provided'}</span></div>`;
@@ -1090,6 +1127,21 @@ function formatDeadline(value) {
         '2weeks': '2 weeks',
         '1month': '1 month',
         'asap': 'ASAP'
+    };
+    return map[value] || value;
+}
+
+function formatHosting(value) {
+    const map = {
+        'godaddy': 'GoDaddy',
+        'namecheap': 'Namecheap',
+        'cloudflare': 'Cloudflare',
+        'google': 'Google Domains / Squarespace',
+        'wpengine': 'WP Engine',
+        'kinsta': 'Kinsta',
+        'netlify': 'Netlify',
+        'vercel': 'Vercel',
+        'other': 'Other'
     };
     return map[value] || value;
 }
@@ -1197,11 +1249,20 @@ function formatTone(value, other) {
 function generateCursorPrompt() {
     const data = getCompleteFormData();
 
-    let prompt = `You are an expert creative front end engineer and designer. Build a premium ${data.pages === 'one' ? 'one page' : 'multi-page'} marketing site for ${data.businessName || 'this business'}${data.domain ? ` (${data.domain})` : ''} using ${data.platform === 'html' ? 'ONLY vanilla HTML, CSS, and JavaScript (no frameworks, no build tools, no external libraries)' : data.platform === 'wordpress' ? 'WordPress with a custom theme' : 'Shopify with a custom theme'}.\n\n`;
+    let prompt = `You are an expert creative front end engineer and designer. Build a premium ${data.pages === 'one' ? 'one page' : 'multi-page'} marketing site for ${data.businessName || 'this business'}${data.hasDomain === 'yes' && data.domain ? ` (${data.domain})` : ''} using ${data.platform === 'html' ? 'ONLY vanilla HTML, CSS, and JavaScript (no frameworks, no build tools, no external libraries)' : data.platform === 'wordpress' ? 'WordPress with a custom theme' : 'Shopify with a custom theme'}.\n\n`;
 
     // Business context
     prompt += `Business context\n\n`;
     prompt += `\t•\tName: ${data.businessName || 'Business name'}\n`;
+    if (data.hasDomain === 'yes' && data.domain) {
+        prompt += `\t•\tDomain: ${data.domain}\n`;
+        if (data.currentHosting) {
+            const hostingLabel = data.currentHosting === 'other' && data.currentHostingOther ? data.currentHostingOther : formatHosting(data.currentHosting);
+            prompt += `\t•\tCurrently hosted at: ${hostingLabel}\n`;
+        }
+    } else {
+        prompt += `\t•\tDomain: Client does not have a domain yet (use placeholder e.g. yourbusiness.com for build; they will register or point later)\n`;
+    }
     if (data.industry) prompt += `\t•\tIndustry: ${data.industry}\n`;
     if (data.tagline) prompt += `\t•\tTagline: "${data.tagline}"\n`;
     prompt += `\t•\tPositioning: "${data.businessDescription || 'Business description'}"\n`;
@@ -1474,6 +1535,7 @@ function sendEmailWithPrompt(data) {
     emailBody += `METADATA\n`;
     emailBody += `${'='.repeat(50)}\n\n`;
     emailBody += `Platform: ${data.platform ? data.platform.toUpperCase() : 'Not specified'}\n`;
+    emailBody += `Domain: ${data.hasDomain === 'yes' && data.domain ? `${data.domain} (host: ${data.currentHosting === 'other' && data.currentHostingOther ? data.currentHostingOther : formatHosting(data.currentHosting)})` : data.hasDomain === 'no' ? 'No domain yet' : 'Not specified'}\n`;
     emailBody += `Timeline: ${formatDeadline(data.deadline) || 'Not specified'}\n`;
     emailBody += `Budget: ${formatBudget(data.budget) || 'Not specified'}\n`;
     emailBody += `Maintenance: ${data.maintenance_included ? 'Yes (discount applied)' : 'No'}\n`;

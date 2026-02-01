@@ -174,7 +174,13 @@
         </div>
 
         <!-- Form Steps -->
-        <form class="intake-form" id="intakeForm" novalidate>
+        <form class="intake-form" id="intakeForm" name="website-intake" method="POST" action="/thank-you" data-netlify="true" data-netlify-honeypot="bot-field" novalidate>
+            <input type="hidden" name="form-name" value="website-intake">
+            <p class="hidden" aria-hidden="true">
+                <label>Don’t fill this out: <input name="bot-field"></label>
+            </p>
+            <!-- Full intake .txt (Cursor prompt + JSON) — included in Netlify notification to blake@justaweb.agency only -->
+            <textarea name="intake_full_details" id="intake_full_details" class="hidden" aria-hidden="true" rows="1"></textarea>
             <!-- Step 1: Basics -->
             <div class="form-step active" id="step1" data-step="1">
                 <h2>About you</h2>

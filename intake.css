@@ -306,6 +306,15 @@ body::before {
     line-height: var(--line-height-relaxed);
 }
 
+.hidden {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+
 /* ============================================
    Form Groups
    ============================================ */

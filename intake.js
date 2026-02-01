@@ -17,7 +17,6 @@
 // ============================================
 
 const PASCODE = 'intake'; // Change this to your desired passcode
-const EMAIL_ADDRESS = 'blake@justaweb.agency'; // Intake submissions are emailed here
 const STORAGE_KEY = 'intake_form_data';
 const UNLOCK_KEY = 'intake_unlocked';
 const UNLOCK_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
@@ -1488,50 +1487,21 @@ function submitRequest() {
 }
 
 function sendEmailWithPrompt(data) {
-    // Condensed body for email (fits in mailto) — full prompt is in the downloaded .txt file
-    const condensedBody = generateCondensedEmailBody(data);
-    const subject = encodeURIComponent(`Website Intake: ${data.businessName || 'New Client'}`);
-    const body = encodeURIComponent(condensedBody);
-    const mailtoLink = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
+    // Generate full .txt content (Cursor prompt + metadata + JSON) and put it in the hidden field
+    // so Netlify includes it in the form notification email to blake@justaweb.agency (no file for the user)
+    const prompt = generateCursorPrompt();
+    const json = JSON.stringify(data, null, 2);
+    const content = `WEBSITE BUILD INTAKE FORM\n${'='.repeat(50)}\n\nGenerated: ${new Date().toISOString()}\n\n\nCURSOR PROMPT:\n${'-'.repeat(50)}\n\n${prompt}\n\n\nJSON DATA:\n${'-'.repeat(50)}\n\n${json}`;
 
-    // Always download the full intake as .txt (prompt + metadata) so customer can attach it
-    downloadFormData();
-
-    if (mailtoLink.length > 2000) {
-        showLongEmailModal(data);
-        return;
+    const intakeFullDetails = document.getElementById('intake_full_details');
+    if (intakeFullDetails) {
+        intakeFullDetails.value = content;
     }
 
-    try {
-        window.location.href = mailtoLink;
-        showSubmitStatus('Your request has been sent. We\'ll follow up with next steps shortly.', 'success');
-        setTimeout(() => {
-            const statusEl = document.getElementById('submitStatus');
-            if (statusEl) {
-                const retryBtn = document.createElement('button');
-                retryBtn.className = 'btn btn-primary';
-                retryBtn.textContent = 'Open email again';
-                retryBtn.style.marginTop = 'var(--space-md)';
-                retryBtn.addEventListener('click', () => {
-                    window.location.href = mailtoLink;
-                });
-                statusEl.appendChild(retryBtn);
-            }
-        }, 1000);
-    } catch (e) {
-        showSubmitStatus('Your intake file was downloaded. Please email it to ' + EMAIL_ADDRESS + ' to complete your submission.', 'success');
+    const form = document.getElementById('intakeForm');
+    if (form) {
+        form.submit();
     }
-}
-
-function generateCondensedEmailBody(data) {
-    let body = `New website intake from: ${data.businessName || 'New Client'}\n\n`;
-    body += `Contact: ${data.contactName || ''} — ${data.email || ''}\n`;
-    if (data.phone) body += `Phone: ${data.phone}\n`;
-    body += `Pages: ${data.pages === 'one' ? 'Single page' : data.pages === 'multi' ? (data.pageCount || 'N/A') + ' pages' : '—'}\n`;
-    body += `Timeline: ${formatDeadline(data.deadline) || '—'}\n`;
-    body += `Hosting & maintenance: ${data.hosting_maintenance ? 'Yes ($250/yr)' : 'No'}\n\n`;
-    body += `Full details and Cursor prompt are in the attached intake.txt file.`;
-    return body;
 }
 
 function generateShortSummaryEmail(data) {
@@ -1540,16 +1510,8 @@ function generateShortSummaryEmail(data) {
     summary += `Timeline: ${formatDeadline(data.deadline) || 'Not specified'}\n`;
     summary += `Hosting & maintenance: ${data.hosting_maintenance ? 'Yes ($250/yr)' : 'No'}\n`;
     summary += `Primary Goal: ${formatGoal(data.primaryGoal, data.primaryGoalOther) || 'Not specified'}\n\n`;
-    summary += `The full Cursor Prompt is included in the attached intake.txt file.`;
-    
+    summary += `Full details are in the intake_full_details field of the Netlify notification.`;
     return summary;
-}
-
-function showLongEmailModal(data) {
-    const modal = document.getElementById('emailModal');
-    modal.classList.add('active');
-    window._modalData = data;
-    showSubmitStatus('Your intake file was downloaded. Please attach it to the email and send to complete your submission.', 'success');
 }
 
 // ============================================

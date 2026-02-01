@@ -14,6 +14,8 @@ The `intake.html`, `intake.css`, and `intake.js` files are **private internal to
 
 The passcode gate is a basic UX feature for convenience, **not real security**. Always use proper server-side authentication for production.
 
+**Netlify form notification:** The intake form submits to Netlify Forms. In the Netlify dashboard, go to **Site settings → Forms → Form notifications** and add an **Email notification** for the form `website-intake` so submissions (including the full Cursor prompt in the `intake_full_details` field) are sent to **blake@justaweb.agency**.
+
 ## 🚀 Features
 
 ### Core Functionality

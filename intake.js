@@ -1089,31 +1089,28 @@ function handleConditionalFields(field) {
 // ============================================
 
 function generateConfirmation() {
+    // Summary and prompt are only in the email/.txt notification (for agency eyes only), not shown on the confirmation step
+    const data = getCompleteFormData();
     const summaryCard = document.getElementById('summaryCard');
     const promptPreview = document.getElementById('promptPreview');
-    const data = getCompleteFormData();
-
-    // Generate summary card
-    let html = '';
-    html += `<div class="summary-item"><span class="summary-item-label">Business Name</span><span class="summary-item-value">${data.businessName || 'Not provided'}</span></div>`;
-    const domainSummary = data.hasDomain === 'yes' && data.domain
-        ? `${data.domain} (${data.currentHosting ? (data.currentHosting === 'other' && data.currentHostingOther ? data.currentHostingOther : formatHosting(data.currentHosting)) : 'host not specified'})`
-        : (data.hasDomain === 'no' ? 'No domain yet (placeholder / register later)' : 'Not specified');
-    html += `<div class="summary-item"><span class="summary-item-label">Domain</span><span class="summary-item-value">${domainSummary}</span></div>`;
-    html += `<div class="summary-item"><span class="summary-item-label">Pages</span><span class="summary-item-value">${data.pages === 'one' ? 'Single page' : data.pages === 'multi' ? `${data.pageCount || 'N/A'} pages` : 'Not provided'}</span></div>`;
-    html += `<div class="summary-item"><span class="summary-item-label">Timeline</span><span class="summary-item-value">${formatDeadline(data.deadline) || 'Not provided'}</span></div>`;
-    html += `<div class="summary-item"><span class="summary-item-label">Hosting & maintenance</span><span class="summary-item-value">${data.hosting_maintenance ? 'Yes ($250/year)' : 'No'}</span></div>`;
-    html += `<div class="summary-item"><span class="summary-item-label">Primary Goal</span><span class="summary-item-value">${formatGoal(data.primaryGoal, data.primaryGoalOther) || 'Not provided'}</span></div>`;
-    
-    summaryCard.innerHTML = html;
-
-    // Generate and show prompt preview
+    if (summaryCard) {
+        let html = '';
+        html += `<div class="summary-item"><span class="summary-item-label">Business Name</span><span class="summary-item-value">${data.businessName || 'Not provided'}</span></div>`;
+        const domainSummary = data.hasDomain === 'yes' && data.domain
+            ? `${data.domain} (${data.currentHosting ? (data.currentHosting === 'other' && data.currentHostingOther ? data.currentHostingOther : formatHosting(data.currentHosting)) : 'host not specified'})`
+            : (data.hasDomain === 'no' ? 'No domain yet (placeholder / register later)' : 'Not specified');
+        html += `<div class="summary-item"><span class="summary-item-label">Domain</span><span class="summary-item-value">${domainSummary}</span></div>`;
+        html += `<div class="summary-item"><span class="summary-item-label">Pages</span><span class="summary-item-value">${data.pages === 'one' ? 'Single page' : data.pages === 'multi' ? `${data.pageCount || 'N/A'} pages` : 'Not provided'}</span></div>`;
+        html += `<div class="summary-item"><span class="summary-item-label">Timeline</span><span class="summary-item-value">${formatDeadline(data.deadline) || 'Not provided'}</span></div>`;
+        html += `<div class="summary-item"><span class="summary-item-label">Hosting & maintenance</span><span class="summary-item-value">${data.hosting_maintenance ? 'Yes ($250/year)' : 'No'}</span></div>`;
+        html += `<div class="summary-item"><span class="summary-item-label">Primary Goal</span><span class="summary-item-value">${formatGoal(data.primaryGoal, data.primaryGoalOther) || 'Not provided'}</span></div>`;
+        summaryCard.innerHTML = html;
+    }
     const prompt = generateCursorPrompt();
     if (promptPreview) {
         promptPreview.value = prompt;
     }
-
-    }
+}
 
 function formatDeadline(value) {
     const map = {

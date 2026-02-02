@@ -1487,11 +1487,10 @@ function submitRequest() {
 }
 
 function sendEmailWithPrompt(data) {
-    // Generate full .txt content (Cursor prompt + metadata + JSON) and put it in the hidden field
+    // Generate .txt content (Cursor prompt only) and put it in the hidden field
     // so Netlify includes it in the form notification email to blake@justaweb.agency (no file for the user)
     const prompt = generateCursorPrompt();
-    const json = JSON.stringify(data, null, 2);
-    const content = `WEBSITE BUILD INTAKE FORM\n${'='.repeat(50)}\n\nGenerated: ${new Date().toISOString()}\n\n\nCURSOR PROMPT:\n${'-'.repeat(50)}\n\n${prompt}\n\n\nJSON DATA:\n${'-'.repeat(50)}\n\n${json}`;
+    const content = `WEBSITE BUILD INTAKE\n${'='.repeat(50)}\n\nGenerated: ${new Date().toISOString()}\n\n\nCURSOR PROMPT:\n${'-'.repeat(50)}\n\n${prompt}`;
 
     const intakeFullDetails = document.getElementById('intake_full_details');
     if (intakeFullDetails) {
@@ -1596,9 +1595,7 @@ function copyToClipboard(text, successMessage) {
 function downloadFormData() {
     const data = getCompleteFormData();
     const prompt = generateCursorPrompt();
-    const json = JSON.stringify(data, null, 2);
-    
-    const content = `WEBSITE BUILD INTAKE FORM\n${'='.repeat(50)}\n\nGenerated: ${new Date().toISOString()}\n\n\nCURSOR PROMPT:\n${'-'.repeat(50)}\n\n${prompt}\n\n\nJSON DATA:\n${'-'.repeat(50)}\n\n${json}`;
+    const content = `WEBSITE BUILD INTAKE\n${'='.repeat(50)}\n\nGenerated: ${new Date().toISOString()}\n\n\nCURSOR PROMPT:\n${'-'.repeat(50)}\n\n${prompt}`;
     
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);

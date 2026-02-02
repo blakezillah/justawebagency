@@ -9,10 +9,23 @@
   to = "/thank-you.html"
   status = 200
 
+# Intake form thank-you page
+[[redirects]]
+  from = "/intake-thank-you"
+  to = "/intake-thank-you.html"
+  status = 200
+
 # Redirect /thank-you.html to clean URL (if accessed directly)
 [[redirects]]
   from = "/thank-you.html"
   to = "/thank-you"
+  status = 301
+  force = true
+
+# Redirect /intake-thank-you.html to clean URL (if accessed directly)
+[[redirects]]
+  from = "/intake-thank-you.html"
+  to = "/intake-thank-you"
   status = 301
   force = true
 

@@ -1,0 +1,104 @@
+---
+/**
+ * Base layout for justaweb.agency pages.
+ *
+ * WHY: one place for the head (SEO, social cards, structured data), analytics and the
+ * theme bootstrap, so every page is consistent and the homepage stays readable.
+ *
+ * HOW:
+ *  - The theme script runs inline before paint: it reads localStorage "theme" (the same
+ *    key the legacy script.js uses) or falls back to the OS setting, and sets
+ *    data-theme on <html> so there is no light/dark flash.
+ *  - GA4 (G-K58RVS4CZQ) and Google Ads (AW-611239252) are the same tags the old page
+ *    shipped. gtag.js is loaded once and configured for both ids (the old page loaded it
+ *    twice). `gtagSendConversionEvent` is kept with the same name and conversion label so
+ *    the Ads lead conversion keeps counting.
+ */
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+/** Structured data: describes the agency itself. No street address is claimed. */
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "JustAWeb",
+  url: "https://justaweb.agency",
+  email: "blake@justaweb.agency",
+  description,
+  priceRange: "$$",
+  areaServed: [
+    { "@type": "City", name: "Vancouver, WA" },
+    { "@type": "City", name: "Portland, OR" },
+  ],
+  founder: { "@type": "Person", name: "Blake Goble" },
+  makesOffer: {
+    "@type": "Offer",
+    name: "Small business website",
+    price: "1000",
+    priceCurrency: "USD",
+  },
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#111317" media="(prefers-color-scheme: dark)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      // Set the theme before first paint. Same storage key as legacy public/script.js.
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem("theme"); } catch (e) {}
+        if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      })();
+    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <!-- Google tag: GA4 + Google Ads, loaded once, async so it never blocks rendering. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K58RVS4CZQ"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      var linker = { linker: { domains: ["justaweb.agency", "justawebagency.netlify.app"] } };
+      gtag("config", "G-K58RVS4CZQ", linker);
+      gtag("config", "AW-611239252", linker);
+      /**
+       * Report a lead-form conversion to Google Ads, then run `callback` (for example the
+       * real form submit). event_timeout guarantees the callback runs even if gtag is
+       * blocked by an ad blocker, so a lead is never lost to tracking.
+       */
+      function gtagSendConversionEvent(callback) {
+        gtag("event", "ads_conversion_submit_lead_form", {
+          event_callback: callback || function () {},
+          event_timeout: 2000,
+          send_to: "AW-611239252/xMSMCNyr6uobENSKu6MC",
+          value: 1.0,
+          currency: "USD",
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>

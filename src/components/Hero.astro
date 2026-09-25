@@ -1,0 +1,121 @@
+---
+/**
+ * Hero: the offer in one breath, two CTAs, three reassurance checks, and real work shown
+ * in a browser frame plus a phone frame.
+ *
+ * WHY: a business owner decides in seconds whether this is for them. The headline states
+ * the thing (a website), the price and the ownership; the visual proves we have shipped
+ * real sites rather than describing that we can.
+ *
+ * HOW: screenshots come through astro:assets <Picture>, which emits AVIF/WebP at several
+ * widths with explicit dimensions (no layout shift). The browser shot is the LCP image,
+ * so it is loaded eagerly with fetchpriority high; the phone is lazy.
+ */
+import { Picture } from "astro:assets";
+import desk from "../assets/work/tidland-desk.jpg";
+import phone from "../assets/work/itts-phone.jpg";
+import { PRICING } from "../data/site.js";
+---
+<section class="hero">
+  <div class="wrap hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow">Websites for small businesses</p>
+      <h1 class="hero__title">
+        A real website for your business.
+        <span class="hero__price">${PRICING.site.toLocaleString("en-US")}. Yours to keep.</span>
+      </h1>
+      <p class="hero__lede">
+        Fast, good-looking sites for local businesses in Vancouver, Portland and beyond.
+        One flat price, no monthly subscription, and you own every file.
+        You work directly with the person who builds it.
+      </p>
+      <div class="hero__ctas">
+        <a class="btn" href="#start">Start my website <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn--ghost" href="#work">See recent work</a>
+      </div>
+      <ul class="checks" aria-label="The short version">
+        <li>No monthly fees</li>
+        <li>You own the code</li>
+        <li>Live in 4 to 6 weeks</li>
+      </ul>
+    </div>
+
+    <div class="hero__visual" aria-label="Examples of sites we built">
+      <figure class="browser">
+        <div class="browser__bar" aria-hidden="true">
+          <span></span><span></span><span></span>
+          <div class="browser__url">tidlandaudio.com</div>
+        </div>
+        <Picture
+          src={desk}
+          formats={["avif", "webp"]}
+          widths={[480, 720, 960, 1200]}
+          sizes="(min-width: 1100px) 620px, (min-width: 960px) 50vw, 92vw"
+          alt="Tidland Audio homepage: vintage gear repairs and modifications"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </figure>
+      <figure class="phone">
+        <Picture
+          src={phone}
+          formats={["avif", "webp"]}
+          widths={[200, 320, 400]}
+          sizes="(min-width: 960px) 190px, 34vw"
+          alt="International Tactical homepage on a phone"
+        />
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; padding-block: clamp(40px, 7vw, 96px) clamp(56px, 8vw, 112px); overflow: clip; }
+  .hero::before {
+    /* Soft warm glow behind the visual; decorative only. */
+    content: ""; position: absolute; inset: -20% -10% auto 40%; height: 120%;
+    background: radial-gradient(closest-side, var(--accent-soft), transparent 70%);
+    opacity: 0.9; pointer-events: none; z-index: -1;
+  }
+  .hero__grid { display: grid; grid-template-columns: 1fr; gap: clamp(40px, 6vw, 64px); align-items: center; }
+  @media (min-width: 960px) { .hero__grid { grid-template-columns: 1.02fr 1fr; } }
+
+  .hero__title { font-size: clamp(2.5rem, 1.4rem + 4.6vw, 4.5rem); letter-spacing: -0.035em; line-height: 1.02; }
+  .hero__price { display: block; color: var(--accent); }
+  .hero__lede { margin-top: 24px; max-width: 34em; font-size: clamp(1.0625rem, 1rem + 0.45vw, 1.3125rem); color: var(--ink-2); }
+  .hero__ctas { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .checks { margin: 28px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 10px 22px; }
+  .checks li { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9375rem; color: var(--ink-2); }
+  .checks li::before {
+    content: ""; width: 18px; height: 18px; border-radius: 50%; flex: none;
+    background: var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 12.5 4 4 8-9' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat;
+  }
+
+  .hero__visual { position: relative; padding-bottom: 28px; padding-right: clamp(24px, 8vw, 72px); }
+  .browser {
+    margin: 0; border-radius: var(--radius); overflow: hidden; background: var(--surface);
+    border: 1px solid var(--line); box-shadow: var(--shadow-lg);
+    transform: rotate(-1deg);
+  }
+  .browser__bar { display: flex; align-items: center; gap: 6px; padding: 10px 12px; background: var(--surface-2); border-bottom: 1px solid var(--line); }
+  .browser__bar > span { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+  .browser__url {
+    margin-left: 10px; flex: 1; max-width: 260px; padding: 4px 12px; border-radius: 999px;
+    background: var(--bg); color: var(--muted); font: 500 0.75rem/1.4 var(--mono);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .browser :global(img) { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+
+  .phone {
+    position: absolute; right: 0; bottom: 0; width: clamp(118px, 30%, 190px); margin: 0;
+    border-radius: 26px; padding: 7px; background: #0d0e11; box-shadow: var(--shadow-lg);
+    transform: rotate(3deg);
+  }
+  .phone :global(img) { width: 100%; aspect-ratio: 9 / 18.5; object-fit: cover; object-position: top; border-radius: 20px; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .phone { animation: bob 6s ease-in-out infinite; }
+    @keyframes bob { 50% { transform: rotate(3deg) translateY(-8px); } }
+  }
+</style>

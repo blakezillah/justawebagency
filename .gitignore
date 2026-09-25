@@ -1,0 +1,7 @@
+# The webgen dashboard is deployed as its own service/repo (dashboard.justaweb.agency).
+# Keep it out of the static site so its source and secrets are never published.
+webgen-pipeline/
+.DS_Store
+node_modules/
+dist/
+.astro/

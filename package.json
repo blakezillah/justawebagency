@@ -1,0 +1,14 @@
+{
+  "name": "justawebagency",
+  "private": true,
+  "type": "module",
+  "description": "justaweb.agency marketing site. Astro static build; legacy private tools (intake, contract) ship unchanged from public/.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^7.3.5"
+  }
+}

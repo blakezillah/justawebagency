@@ -1,6 +1,30 @@
 # justaweb.agency
 
-A premium one-page marketing website for justaweb.agency, a web design agency specializing in simple, fast, and powerful websites. Built with vanilla HTML, CSS, and JavaScript—no frameworks, no build tools, no external dependencies.
+Marketing site for JustAWeb, Blake Goble's small-business website agency.
+
+## Stack (since 2026-09-25)
+
+The homepage is an **Astro** static site: it renders to plain HTML at build time and ships
+almost no JavaScript (theme toggle, mobile menu close, contact-form conversion). Screenshots
+go through `astro:assets`, which emits AVIF/WebP at several widths.
+
+```bash
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # writes dist/ (Netlify publishes dist/, see netlify.toml)
+```
+
+- `src/pages/index.astro` is the page; sections live in `src/components/`.
+- **All copy, prices and portfolio entries live in `src/data/site.js`.** Edit there. Every claim
+  must stay true (no invented clients, metrics or testimonials; no em dashes).
+- Adding a portfolio site: drop `{key}-desk.jpg` (1440x900) and `{key}-phone.jpg` (390x844 @2x)
+  into `src/assets/work/`, then add an entry to `WORK`.
+- `public/` holds the legacy private tools (intake, contract, thank-you pages, audit-results)
+  and their `styles.css` / `script.js`, copied through unchanged so their Netlify forms keep working.
+- The contact form keeps the Netlify form name `contact` and fires the Google Ads lead conversion
+  before submitting.
+
+The notes below describe the legacy vanilla page and still apply to the private tools in `public/`.
 
 ## ⚠️ Important: Intake Form Privacy
 

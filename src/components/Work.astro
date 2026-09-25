@@ -1,0 +1,109 @@
+---
+/**
+ * Recent work: one card per live site with a desktop screenshot, an overlapping phone
+ * screenshot, honest labelling (client site vs our own product) and a link to the real
+ * site.
+ *
+ * WHY: owners trust what they can click. Real screenshots of live sites replace the old
+ * logo tiles and the invented "case study" modals.
+ *
+ * HOW: screenshots are imported with import.meta.glob so adding a site means dropping
+ * {key}-desk.jpg and {key}-phone.jpg into src/assets/work/ and adding a WORK entry in
+ * src/data/site.js. All images are lazy: none of them is above the fold.
+ */
+import { Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { WORK } from "../data/site.js";
+
+const shots = import.meta.glob<{ default: ImageMetadata }>("../assets/work/*.jpg", { eager: true });
+const img = (key: string, kind: "desk" | "phone") => shots[`../assets/work/${key}-${kind}.jpg`]?.default;
+---
+<section class="section" id="work">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Recent work</p>
+      <h2 class="h2">Real sites for real businesses.</h2>
+      <p class="lede">Every one of these is live right now. Open them on your phone and see how they feel.</p>
+    </div>
+
+    <ul class="work">
+      {WORK.map((w, i) => (
+        <li class="work__item reveal">
+          <a class="work__card" href={w.url} target="_blank" rel="noopener">
+            <div class="work__media">
+              {img(w.key, "desk") && (
+                <Picture
+                  class="work__desk"
+                  src={img(w.key, "desk")!}
+                  formats={["avif", "webp"]}
+                  widths={[400, 640, 880]}
+                  sizes="(min-width: 900px) 540px, 92vw"
+                  alt={`${w.name} website on a desktop screen`}
+                />
+              )}
+              {img(w.key, "phone") && (
+                <Picture
+                  class="work__phone"
+                  src={img(w.key, "phone")!}
+                  formats={["avif", "webp"]}
+                  widths={[160, 280]}
+                  sizes="140px"
+                  alt=""
+                />
+              )}
+            </div>
+            <div class="work__body">
+              <p class="work__kind" data-own={w.kind !== "Client site" ? "" : undefined}>{w.kind}</p>
+              <h3 class="work__name">{w.name}</h3>
+              <p class="work__blurb">{w.blurb}</p>
+              <ul class="work__tags" aria-label="Tags">
+                {w.tags.map((t) => <li>{t}</li>)}
+              </ul>
+              <span class="work__link">
+                Visit {new URL(w.url).hostname}
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="visually-hidden">(opens in a new tab)</span>
+              </span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .work { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(20px, 3vw, 32px); }
+  @media (min-width: 900px) { .work { grid-template-columns: 1fr 1fr; } }
+
+  .work__card {
+    display: flex; flex-direction: column; height: 100%; text-decoration: none;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .work__card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: color-mix(in srgb, var(--ink) 25%, var(--line)); }
+  @media (prefers-reduced-motion: reduce) { .work__card { transition: none; } .work__card:hover { transform: none; } }
+
+  .work__media { position: relative; background: var(--surface-2); padding: clamp(16px, 3vw, 28px) clamp(16px, 3vw, 28px) 0; overflow: hidden; }
+  .work__media :global(.work__desk) {
+    width: 86%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top;
+    border-radius: 10px 10px 0 0; box-shadow: var(--shadow-sm);
+    transition: transform 0.4s ease;
+  }
+  .work__media :global(.work__phone) {
+    position: absolute; right: clamp(12px, 2.5vw, 24px); bottom: -18%; width: 24%; aspect-ratio: 9 / 18.5;
+    object-fit: cover; object-position: top; border-radius: 16px; border: 5px solid #0d0e11; box-shadow: var(--shadow-lg);
+    transition: transform 0.4s ease;
+  }
+  .work__card:hover :global(.work__phone) { transform: translateY(-10px); }
+  @media (prefers-reduced-motion: reduce) { .work__media :global(img) { transition: none; } }
+
+  .work__body { padding: clamp(20px, 3vw, 28px); display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .work__kind { font: 700 0.75rem/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ok); }
+  .work__kind[data-own] { color: var(--muted); }
+  .work__name { font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.625rem); }
+  .work__blurb { color: var(--ink-2); }
+  .work__tags { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .work__tags li { font-size: 0.8125rem; font-weight: 600; padding: 5px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); }
+  .work__link { margin-top: auto; padding-top: 10px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--accent); }
+</style>

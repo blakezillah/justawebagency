@@ -1,0 +1,380 @@
+---
+/**
+ * justaweb.agency homepage.
+ *
+ * Story order, each section answering the owner's next question:
+ *   Hero        What is this and what does it cost?
+ *   Pains       Is this for someone like me?
+ *   Work        Have you actually done this?
+ *   Included    What exactly do I get?
+ *   Compare     Why not Wix, or a big agency?
+ *   How         What happens, and how much of my time does it take?
+ *   Preview     (outbound bridge) "You built me a sample site?"
+ *   Pricing     The numbers, plainly.
+ *   About       Who am I dealing with?
+ *   FAQ         The last objections.
+ *   Contact     Do it.
+ *
+ * Only three tiny scripts ship to the browser (theme toggle, menu close, form conversion);
+ * everything else is static HTML and CSS.
+ */
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import Work from "../components/Work.astro";
+import Contact from "../components/Contact.astro";
+import { PAINS, INCLUDED, COMPARE, STEPS, FAQ, PRICING, CONTACT } from "../data/site.js";
+
+const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
+const year = new Date().getFullYear();
+---
+<Base
+  title="Small Business Websites, $1,000 Flat | JustAWeb"
+  description="Fast, custom websites for small businesses in Vancouver, WA, Portland and beyond. $1,000 flat, you own everything, no monthly fees. Optional $250 a year hosting and edits."
+>
+  <Header />
+
+  <main id="main">
+    <Hero />
+
+    <!-- Pains: mirror the owner's situation back to them. -->
+    <section class="section section--alt" aria-labelledby="pains-h">
+      <div class="wrap">
+        <div class="section-head section-head--center reveal">
+          <p class="eyebrow">Sound familiar?</p>
+          <h2 class="h2" id="pains-h">Your customers are looking for you online.</h2>
+          <p class="lede">If any of these is you, you are exactly who I build for.</p>
+        </div>
+        <ul class="pains">
+          {PAINS.map((p, i) => (
+            <li class="card pain reveal">
+              <span class="pain__n" aria-hidden="true">0{i + 1}</span>
+              <h3>{p.title}</h3>
+              <p>{p.body}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <Work />
+
+    <!-- Included: the concrete deliverable. -->
+    <section class="section section--alt" id="included" aria-labelledby="inc-h">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">What you get</p>
+          <h2 class="h2" id="inc-h">Everything a small business site needs. Nothing it doesn't.</h2>
+        </div>
+        <ul class="included">
+          {INCLUDED.map((f) => (
+            <li class="reveal">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="var(--accent-soft)"/><path d="m7 12.5 3.3 3.3L17 9" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div>
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- Compare: qualitative, no competitor prices (they change and we can't keep them true). -->
+    <section class="section" aria-labelledby="cmp-h">
+      <div class="wrap">
+        <div class="section-head section-head--center reveal">
+          <p class="eyebrow">The honest comparison</p>
+          <h2 class="h2" id="cmp-h">The middle path most owners actually want.</h2>
+          <p class="lede">A builder is cheap but you do all the work. An agency does the work but costs a lot. This is neither.</p>
+        </div>
+        <div class="compare reveal" role="region" aria-labelledby="cmp-h" tabindex="0">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col"><span class="visually-hidden">Question</span></th>
+                {COMPARE.columns.map((c, i) => <th scope="col" class={i === 2 ? "is-us" : undefined}>{c}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARE.rows.map((r) => (
+                <tr>
+                  <th scope="row">{r.label}</th>
+                  {r.values.map((v, i) => <td class={i === 2 ? "is-us" : undefined} data-label={COMPARE.columns[i]}>{v}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works + the bridge for owners who received a preview from outreach. -->
+    <section class="section section--alt" id="how" aria-labelledby="how-h">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">How it works</p>
+          <h2 class="h2" id="how-h">Three steps. Very little of your time.</h2>
+        </div>
+        <ol class="steps">
+          {STEPS.map((s, i) => (
+            <li class="step reveal">
+              <span class="step__n" aria-hidden="true">{i + 1}</span>
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+            </li>
+          ))}
+        </ol>
+
+        <aside class="preview reveal" aria-labelledby="preview-h">
+          <div class="preview__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="28" height="28"><rect x="3" y="4" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m9.5 10.5 2 2 3.5-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <h3 id="preview-h">Got a preview link from us?</h3>
+            <p>Sometimes I build a sample site for a local business before saying hello. If you got one, take your time with it. There is no obligation. If you like it, reply to the email or send the form below with your business name, and we will make it yours.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Pricing: two numbers, plain terms. -->
+    <section class="section" id="pricing" aria-labelledby="price-h">
+      <div class="wrap">
+        <div class="section-head section-head--center reveal">
+          <p class="eyebrow">Pricing</p>
+          <h2 class="h2" id="price-h">One price. No surprises.</h2>
+          <p class="lede">Half to start, half before launch. Venmo or Zelle.</p>
+        </div>
+        <div class="prices">
+          <article class="price price--main reveal" aria-labelledby="p1">
+            <p class="price__tag">Your website</p>
+            <h3 id="p1" class="price__amt">{usd(PRICING.site)}<span> one time</span></h3>
+            <p class="price__desc">A custom site, designed and built for your business, and yours to keep.</p>
+            <ul class="price__list">
+              <li>Custom design for your business</li>
+              <li>Mobile-first and fast loading</li>
+              <li>Contact form, tap-to-call, map and hours</li>
+              <li>Google-ready SEO basics</li>
+              <li>Help with your domain</li>
+              <li>You own all code and files</li>
+            </ul>
+            <a class="btn" href="#start">Start my website <span class="arrow" aria-hidden="true">→</span></a>
+          </article>
+          <article class="price reveal" aria-labelledby="p2">
+            <p class="price__tag">Optional add-on</p>
+            <h3 id="p2" class="price__amt">{usd(PRICING.hosting)}<span> per year</span></h3>
+            <p class="price__desc">Fast hosting plus changes whenever you need them. No monthly bills.</p>
+            <ul class="price__list">
+              <li>Fast, reliable hosting</li>
+              <li>Text, photo and page updates on request</li>
+              <li>Help when you need it</li>
+              <li>Billed once a year, cancel anytime</li>
+            </ul>
+            <a class="btn btn--ghost" href="#faq">Questions? See the FAQ</a>
+          </article>
+        </div>
+        <p class="prices__note reveal">Need WordPress, an online store or something bigger? <a href="#start">Ask for a custom quote.</a></p>
+      </div>
+    </section>
+
+    <!-- About: a person, not a faceless agency. -->
+    <section class="section section--alt" aria-labelledby="about-h">
+      <div class="wrap about reveal">
+        <div class="about__mark" aria-hidden="true">BG</div>
+        <div>
+          <p class="eyebrow">Who builds it</p>
+          <h2 class="h2" id="about-h">Hi, I'm Blake.</h2>
+          <p class="lede">JustAWeb is me. I design and build every site myself, answer my own email, and stick around after launch. No account managers, no hand-offs, no one reading from a script.</p>
+          <p class="about__sign">Blake Goble, JustAWeb</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ: native details/summary, works without JavaScript. -->
+    <section class="section" id="faq" aria-labelledby="faq-h">
+      <div class="wrap faq">
+        <div class="section-head reveal">
+          <p class="eyebrow">FAQ</p>
+          <h2 class="h2" id="faq-h">Questions owners ask.</h2>
+          <p class="lede">Something else on your mind? <a href={`mailto:${CONTACT.email}`}>Email me</a>.</p>
+        </div>
+        <div class="faq__list">
+          {FAQ.map((f, i) => (
+            <details class="qa" open={i === 0}>
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <Contact />
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__row">
+      <div>
+        <a class="footer__brand" href="/">justaweb<span>.agency</span></a>
+        <p>Simple, fast websites for small businesses.<br />Serving Vancouver, WA, Portland, OR and beyond.</p>
+      </div>
+      <nav aria-label="Footer">
+        <ul>
+          <li><a href="#work">Work</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="wrap footer__legal">© {year} JustAWeb. All rights reserved.</div>
+  </footer>
+
+  <!-- Phone-only sticky CTA: the form is never more than one tap away. -->
+  <div class="sticky-cta">
+    <a class="btn" href="#start">Start my website</a>
+    <a class="btn btn--ghost sticky-cta__mail" href={`mailto:${CONTACT.email}`} aria-label={`Email ${CONTACT.email}`}>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</Base>
+
+<style>
+  /* ---- Pains ---- */
+  .pains { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+  @media (min-width: 640px) { .pains { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1100px) { .pains { grid-template-columns: repeat(4, 1fr); } }
+  .pain { display: grid; gap: 10px; align-content: start; }
+  .pain__n { font: 700 0.8125rem/1 var(--mono); color: var(--accent); }
+  .pain h3 { font-size: 1.25rem; }
+  .pain p { color: var(--ink-2); }
+
+  /* ---- Included ---- */
+  .included { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px 32px; }
+  @media (min-width: 640px) { .included { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1024px) { .included { grid-template-columns: repeat(4, 1fr); } }
+  .included li { display: grid; grid-template-columns: 22px 1fr; gap: 14px; align-items: start; }
+  .included svg { margin-top: 3px; }
+  .included h3 { font-size: 1.125rem; letter-spacing: -0.015em; }
+  .included p { margin-top: 6px; color: var(--ink-2); font-size: 1rem; }
+
+  /* ---- Compare ---- */
+  .compare { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+  .compare table { width: 100%; min-width: 620px; border-collapse: collapse; }
+  .compare th, .compare td { padding: 16px 20px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .compare tbody tr:last-child > * { border-bottom: 0; }
+  .compare thead th { font-size: 0.8125rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .compare tbody th { font-weight: 700; width: 24%; }
+  .compare td { color: var(--ink-2); }
+  .compare .is-us { background: var(--accent-soft); color: var(--ink); font-weight: 700; }
+  .compare thead .is-us { color: var(--accent); }
+  /* Phones: one card per question, with our answer last and highlighted, so nothing
+     important hides behind a sideways scroll. data-label carries the column name. */
+  @media (max-width: 720px) {
+    .compare { overflow: visible; border: 0; background: none; display: grid; }
+    .compare table, .compare tbody, .compare tr, .compare th, .compare td { display: block; min-width: 0; }
+    .compare thead { display: none; }
+    .compare tbody { display: grid; gap: 12px; }
+    .compare tr { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+    .compare tbody th { width: auto; padding: 14px 16px 6px; border: 0; font-size: 1.0625rem; }
+    .compare td { display: flex; justify-content: space-between; gap: 16px; padding: 8px 16px; border: 0; text-align: right; }
+    .compare td::before { content: attr(data-label); color: var(--muted); font-weight: 500; text-align: left; }
+    .compare td.is-us { margin-top: 6px; padding-block: 12px; }
+    .compare td.is-us::before { color: var(--accent); font-weight: 700; }
+  }
+
+  /* ---- Steps ---- */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; counter-reset: s; }
+  @media (min-width: 900px) { .steps { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+  .step { position: relative; padding: 28px; border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--line); }
+  .step__n {
+    display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+    background: var(--ink); color: var(--bg); font-weight: 800; font-size: 1.125rem; margin-bottom: 18px;
+  }
+  .step h3 { font-size: 1.3125rem; }
+  .step p { margin-top: 10px; color: var(--ink-2); }
+
+  .preview {
+    margin-top: clamp(28px, 4vw, 40px); display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start;
+    padding: clamp(20px, 3vw, 32px); border-radius: var(--radius-lg);
+    border: 2px dashed color-mix(in srgb, var(--accent) 45%, var(--line)); background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+  }
+  .preview__icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: var(--accent); color: var(--accent-ink); }
+  .preview h3 { font-size: 1.25rem; }
+  .preview p { margin-top: 8px; color: var(--ink-2); max-width: 62em; }
+  @media (max-width: 560px) { .preview { grid-template-columns: 1fr; } }
+
+  /* ---- Pricing ---- */
+  .prices { display: grid; gap: 20px; max-width: 920px; margin-inline: auto; }
+  @media (min-width: 800px) { .prices { grid-template-columns: 1.15fr 1fr; align-items: stretch; } }
+  .price { display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 3.5vw, 36px); border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--line); }
+  .price--main { border: 2px solid var(--ink); box-shadow: var(--shadow-lg); }
+  .price__tag { font: 700 0.8125rem/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  .price__amt { font-size: clamp(2.75rem, 2rem + 3vw, 3.75rem); letter-spacing: -0.04em; }
+  .price__amt span { font-size: 1rem; font-weight: 600; letter-spacing: 0; color: var(--muted); }
+  .price__desc { color: var(--ink-2); }
+  .price__list { list-style: none; margin: 6px 0 10px; padding: 0; display: grid; gap: 10px; }
+  .price__list li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; }
+  .price__list li::before {
+    content: ""; width: 18px; height: 18px; margin-top: 4px; border-radius: 50%;
+    background: var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 12.5 4 4 8-9' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat;
+  }
+  .price .btn { margin-top: auto; }
+  .prices__note { margin-top: 28px; text-align: center; color: var(--ink-2); }
+  .prices__note a, .faq a { color: var(--accent); font-weight: 700; }
+
+  /* ---- About ---- */
+  .about { display: grid; gap: clamp(24px, 4vw, 48px); align-items: center; max-width: 920px; }
+  @media (min-width: 720px) { .about { grid-template-columns: auto 1fr; } }
+  .about__mark {
+    display: grid; place-items: center; width: clamp(120px, 18vw, 180px); aspect-ratio: 1; border-radius: 50%;
+    background: var(--ink); color: var(--bg); font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -0.04em;
+    box-shadow: 0 0 0 8px var(--surface), 0 0 0 9px var(--line);
+  }
+  .about__sign { margin-top: 20px; font-weight: 700; }
+
+  /* ---- FAQ ---- */
+  .faq { display: grid; gap: 32px; }
+  @media (min-width: 960px) { .faq { grid-template-columns: 0.8fr 1.2fr; gap: 64px; align-items: start; } }
+  .faq__list { border-top: 1px solid var(--line); }
+  .qa { border-bottom: 1px solid var(--line); }
+  .qa summary {
+    list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    padding: 20px 0; font-weight: 700; font-size: 1.0625rem;
+  }
+  .qa summary::-webkit-details-marker { display: none; }
+  .qa summary::after {
+    content: ""; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 6v12M6 12h12' stroke='%23888' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") center/14px no-repeat;
+    transition: transform 0.2s ease;
+  }
+  .qa[open] summary::after { transform: rotate(45deg); }
+  .qa summary:hover { color: var(--accent); }
+  .qa p { padding: 0 44px 22px 0; color: var(--ink-2); }
+
+  /* ---- Footer ---- */
+  .footer { padding-block: 48px calc(40px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); }
+  .footer__row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px 48px; }
+  .footer__brand { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; text-decoration: none; }
+  .footer__brand span { color: var(--muted); font-weight: 600; }
+  .footer p { margin-top: 10px; color: var(--muted); font-size: 0.9375rem; }
+  .footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 24px; }
+  .footer nav a { text-decoration: none; font-weight: 600; color: var(--ink-2); }
+  .footer nav a:hover { color: var(--accent); }
+  .footer__legal { margin-top: 32px; font-size: 0.875rem; color: var(--muted); }
+
+  /* ---- Sticky CTA (phones) ---- */
+  .sticky-cta { display: none; }
+  @media (max-width: 720px) {
+    .sticky-cta {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; gap: 10px;
+      padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+      background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--line);
+    }
+    .sticky-cta .btn:first-child { flex: 1; }
+    .sticky-cta__mail { width: 52px; padding: 0; }
+    .footer { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+  }
+</style>

@@ -1,6 +1,16 @@
 [build]
-  # Static site - no build command needed
-  publish = "."
+  # Astro static build (see astro.config.mjs). public/ is copied into dist/ as-is.
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+# Long-cache Astro's fingerprinted assets (file names change when content changes).
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
 
 # Rewrite rules for clean URLs (removing .html)
 # Specific rule for thank-you page - serves content at clean URL

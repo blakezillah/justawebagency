@@ -1,0 +1,149 @@
+---
+/**
+ * Contact: the conversion point. A short form beside a plain promise of what happens next.
+ *
+ * WHY: every extra required field costs leads. Only name, email and a message are
+ * required; business, current site and timeline are optional helpers. The column beside
+ * the form removes the two fears that stop owners from writing: "will this get me a
+ * sales call?" and "what does it cost?".
+ *
+ * HOW:
+ *  - Netlify Forms: name="contact" (same form name as the old page, so the existing
+ *    Netlify notification settings keep working), a hidden form-name input, and the
+ *    bot-field honeypot. action="/thank-you" is where Netlify sends the browser after a
+ *    successful POST.
+ *  - Google Ads: on submit we fire the lead conversion via gtagSendConversionEvent (defined
+ *    in Base.astro) and submit from its callback. Its 2 s timeout guarantees the submit
+ *    still happens if tracking is blocked. With JavaScript off, the form posts normally.
+ */
+import { CONTACT, PRICING } from "../data/site.js";
+---
+<section class="section contact" id="start">
+  <div class="wrap contact__grid">
+    <div class="contact__intro reveal">
+      <p class="eyebrow">Start here</p>
+      <h2 class="h2">Tell me about your business.</h2>
+      <p class="lede">A few lines is plenty. I reply {CONTACT.responseTime} with honest next steps, never a hard sell.</p>
+
+      <ol class="next">
+        <li><span><strong>You send this form.</strong> Takes about a minute.</span></li>
+        <li><span><strong>I reply {CONTACT.responseTime}</strong> with questions or a quick call time.</span></li>
+        <li><span><strong>You decide.</strong> Nothing is owed until you say go, then it is ${PRICING.site.toLocaleString("en-US")} flat, half up front.</span></li>
+      </ol>
+
+      <p class="contact__alt">
+        Rather email?{" "}
+        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+      </p>
+    </div>
+
+    <form
+      class="form card reveal"
+      name="contact"
+      method="POST"
+      action="/thank-you"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      data-contact-form
+    >
+      <input type="hidden" name="form-name" value="contact" />
+      <p class="visually-hidden" aria-hidden="true">
+        <label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+      </p>
+
+      <div class="form__row">
+        <div class="field">
+          <label for="f-name">Your name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required />
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required />
+        </div>
+      </div>
+
+      <div class="form__row">
+        <div class="field">
+          <label for="f-business">Business name <span class="opt">optional</span></label>
+          <input id="f-business" name="business" type="text" autocomplete="organization" />
+        </div>
+        <div class="field">
+          <label for="f-website">Current website <span class="opt">optional</span></label>
+          <input id="f-website" name="website" type="text" inputmode="url" placeholder="None yet is fine" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-timeline">When do you need it? <span class="opt">optional</span></label>
+        <select id="f-timeline" name="timeline">
+          <option value="">No rush, just exploring</option>
+          <option>Standard (4 to 6 weeks)</option>
+          <option>Rush (2 to 3 weeks)</option>
+          <option>Flexible (8+ weeks)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="f-message">What does your business do, and what should the site do for you?</label>
+        <textarea id="f-message" name="message" rows="5" required placeholder="Example: We're a family auto shop in east Vancouver. People keep asking if we have a website. We want them to see our services and call us."></textarea>
+      </div>
+
+      <button class="btn form__submit" type="submit">Send it <span class="arrow" aria-hidden="true">→</span></button>
+      <p class="form__fine">No spam, no newsletter. Your details are only used to reply to you.</p>
+    </form>
+  </div>
+</section>
+
+<script>
+  // Fire the Google Ads lead conversion, then submit. See the component header for why.
+  const form = document.querySelector<HTMLFormElement>("[data-contact-form]");
+  form?.addEventListener("submit", (e) => {
+    if (!form.checkValidity()) return; // let the browser show its own messages
+    const send = (window as any).gtagSendConversionEvent as undefined | ((cb: () => void) => void);
+    if (typeof send !== "function") return; // tracking absent: plain submit
+    e.preventDefault();
+    const btn = form.querySelector<HTMLButtonElement>("button[type=submit]");
+    if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
+    let done = false;
+    const go = () => { if (!done) { done = true; form.submit(); } };
+    send(go);
+    setTimeout(go, 2500); // belt and braces if the callback never fires
+  });
+</script>
+
+<style>
+  .contact { background: var(--surface-2); }
+  .contact__grid { display: grid; gap: clamp(32px, 5vw, 64px); align-items: start; }
+  @media (min-width: 960px) { .contact__grid { grid-template-columns: 0.9fr 1.1fr; } }
+
+  .next { margin: 32px 0 0; padding: 0; list-style: none; counter-reset: n; display: grid; gap: 16px; }
+  .next li { counter-increment: n; display: grid; grid-template-columns: 36px 1fr; gap: 14px; align-items: center; color: var(--ink-2); }
+  .next li::before {
+    content: counter(n); display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%;
+    background: var(--surface); border: 1px solid var(--line); font-weight: 800; color: var(--ink);
+  }
+  .next strong { color: var(--ink); }
+  .contact__alt { margin-top: 28px; color: var(--ink-2); }
+  .contact__alt a { font-weight: 700; color: var(--accent); word-break: break-all; }
+
+  .form { display: grid; gap: 18px; padding: clamp(20px, 3.5vw, 36px); box-shadow: var(--shadow-sm); }
+  .form__row { display: grid; gap: 18px; }
+  @media (min-width: 640px) { .form__row { grid-template-columns: 1fr 1fr; } }
+  .field { display: grid; gap: 8px; min-width: 0; }
+  .field label { font-weight: 700; font-size: 0.9375rem; }
+  .opt { font-weight: 500; color: var(--muted); font-size: 0.8125rem; margin-left: 4px; }
+  .field input, .field select, .field textarea {
+    width: 100%; min-height: 50px; padding: 12px 14px; font: inherit; font-size: 1rem; color: var(--ink);
+    background: var(--bg); border: 1.5px solid var(--line); border-radius: var(--radius-sm);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field textarea { resize: vertical; min-height: 140px; line-height: 1.5; }
+  .field input::placeholder, .field textarea::placeholder { color: var(--muted); opacity: 1; }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  .field input:user-invalid, .field textarea:user-invalid { border-color: #dc2626; }
+  .form__submit { width: 100%; margin-top: 4px; }
+  .form__submit:disabled { opacity: 0.7; cursor: progress; }
+  .form__fine { font-size: 0.875rem; color: var(--muted); text-align: center; }
+</style>

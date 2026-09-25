@@ -1,0 +1,130 @@
+---
+/**
+ * Sticky site header: wordmark, section links, theme toggle, primary CTA.
+ *
+ * WHY: the CTA is visible at every scroll depth on desktop, because a visitor who is ready
+ * should never have to hunt for the form. On phones the header stays slim and the
+ * StickyCta bar at the bottom carries the CTA instead.
+ *
+ * HOW: the mobile menu is a native <details> element, so it opens with no JavaScript.
+ * The small script only adds conveniences: close the menu after a link is tapped or on
+ * Escape, and flip the theme (persisted to localStorage "theme", same key as the legacy
+ * pages).
+ */
+const links = [
+  { href: "#work", label: "Work" },
+  { href: "#included", label: "What you get" },
+  { href: "#how", label: "How it works" },
+  { href: "#pricing", label: "Pricing" },
+  { href: "#faq", label: "FAQ" },
+];
+---
+<header class="header">
+  <div class="wrap header__row">
+    <a class="brand" href="/" aria-label="JustAWeb home">
+      <span class="brand__mark" aria-hidden="true">j</span>
+      <span class="brand__name">justaweb<span class="brand__tld">.agency</span></span>
+    </a>
+
+    <nav class="nav" aria-label="Main">
+      <ul>
+        {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark theme">
+        <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      </button>
+      <a class="btn btn--sm header__cta" href="#start">Start my website</a>
+
+      <details class="menu">
+        <summary class="icon-btn" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </summary>
+        <div class="menu__panel">
+          <ul>
+            {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          </ul>
+          <a class="btn" href="#start">Start my website</a>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Theme toggle: flip data-theme on <html> and remember the choice.
+  document.querySelector("[data-theme-toggle]")?.addEventListener("click", () => {
+    const root = document.documentElement;
+    const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("theme", next); } catch {}
+  });
+
+  // Mobile menu: close after choosing a link, on Escape, or on an outside tap.
+  const menu = document.querySelector<HTMLDetailsElement>(".menu");
+  if (menu) {
+    menu.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).closest("a")) menu.open = false;
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") menu.open = false; });
+    document.addEventListener("click", (e) => { if (menu.open && !menu.contains(e.target as Node)) menu.open = false; });
+  }
+</script>
+
+<style>
+  .header {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  }
+  .header__row { height: var(--header-h); display: flex; align-items: center; gap: 24px; }
+
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; letter-spacing: -0.02em; font-size: 1.125rem; }
+  .brand__mark {
+    display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px;
+    background: var(--ink); color: var(--bg); font-size: 1.25rem; line-height: 1; padding-bottom: 3px; position: relative;
+  }
+  .brand__mark::after { content: ""; position: absolute; right: 5px; bottom: 6px; width: 6px; height: 6px; border-radius: 50%; background: #ff8a5c; }
+  .brand__tld { color: var(--muted); font-weight: 600; }
+
+  .nav { margin-left: auto; }
+  .nav ul { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+  .nav a { display: block; padding: 8px 12px; border-radius: 999px; text-decoration: none; font-weight: 600; font-size: 0.9375rem; color: var(--ink-2); }
+  .nav a:hover { color: var(--ink); background: var(--surface-2); }
+
+  .header__actions { display: flex; align-items: center; gap: 8px; }
+
+  .icon-btn {
+    display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; list-style: none;
+  }
+  .icon-btn:hover { background: var(--surface-2); }
+  .icon-btn::-webkit-details-marker { display: none; }
+  .i-moon { display: none; }
+  :global([data-theme="dark"]) .i-sun { display: none; }
+  :global([data-theme="dark"]) .i-moon { display: block; }
+
+  .menu { position: relative; display: none; }
+  .menu__panel {
+    position: absolute; right: 0; top: calc(100% + 10px); width: min(300px, calc(100vw - 32px));
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    padding: 10px; display: grid; gap: 8px;
+  }
+  .menu__panel ul { list-style: none; margin: 0; padding: 0; }
+  .menu__panel li a { display: block; padding: 12px 14px; border-radius: var(--radius-sm); text-decoration: none; font-weight: 600; }
+  .menu__panel li a:hover { background: var(--surface-2); }
+
+  @media (max-width: 960px) {
+    .nav { display: none; }
+    .header__actions { margin-left: auto; }
+    .menu { display: block; }
+  }
+  @media (max-width: 560px) {
+    .header__cta { display: none; }
+  }
+</style>

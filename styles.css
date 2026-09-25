@@ -860,6 +860,20 @@ section .container {
     display: block;
 }
 
+.work-card-image-cover {
+    padding: 0;
+    background: #0b1409;
+}
+
+.work-card-image-cover img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    object-fit: cover;
+    object-position: center;
+}
+
 .work-card-image .makarios-logo {
     width: auto;
     height: auto;

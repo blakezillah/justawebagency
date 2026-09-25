@@ -23,6 +23,8 @@ import Header from "../components/Header.astro";
 import Hero from "../components/Hero.astro";
 import Work from "../components/Work.astro";
 import Contact from "../components/Contact.astro";
+import { Picture } from "astro:assets";
+import blakePhoto from "../assets/blake.jpg";
 import { PAINS, INCLUDED, COMPARE, STEPS, FAQ, PRICING, CONTACT } from "../data/site.js";
 
 const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
@@ -181,7 +183,15 @@ const year = new Date().getFullYear();
     <!-- About: a person, not a faceless agency. -->
     <section class="section section--alt" aria-labelledby="about-h">
       <div class="wrap about reveal">
-        <div class="about__mark" aria-hidden="true">BG</div>
+        <!-- Real photo of Blake (cropped 3:4, metadata stripped before commit). -->
+        <Picture
+          class="about__photo"
+          src={blakePhoto}
+          formats={["avif", "webp"]}
+          widths={[240, 360, 480, 585]}
+          sizes="(min-width: 720px) 280px, 70vw"
+          alt="Blake Goble on the beach, smiling, giving a young child a shoulder ride"
+        />
         <div>
           <p class="eyebrow">Who builds it</p>
           <h2 class="h2" id="about-h">Hi, I'm Blake.</h2>
@@ -327,11 +337,12 @@ const year = new Date().getFullYear();
   /* ---- About ---- */
   .about { display: grid; gap: clamp(24px, 4vw, 48px); align-items: center; max-width: 920px; }
   @media (min-width: 720px) { .about { grid-template-columns: auto 1fr; } }
-  .about__mark {
-    display: grid; place-items: center; width: clamp(120px, 18vw, 180px); aspect-ratio: 1; border-radius: 50%;
-    background: var(--ink); color: var(--bg); font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -0.04em;
-    box-shadow: 0 0 0 8px var(--surface), 0 0 0 9px var(--line);
+  .about__photo {
+    width: clamp(220px, 26vw, 280px); aspect-ratio: 3 / 4; object-fit: cover; object-position: 50% 30%;
+    border-radius: var(--radius-lg); box-shadow: 0 0 0 6px var(--surface), 0 0 0 7px var(--line), var(--shadow-lg);
+    transform: rotate(-2deg);
   }
+  @media (max-width: 719px) { .about__photo { width: min(280px, 72vw); transform: none; } }
   .about__sign { margin-top: 20px; font-weight: 700; }
 
   /* ---- FAQ ---- */

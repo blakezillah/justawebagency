@@ -80,7 +80,11 @@ body {
 }
 img, svg, picture { display: block; max-width: 100%; height: auto; }
 a { color: inherit; }
-h1, h2, h3, h4 { margin: 0; line-height: 1.08; letter-spacing: -0.025em; font-weight: 800; text-wrap: balance; }
+h1, h2, h3, h4 { margin: 0; line-height: 1.08; letter-spacing: -0.025em; font-weight: 800; text-wrap: pretty; }
+/* Sentence lines: each .sl inside a heading starts on its own line from tablet up, so a
+   heading never breaks mid-sentence while the next sentence shares that line (Blake's
+   preference, 2026-09-25). On phones the sentences flow normally. */
+@media (min-width: 768px) { .sl { display: block; } }
 p { margin: 0; text-wrap: pretty; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
@@ -101,7 +105,9 @@ p { margin: 0; text-wrap: pretty; }
 .section { padding-block: var(--section); }
 .section--alt { background: var(--surface-2); }
 
-.section-head { max-width: 720px; margin-bottom: clamp(36px, 5vw, 56px); }
+.section-head { margin-bottom: clamp(36px, 5vw, 56px); }
+.section-head .lede { max-width: 720px; }
+.section-head--center .lede { margin-inline: auto; }
 .section-head--center { margin-inline: auto; text-align: center; }
 .eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
@@ -110,7 +116,7 @@ p { margin: 0; text-wrap: pretty; }
 }
 .eyebrow::before { content: ""; width: 18px; height: 2px; background: currentColor; border-radius: 2px; }
 .section-head--center .eyebrow::before { display: none; }
-.h2 { font-size: clamp(2rem, 1.3rem + 3vw, 3.25rem); }
+.h2 { font-size: clamp(1.875rem, 3.6vw, 2.875rem); } /* fluid so one sentence fits one line from 768px up */
 .lede { margin-top: 16px; font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem); color: var(--ink-2); }
 
 /* ---- Buttons --------------------------------------------------------------- */

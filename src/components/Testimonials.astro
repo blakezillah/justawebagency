@@ -1,0 +1,51 @@
+---
+/**
+ * Client testimonials: verbatim quotes with the client's name and business.
+ *
+ * WHY: placed right after the work, so an owner sees a real site and then hears the
+ * owner of that site say it worked. Quotes come only from TESTIMONIALS in
+ * src/data/site.js (see its note on verbatim wording and the held Makarios quote).
+ *
+ * HOW: semantic <figure>/<blockquote>/<figcaption>; the business name links to the live
+ * site. Static markup, no carousel, so every quote is readable without interaction.
+ */
+import Icon from "./Icon.astro";
+import { TESTIMONIALS } from "../data/site.js";
+---
+<section class="section testimonials" aria-labelledby="tst-h">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">What clients say</p>
+      <h2 class="h2" id="tst-h">In their own words.</h2>
+    </div>
+    <div class="quotes">
+      {TESTIMONIALS.map((t) => (
+        <figure class="quote reveal">
+          <span class="icon-tile"><Icon name="Quote" /></span>
+          <blockquote><p>{t.quote}</p></blockquote>
+          <figcaption>
+            <strong>{t.name}</strong>
+            <a href={t.url} target="_blank" rel="noopener">{t.business}<span class="visually-hidden"> (opens in a new tab)</span></a>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Continues the Work section on the same background, so less top padding. */
+  .testimonials { padding-top: 0; }
+  .quotes { display: grid; gap: clamp(16px, 3vw, 28px); }
+  @media (min-width: 900px) { .quotes { grid-template-columns: 1fr 1fr; } }
+  .quote {
+    margin: 0; display: flex; flex-direction: column; gap: 20px;
+    padding: clamp(24px, 3.5vw, 36px); border-radius: var(--radius-lg);
+    background: var(--surface); border: 1px solid var(--line);
+  }
+  .quote blockquote { margin: 0; }
+  .quote blockquote p { font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem); line-height: 1.6; color: var(--ink); }
+  .quote figcaption { margin-top: auto; display: grid; gap: 2px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .quote figcaption a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .quote figcaption a:hover { text-decoration: underline; }
+</style>

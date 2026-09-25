@@ -1,0 +1,46 @@
+---
+/**
+ * Site footer, shared by every Astro page (homepage and privacy policy).
+ *
+ * WHY a component: the privacy page needs the same footer, and links here use
+ * "/#section" so they work from any page, not only the homepage.
+ */
+import Icon from "./Icon.astro";
+import { CONTACT } from "../data/site.js";
+
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="wrap footer__row">
+    <div>
+      <a class="footer__brand" href="/">justaweb<span>.agency</span></a>
+      <p>Simple, fast websites for small businesses.</p>
+      <p class="footer__meta"><Icon name="MapPin" size={16} /> Serving Vancouver, WA, Portland, OR and beyond</p>
+    </div>
+    <nav aria-label="Footer">
+      <ul>
+        <li><a href="/#work">Work</a></li>
+        <li><a href="/#pricing">Pricing</a></li>
+        <li><a href="/#faq">FAQ</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+        <li><a class="footer__mail" href={`mailto:${CONTACT.email}`}><Icon name="Mail" size={16} /> {CONTACT.email}</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="wrap footer__legal">© {year} JustAWeb. All rights reserved.</div>
+</footer>
+
+<style>
+  .footer { padding-block: 48px calc(40px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); }
+  .footer__row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px 48px; }
+  .footer__brand { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; text-decoration: none; }
+  .footer__brand span { color: var(--muted); font-weight: 600; }
+  .footer p { margin-top: 10px; color: var(--muted); font-size: 0.9375rem; }
+  .footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 24px; }
+  .footer nav a { text-decoration: none; font-weight: 600; color: var(--ink-2); }
+  .footer nav a:hover { color: var(--accent); }
+  .footer__meta, .footer__mail { display: inline-flex; align-items: center; gap: 8px; }
+  .footer__meta :global(.icon), .footer__mail :global(.icon) { flex: none; color: var(--accent); }
+  .footer__legal { margin-top: 32px; font-size: 0.875rem; color: var(--muted); }
+
+</style>

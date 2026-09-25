@@ -14,11 +14,11 @@
 import Icon from "./Icon.astro";
 
 const links = [
-  { href: "#work", label: "Work" },
-  { href: "#included", label: "What you get" },
-  { href: "#how", label: "How it works" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/#work", label: "Work" },
+  { href: "/#included", label: "What you get" },
+  { href: "/#how", label: "How it works" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: "/#faq", label: "FAQ" },
 ];
 ---
 <header class="header">
@@ -39,7 +39,7 @@ const links = [
         <Icon name="Sun" size={20} class="i-sun" />
         <Icon name="Moon" size={20} class="i-moon" />
       </button>
-      <a class="btn btn--sm header__cta" href="#start">Start my website</a>
+      <a class="btn btn--sm header__cta" href="/#start">Start my website</a>
 
       <details class="menu">
         <summary class="icon-btn" aria-label="Open menu">
@@ -49,7 +49,7 @@ const links = [
           <ul>
             {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
           </ul>
-          <a class="btn" href="#start">Start my website</a>
+          <a class="btn" href="/#start">Start my website</a>
         </div>
       </details>
     </div>

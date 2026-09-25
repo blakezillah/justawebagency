@@ -1,0 +1,138 @@
+---
+/**
+ * Privacy policy for justaweb.agency (served at /privacy).
+ *
+ * WHY: the site runs Google Analytics and Google Ads tags, collects contact-form data,
+ * hosts private client tools, and JustAWeb reaches out to businesses using public
+ * listing data. Visitors and prospects deserve a plain statement of what is collected
+ * and how to opt out, and outbound email needs a policy to point to.
+ *
+ * HOW: plain language, only claims that match how the site actually works today
+ * (Netlify hosting and Forms, GA4 G-K58RVS4CZQ, Google Ads AW-611239252, intake and
+ * contract tools in public/, the webgen-pipeline outreach machine and its suppression
+ * list). If any of those change, update this page and bump UPDATED. No em dashes.
+ * Blake should review it; it is not a substitute for legal advice.
+ */
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { CONTACT } from "../data/site.js";
+
+const UPDATED = "September 25, 2026";
+const mail = `mailto:${CONTACT.email}`;
+---
+<Base
+  title="Privacy Policy | JustAWeb"
+  description="How JustAWeb collects, uses and protects information from website visitors, clients and the businesses we contact."
+>
+  <Header />
+  <main id="main" class="section">
+    <article class="wrap legal">
+      <p class="eyebrow">Privacy</p>
+      <h1>Privacy policy</h1>
+      <p class="legal__updated">Last updated {UPDATED}</p>
+
+      <p class="lede">
+        JustAWeb is a small web design business run by Blake Goble. This page explains, in plain
+        language, what information we collect, why, and the choices you have. We do not sell
+        personal information.
+      </p>
+
+      <h2>Who we are</h2>
+      <p>
+        "JustAWeb", "we" and "us" mean JustAWeb (justaweb.agency). Questions or requests about
+        your information go to <a href={mail}>{CONTACT.email}</a>.
+      </p>
+
+      <h2>Information you give us</h2>
+      <ul>
+        <li><strong>Contact form.</strong> Your name, email address and message, plus anything optional you add (business name, current website, timeline). We use it to reply to you and to discuss your project.</li>
+        <li><strong>Email.</strong> Anything you send us by email, used the same way.</li>
+        <li><strong>Client project tools.</strong> If you become a client, our private project intake form and service agreement collect the business details, content and signature needed to build your site and document our agreement.</li>
+        <li><strong>Payments.</strong> Payments are made through services such as Venmo or Zelle. We receive a record that you paid; we never see or store your card or bank details.</li>
+      </ul>
+
+      <h2>Information collected automatically</h2>
+      <ul>
+        <li><strong>Analytics.</strong> We use Google Analytics to understand how visitors use this site, such as which pages are viewed and roughly where visits come from. Google Analytics uses cookies and similar technology.</li>
+        <li><strong>Advertising measurement.</strong> We use Google Ads conversion tracking to learn whether our ads lead to contact form submissions. This also uses cookies.</li>
+        <li><strong>Server logs.</strong> Our host, Netlify, processes standard technical data such as IP address, browser type and the pages requested, to deliver and protect the site.</li>
+      </ul>
+
+      <h2>Businesses we reach out to</h2>
+      <p>
+        Sometimes we contact a local business that has no website, or an outdated one, to offer
+        our services. To do that we use business information that is publicly listed, such as the
+        business name, address, phone number, hours, photos and public reviews, which may come
+        from map listings through data providers. We may build a sample website from that
+        information and share it with the business behind a private, password-protected link.
+      </p>
+      <ul>
+        <li>We contact businesses by email only, and every email says who we are and how to stop hearing from us.</li>
+        <li>If you ask us to stop, we add your business to our do-not-contact list and honor it promptly, and we take down any sample site we made for you.</li>
+        <li>We never claim to be affiliated with Google or with your business.</li>
+      </ul>
+
+      <h2>How we use information</h2>
+      <ul>
+        <li>To reply to you and provide the services you ask for.</li>
+        <li>To build, launch and support client websites.</li>
+        <li>To understand and improve this site and our advertising.</li>
+        <li>To keep records we are required to keep, such as agreements and payments.</li>
+      </ul>
+
+      <h2>Who we share it with</h2>
+      <p>
+        We share information only with the service providers that run this site and our
+        business, and only for those purposes: Netlify (hosting and form handling), Google
+        (analytics and ad measurement) and our email provider. We may also disclose
+        information if the law requires it. We do not sell or rent personal information, and we
+        do not share it for other companies' marketing.
+      </p>
+
+      <h2>Your choices</h2>
+      <ul>
+        <li>You can block or delete cookies in your browser settings.</li>
+        <li>You can opt out of Google Analytics with the <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener">Google Analytics opt-out browser add-on</a>.</li>
+        <li>You can manage ad personalization in <a href="https://adssettings.google.com" rel="noopener">Google's ad settings</a>.</li>
+        <li>You can ask us to show you, correct or delete the information we hold about you by emailing <a href={mail}>{CONTACT.email}</a>. We will respond within 30 days.</li>
+      </ul>
+
+      <h2>How long we keep it</h2>
+      <p>
+        We keep contact messages and project records for as long as they are useful for your
+        project or our business records, and delete them when you ask unless we must keep them
+        by law. Our do-not-contact list is kept indefinitely so we can keep honoring it.
+      </p>
+
+      <h2>Security</h2>
+      <p>
+        We use reputable providers and limit access to the information we hold. No method of
+        storing or sending data online is perfectly secure, but we take reasonable care to
+        protect it.
+      </p>
+
+      <h2>Children</h2>
+      <p>This site is for businesses and is not directed at children under 13. We do not knowingly collect their information.</p>
+
+      <h2>Changes to this policy</h2>
+      <p>If we change this policy, we will update it here and change the date at the top.</p>
+
+      <h2>Contact</h2>
+      <p>Questions about privacy? Email <a href={mail}>{CONTACT.email}</a>.</p>
+    </article>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .legal { max-width: 760px; }
+  .legal h1 { font-size: clamp(2.25rem, 1.6rem + 3vw, 3.25rem); }
+  .legal__updated { margin-top: 12px; color: var(--muted); font-size: 0.9375rem; }
+  .legal .lede { margin-top: 28px; }
+  .legal h2 { margin-top: 44px; font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.625rem); }
+  .legal p { margin-top: 14px; color: var(--ink-2); }
+  .legal ul { margin: 14px 0 0; padding-left: 1.25em; display: grid; gap: 10px; color: var(--ink-2); }
+  .legal strong { color: var(--ink); }
+  .legal a { color: var(--accent); font-weight: 600; }
+</style>

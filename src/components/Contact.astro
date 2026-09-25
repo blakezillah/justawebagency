@@ -23,8 +23,8 @@ import Icon from "./Icon.astro";
   <div class="wrap contact__grid">
     <div class="contact__intro reveal">
       <p class="eyebrow">Start here</p>
-      <h2 class="h2">Tell me about your business.</h2>
-      <p class="lede">A few lines is plenty. I reply {CONTACT.responseTime} with honest next steps, never a hard sell.</p>
+      <h2 class="h2">Start your website.</h2>
+      <p class="lede">Tell me a little about your business. A few lines is plenty. I reply {CONTACT.responseTime} with honest next steps, never a hard sell.</p>
 
       <ol class="next">
         <li><span><strong>You send this form.</strong> Takes about a minute.</span></li>
@@ -91,7 +91,7 @@ import Icon from "./Icon.astro";
       </div>
 
       <button class="btn form__submit" type="submit">Send it <span class="arrow" aria-hidden="true">→</span></button>
-      <p class="form__fine">No spam, no newsletter. Your details are only used to reply to you.</p>
+      <p class="form__fine">No spam, no newsletter. Your details are only used to reply to you. <a href="/privacy">Privacy policy</a></p>
     </form>
   </div>
 </section>
@@ -149,4 +149,5 @@ import Icon from "./Icon.astro";
   .form__submit { width: 100%; margin-top: 4px; }
   .form__submit:disabled { opacity: 0.7; cursor: progress; }
   .form__fine { font-size: 0.875rem; color: var(--muted); text-align: center; }
+  .form__fine a { color: inherit; }
 </style>

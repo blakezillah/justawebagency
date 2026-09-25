@@ -65,8 +65,8 @@ export const WORK = [
 export const PAINS = [
   { icon: "SearchX", title: "Just a Facebook page", body: "Customers search Google, find nothing official, and call the shop down the street." },
   { icon: "History", title: "A site from years ago", body: "It is slow, it breaks on phones, and the hours on it are wrong." },
-  { icon: "CreditCard", title: "A builder you never touch", body: "You pay every month for a template you have not had time to finish." },
-  { icon: "ReceiptText", title: "Agency quotes that sting", body: "Thousands of dollars, long timelines, and a monthly retainer on top." },
+  { icon: "CreditCard", title: "Paying for a builder", body: "You pay every month for a template you have not had time to finish." },
+  { icon: "ReceiptText", title: "Agency sticker shock", body: "Thousands of dollars, long timelines, and a monthly retainer on top." },
 ];
 
 /** What every site includes. Each line must stay true for the $1,000 build. `icon` is a Lucide export name. */
@@ -95,7 +95,7 @@ export const COMPARE = {
 
 /** Process steps. Timelines are the ones already published on the old site. */
 export const STEPS = [
-  { title: "Tell me about your business", body: "Fill out the short form or email me. I reply within one business day, and a quick call is free." },
+  { title: "Send a quick note", body: "Tell me about your business with the short form or by email. I reply within one business day, and a quick call is free." },
   { title: "I design and build it", body: "You get a private link to the real site as it comes together, and you ask for changes before anything goes live." },
   { title: "Launch, and it's yours", body: "I connect your domain, set up Google basics and hand you every file. Most sites are live in 4 to 6 weeks." },
 ];
@@ -110,5 +110,28 @@ export const FAQ = [
   { q: "I don't have a domain yet. Can you help?", a: "Yes. I will help you pick and register one as part of setup, and it is registered in your name." },
   { q: "Can I make changes myself later?", a: "Yes. I will show you how to update text and images. Or send changes my way; they are included with the $250 a year hosting." },
   { q: "Do you do WordPress or online stores?", a: "Yes, when a project needs them. Tell me what you have in mind and I will send a custom quote." },
-  { q: "Do you offer ongoing SEO?", a: "Every site ships with solid SEO foundations. I do not sell monthly SEO packages." },
+  { q: "Do you offer ongoing SEO?", a: "Every site ships with solid SEO foundations. I do not sell monthly SEO packages myself, but I work with trusted partners who do, and I am happy to connect you with one so you are never left in the dark." },
+];
+
+/**
+ * Client testimonials, quoted verbatim from the original site. Blake confirmed on
+ * 2026-09-25 that they are real and approved. Never edit a quote's wording; if a
+ * client wants a change, get new text from them.
+ * The Makarios quote ("Luke G") is deliberately NOT here: Makarios is Blake's own
+ * company, so an endorsement from it needs a material-connection disclosure (FTC
+ * Endorsement Guides) before it can appear.
+ */
+export const TESTIMONIALS = [
+  {
+    quote: "We needed a fast, professional website for our security consulting and training business. The fast, reliable website loads instantly and clearly communicates our mission of reducing victimization through real-world training. The site perfectly represents our expertise and makes it easy for clients to understand our services.",
+    name: "Jordan Lee",
+    business: "Precision Safety Inc.",
+    url: "https://precisionsafetyinc.com",
+  },
+  {
+    quote: "Our firearms and tactical training school needed a website that showcases our 30+ years of experience and real operational expertise. The WordPress site makes it easy to update class schedules and training information, while maintaining fast performance. It effectively communicates our safety record and the quality of our instruction.",
+    name: "Jordan Weiss",
+    business: "International Tactical",
+    url: "https://internationaltactical.com",
+  },
 ];

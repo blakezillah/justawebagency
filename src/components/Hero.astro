@@ -18,12 +18,14 @@ import { PRICING } from "../data/site.js";
 ---
 <section class="hero">
   <div class="wrap hero__grid">
-    <div class="hero__copy">
+    <div class="hero__head">
       <p class="eyebrow">Websites for small businesses</p>
       <h1 class="hero__title">
-        A real website for your business.
+        <span class="sl">A real website for your business.</span>
         <span class="hero__price">${PRICING.site.toLocaleString("en-US")}. Yours to keep.</span>
       </h1>
+    </div>
+    <div class="hero__copy">
       <p class="hero__lede">
         Fast, good-looking sites for local businesses in Vancouver, Portland and beyond.
         One flat price, no monthly subscription, and you own every file.
@@ -77,12 +79,19 @@ import { PRICING } from "../data/site.js";
     background: radial-gradient(closest-side, var(--accent-soft), transparent 70%);
     opacity: 0.9; pointer-events: none; z-index: -1;
   }
-  .hero__grid { display: grid; grid-template-columns: 1fr; gap: clamp(40px, 6vw, 64px); align-items: center; }
-  @media (min-width: 960px) { .hero__grid { grid-template-columns: 1.02fr 1fr; } }
+  .hero__grid { display: grid; grid-template-columns: 1fr; gap: 24px clamp(40px, 6vw, 64px); align-items: center; }
+  /* Font scales with the viewport (5.2vw) so "A real website for your business." fits on
+     one line from tablet width up. */
+  /* Desktop: the headline spans both columns so each sentence sits on one line; the
+     copy and CTAs sit left of the visual underneath. */
+  @media (min-width: 960px) {
+    .hero__grid { grid-template-columns: 1.02fr 1fr; row-gap: 40px; }
+    .hero__head { grid-column: 1 / -1; }
+  }
 
-  .hero__title { font-size: clamp(2.5rem, 1.4rem + 4.6vw, 4.5rem); letter-spacing: -0.035em; line-height: 1.02; }
+  .hero__title { font-size: clamp(2.375rem, 5.2vw, 4.25rem); letter-spacing: -0.035em; line-height: 1.04; }
   .hero__price { display: block; color: var(--accent); }
-  .hero__lede { margin-top: 24px; max-width: 34em; font-size: clamp(1.0625rem, 1rem + 0.45vw, 1.3125rem); color: var(--ink-2); }
+  .hero__lede { margin-top: 0; max-width: 34em; font-size: clamp(1.0625rem, 1rem + 0.45vw, 1.3125rem); color: var(--ink-2); }
   .hero__ctas { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
 
   .checks { margin: 28px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 10px 22px; }

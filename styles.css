@@ -792,6 +792,11 @@ section .container {
     align-items: stretch;
 }
 
+/* A leftover card fills the row instead of sitting beside an empty cell. */
+.work-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+}
+
 .work-card {
     background: #ffffff;
     border-radius: var(--radius-xl);

@@ -1,0 +1,73 @@
+---
+/**
+ * Confirmation screen shared by the thank-you pages (contact form and client intake).
+ *
+ * WHY: a submission is the moment an owner is most anxious ("did it go through? what now?").
+ * One consistent screen answers both: a clear check, what happens next as numbered steps,
+ * and a way back to the site. Old versions of these pages still used the retired indigo
+ * design and promised a "team"; this one matches the homepage and speaks as Blake.
+ *
+ * HOW: props carry the copy; the default slot holds anything page-specific (the intake
+ * page puts the client's reference number there).
+ */
+import Icon from "./Icon.astro";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  lede: string;
+  steps: { title: string; body: string }[];
+}
+const { eyebrow, title, lede, steps } = Astro.props;
+---
+<main id="main" class="confirm">
+  <div class="wrap confirm__inner">
+    <span class="confirm__check"><Icon name="CircleCheck" size={34} /></span>
+    <p class="eyebrow">{eyebrow}</p>
+    <h1 class="confirm__title">{title}</h1>
+    <p class="lede">{lede}</p>
+    <slot />
+
+    <h2 class="confirm__next">What happens next</h2>
+    <ol class="confirm__steps">
+      {steps.map((s, i) => (
+        <li>
+          <span class="confirm__n" aria-hidden="true">{i + 1}</span>
+          <div>
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <div class="confirm__actions">
+      <a class="btn" href="/">Back to the homepage</a>
+      <a class="btn btn--ghost" href="/#work">See recent work</a>
+    </div>
+  </div>
+</main>
+
+<style>
+  .confirm { padding-block: clamp(48px, 8vw, 104px); }
+  .confirm__inner { max-width: 760px; }
+  .confirm__check {
+    display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%;
+    background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); margin-bottom: 24px;
+  }
+  .confirm__title { font-size: clamp(2.25rem, 5vw, 3.5rem); letter-spacing: -0.035em; }
+  .confirm .lede { margin-top: 16px; }
+  .confirm__next { margin-top: clamp(40px, 6vw, 56px); font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.625rem); }
+  .confirm__steps { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 14px; }
+  .confirm__steps li {
+    display: grid; grid-template-columns: 40px 1fr; gap: 16px; align-items: start;
+    padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  }
+  .confirm__n {
+    display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+    background: var(--ink); color: var(--bg); font-weight: 800;
+  }
+  .confirm__steps h3 { font-size: 1.125rem; letter-spacing: -0.015em; }
+  .confirm__steps p { margin-top: 6px; color: var(--ink-2); }
+  .confirm__actions { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 12px; }
+</style>

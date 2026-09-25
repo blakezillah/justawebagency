@@ -10,14 +10,21 @@
     
     // EmailJS Configuration (Sign up at https://www.emailjs.com)
     // If not using EmailJS, set useEmailJS to false and configure Netlify Functions instead
+    const EMAILJS = {
+        serviceID: 'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
+        templateID: 'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
+        publicKey: 'YOUR_PUBLIC_KEY', // Replace with your EmailJS public key
+        agencyEmail: 'blake@justaweb.agency'
+    };
+    /**
+     * EmailJS is optional. It used to be forced on while the ids above were still
+     * placeholders, so emailjs.send threw before the Netlify submission ever ran and
+     * every signing ended in an error. Now it only turns on once real ids are filled in;
+     * until then the Netlify "contract" form (with the signed PDF attached) is the record.
+     */
     const CONFIG = {
-        useEmailJS: true, // Set to false if using Netlify Functions
-        emailJS: {
-            serviceID: 'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
-            templateID: 'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
-            publicKey: 'YOUR_PUBLIC_KEY', // Replace with your EmailJS public key
-            agencyEmail: 'hello@justaweb.agency' // Your agency email
-        }
+        useEmailJS: !Object.values(EMAILJS).some(v => String(v).startsWith('YOUR_')),
+        emailJS: EMAILJS
     };
 
     // ============================================
@@ -934,111 +941,53 @@ A PDF copy of the signed contract is attached.`;
     // Submit Form to Netlify
     // ============================================
     
+    /**
+     * Submit the signed agreement to the Netlify form "contract".
+     *
+     * Netlify only stores fields that exist in the static form in contract.html, so every
+     * field sent here is declared there too (the old code sent fields Netlify silently
+     * dropped). The signed PDF goes up as a real file upload, which Netlify stores and
+     * links in the submission, instead of a base64 blob in a text field. The response is
+     * checked: a failed post throws, so the client is told instead of seeing a false
+     * success. The dashboard Clients board reads these submissions to mark the client
+     * "Contract signed".
+     */
     async function submitToNetlify(formData, pdfBlob) {
-        // Convert PDF blob to base64 for Netlify form submission
-        const reader = new FileReader();
-        const base64Promise = new Promise((resolve) => {
-            reader.onloadend = () => resolve(reader.result.split(',')[1]);
-            reader.readAsDataURL(pdfBlob);
-        });
-        
-        const base64PDF = await base64Promise;
-        
-        // Create a hidden form for Netlify submission
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/';
-        form.style.display = 'none';
-        
-        // Create a readable summary for Netlify form
-        const contractSummary = `
-Website Development Contract - Signed
-
-CLIENT INFORMATION:
-- Name: ${formData.clientName || ''}
-- Email: ${formData.clientEmail || ''}
-- Business: ${formData.clientBusiness || ''}
-
-PROJECT DETAILS:
-- Package: ${formData.selectedPackage || ''}
-- Timeline: ${formData.projectTimeline || ''}
-- Start Date: ${formatDate(formData.projectStartDate) || ''}
-- Estimated Completion: ${formatDate(formData.estimatedCompletionDate) || ''}
-
-PAYMENT INFORMATION:
-- Total Cost: $${parseFloat(formData.totalProjectCost || 0).toFixed(2)}
-- Deposit (50%): $${(parseFloat(formData.totalProjectCost || 0) * 0.5).toFixed(2)}
-- Final Payment (50%): $${(parseFloat(formData.totalProjectCost || 0) * 0.5).toFixed(2)}
-- Payment Method: ${formData.paymentMethod || 'Not specified'}
-
-CONTRACT:
-- Contract Date: ${formatDate(formData.contractDate) || ''}
-- Client Signature Date: ${formatDate(formData.clientSignatureDate) || ''}
-
-A PDF copy of the signed contract is attached as base64 data (contract_pdf field).
-        `.trim();
-        
-        // Add form fields as individual inputs
-        const fieldsToInclude = {
+        const total = parseFloat(formData.totalProjectCost || 0);
+        const fields = {
+            'form-name': 'contract',
             'client_name': formData.clientName || '',
             'client_email': formData.clientEmail || '',
             'client_business': formData.clientBusiness || '',
             'package': formData.selectedPackage || '',
             'timeline': formData.projectTimeline || '',
-            'total_cost': `$${parseFloat(formData.totalProjectCost || 0).toFixed(2)}`,
-            'deposit': `$${(parseFloat(formData.totalProjectCost || 0) * 0.5).toFixed(2)}`,
-            'final_payment': `$${(parseFloat(formData.totalProjectCost || 0) * 0.5).toFixed(2)}`,
+            'total_cost': `$${total.toFixed(2)}`,
+            'deposit': `$${(total * 0.5).toFixed(2)}`,
+            'final_payment': `$${(total * 0.5).toFixed(2)}`,
             'payment_method': formData.paymentMethod || '',
             'start_date': formatDate(formData.projectStartDate) || '',
             'completion_date': formatDate(formData.estimatedCompletionDate) || '',
             'contract_date': formatDate(formData.contractDate) || '',
-            'contract_summary': contractSummary
+            'contract_summary': [
+                'Website Development Contract - Signed',
+                `Client: ${formData.clientName || ''} <${formData.clientEmail || ''}>, ${formData.clientBusiness || ''}`,
+                `Package: ${formData.selectedPackage || ''}; timeline: ${formData.projectTimeline || ''}`,
+                `Total: $${total.toFixed(2)} (deposit $${(total * 0.5).toFixed(2)}, final $${(total * 0.5).toFixed(2)}), via ${formData.paymentMethod || 'not specified'}`,
+                `Signed: ${formatDate(formData.clientSignatureDate) || ''} by ${formData.clientSignatureName || ''}`,
+            ].join('\n'),
+            'subject': `Contract signed: ${formData.clientBusiness || formData.clientName || 'client'}`,
         };
-        
-        Object.keys(fieldsToInclude).forEach(key => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = fieldsToInclude[key];
-            form.appendChild(input);
-        });
-        
-        // Add PDF as base64
-        const pdfInput = document.createElement('input');
-        pdfInput.type = 'hidden';
-        pdfInput.name = 'contract_pdf';
-        pdfInput.value = base64PDF.substring(0, 1000) + '... [truncated for display]';
-        form.appendChild(pdfInput);
-        
-        // Add full PDF as a separate field (note field for large data)
-        const pdfFullInput = document.createElement('textarea');
-        pdfFullInput.style.display = 'none';
-        pdfFullInput.name = 'contract_pdf_full';
-        pdfFullInput.value = base64PDF;
-        form.appendChild(pdfFullInput);
-        
-        // Add form name
-        const formNameInput = document.createElement('input');
-        formNameInput.type = 'hidden';
-        formNameInput.name = 'form-name';
-        formNameInput.value = 'contract';
-        form.appendChild(formNameInput);
-        
-        document.body.appendChild(form);
-        
-        // Submit (Netlify will handle it)
-        try {
-            await fetch('/', {
-                method: 'POST',
-                body: new FormData(form)
-            });
-            document.body.removeChild(form);
-            return true;
-        } catch (error) {
-            console.error('Netlify submission error:', error);
-            document.body.removeChild(form);
-            return false;
+
+        const body = new FormData();
+        Object.entries(fields).forEach(([k, v]) => body.append(k, v));
+        if (pdfBlob) {
+            const slug = (formData.clientBusiness || 'client').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+            body.append('contract_pdf', new File([pdfBlob], `justaweb-agreement-${slug}.pdf`, { type: 'application/pdf' }));
         }
+
+        const res = await fetch('/', { method: 'POST', body });
+        if (!res.ok) throw new Error(`Contract submission failed (HTTP ${res.status})`);
+        return true;
     }
 
     // ============================================
@@ -1151,12 +1100,12 @@ A PDF copy of the signed contract is attached as base64 data (contract_pdf field
                 await sendEmailWithPDF(pdfBlob, data);
             }
             
-            // Submit to Netlify (as backup)
+            // Submit to Netlify: the record of the signed agreement
             showStatus('Submitting contract...', '');
             await submitToNetlify(data, pdfBlob);
             
             // Success
-            showStatus('Contract submitted successfully! Check your email for a copy.', 'success');
+            showStatus('Signed and sent. A PDF copy has downloaded to your device, and Blake has received it.', 'success');
             
             // Reset form after delay
             setTimeout(() => {
@@ -1174,7 +1123,7 @@ A PDF copy of the signed contract is attached as base64 data (contract_pdf field
             
         } catch (error) {
             console.error('Form submission error:', error);
-            showStatus('An error occurred. Please try again or contact hello@justaweb.agency', 'error');
+            showStatus('Something went wrong and the agreement was not sent. Please try again, or email blake@justaweb.agency.', 'error');
             submitBtn.disabled = false;
             submitBtn.querySelector('.btn-text').style.display = 'inline';
             submitBtn.querySelector('.btn-loader').style.display = 'none';

@@ -6,6 +6,20 @@
 [build.environment]
   NODE_VERSION = "24"
 
+# Private client tools: always fetch fresh (replaces the old in-page cache-busting
+# script) and keep them out of search engines even if a link leaks.
+[[headers]]
+  for = "/intake*"
+  [headers.values]
+    Cache-Control = "no-cache"
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/contract*"
+  [headers.values]
+    Cache-Control = "no-cache"
+    X-Robots-Tag = "noindex, nofollow"
+
 # Long-cache Astro's fingerprinted assets (file names change when content changes).
 [[headers]]
   for = "/_astro/*"

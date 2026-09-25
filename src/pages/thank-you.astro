@@ -1,0 +1,34 @@
+---
+/**
+ * /thank-you: where Netlify sends a visitor after the homepage contact form posts.
+ * Replaces the old public/thank-you.html (retired design, "our team" copy, 24 hour promise).
+ * Promises here must match the homepage: reply within one business day, nothing owed
+ * until the owner says go.
+ */
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Confirmation from "../components/Confirmation.astro";
+import { CONTACT, PRICING } from "../data/site.js";
+---
+<Base title="Thanks, message received | JustAWeb" description="Your message reached JustAWeb." noindex>
+  <Header />
+  <Confirmation
+    eyebrow="Message received"
+    title="Thanks. I've got your message."
+    lede={`I read every message myself and reply ${CONTACT.responseTime}. Keep an eye on your inbox, and check spam just in case.`}
+    steps={[
+      { title: "I read your note", body: "I look at your business and, if you have one, your current site, so my reply is specific to you." },
+      { title: "I reply with next steps", body: "Usually a few questions or a time for a quick, free call. No pressure and no sales script." },
+      { title: "You decide", body: `Nothing is owed until you say go. Then it is $${PRICING.site.toLocaleString("en-US")} flat, half to start.` },
+    ]}
+  >
+    <p class="contact-alt">Need to add something? Email <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.</p>
+  </Confirmation>
+  <Footer />
+</Base>
+
+<style>
+  .contact-alt { margin-top: 20px; color: var(--ink-2); }
+  .contact-alt a { color: var(--accent); font-weight: 700; }
+</style>

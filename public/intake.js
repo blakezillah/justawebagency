@@ -1,16 +1,20 @@
-// ============================================
-// PRIVATE INTAKE FORM - NOT FOR PUBLIC ACCESS
-// ============================================
-// 
-// WARNING: This code contains internal business logic.
-// For production use:
-// 1. Host behind server-side authentication (not just passcode gate)
-// 2. Use environment variables for sensitive values
-// 3. Consider obfuscation/minification for additional protection
-// 4. Never commit sensitive data to version control
-//
-// The passcode gate is a basic UX feature, NOT real security.
-// ============================================
+/**
+ * JustAWeb client intake (public/intake.html).
+ *
+ * WHAT: a 7-step form a new client fills out after saying yes. Answers autosave to this
+ * device (localStorage) so a client can leave and come back. On submit it posts to the
+ * Netlify form "website-intake" with three machine fields filled here:
+ *   - intake_ref:  a short reference (JAW-YYYYMMDD-XXXX) shown to the client and used as
+ *                  the handle for the project everywhere else.
+ *   - intake_json: every answer as versioned JSON (schema "justaweb.intake/1"). The
+ *                  dashboard Clients board (webgen-pipeline lib/clients.js) reads this to
+ *                  track the client and to turn the answers into a site spec.
+ *   - intake_full_details: the build prompt for an AI coding tool.
+ * plus "subject", which Netlify uses as the notification email subject.
+ *
+ * The passcode gate only keeps casual visitors out of a page that is not linked
+ * anywhere; it is not security, and nothing secret lives in this file.
+ */
 
 // ============================================
 // Configuration Constants
@@ -60,7 +64,6 @@ let faqCount = 0;
                 formContainer.style.display = 'block';
                 loadFormData();
                 initFormHandlers();
-                initExportHandlers();
                 showStep(1);
                 return true;
             } else {
@@ -94,7 +97,6 @@ let faqCount = 0;
             formContainer.style.display = 'block';
             loadFormData();
             initFormHandlers();
-            initExportHandlers();
             showStep(1);
         } else {
             gateError.textContent = 'Incorrect passcode. Please try again.';
@@ -128,12 +130,23 @@ function loadFormData() {
     }
 }
 
+/**
+ * Persist answers to this device and tell the client it happened, so they trust that
+ * leaving mid-way is safe. Storage can throw (private mode, full quota); the form keeps
+ * working either way and the indicator says so honestly.
+ */
 function saveFormData() {
     formData.updated_at = new Date().toISOString();
     if (!formData.created_at) {
         formData.created_at = new Date().toISOString();
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+    let ok = true;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(formData)); } catch (e) { ok = false; }
+    const el = document.getElementById('saveStatus');
+    if (el) {
+        el.textContent = ok ? 'Saved on this device' : 'Could not save on this device. Finish in one sitting.';
+        el.classList.toggle('is-error', !ok);
+    }
 }
 
 function populateForm() {
@@ -214,17 +227,20 @@ function showStep(step) {
     const nextBtn = document.getElementById('nextBtn');
     const formNav = document.querySelector('.form-navigation');
 
-    if (step === totalSteps) {
-        // Hide navigation on final step (has its own submit button)
-        if (formNav) formNav.style.display = 'none';
-    } else {
-        if (formNav) formNav.style.display = 'flex';
-        prevBtn.style.display = step > 1 ? 'inline-flex' : 'none';
-        nextBtn.style.display = 'inline-flex';
-    }
+    // The final step has its own submit button, but keeps Previous so the client can go
+    // back and fix an answer after reviewing the summary.
+    if (formNav) formNav.style.display = 'flex';
+    prevBtn.style.display = step > 1 ? 'inline-flex' : 'none';
+    nextBtn.style.display = step === totalSteps ? 'none' : 'inline-flex';
 
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to top and move focus to the step heading for keyboard and screen reader users.
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    const heading = stepEl && stepEl.querySelector('h2');
+    if (heading) {
+        heading.setAttribute('tabindex', '-1');
+        heading.focus({ preventScroll: true });
+    }
 }
 
 function nextStep() {
@@ -1087,28 +1103,67 @@ function handleConditionalFields(field) {
 // Confirmation Page Generation
 // ============================================
 
+/** Escape user text before it goes into innerHTML. */
+function escHtml(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/**
+ * Final-step review. Shows the answers that matter most, grouped by step, each group
+ * with an Edit link that jumps back to that step. Clients catch their own typos here
+ * instead of Blake catching them in the build.
+ */
 function generateConfirmation() {
-    // Summary and prompt are only in the email/.txt notification (for agency eyes only), not shown on the confirmation step
     const data = getCompleteFormData();
     const summaryCard = document.getElementById('summaryCard');
-    const promptPreview = document.getElementById('promptPreview');
-    if (summaryCard) {
-        let html = '';
-        html += `<div class="summary-item"><span class="summary-item-label">Business Name</span><span class="summary-item-value">${data.businessName || 'Not provided'}</span></div>`;
-        const domainSummary = data.hasDomain === 'yes' && data.domain
-            ? `${data.domain} (${data.currentHosting ? (data.currentHosting === 'other' && data.currentHostingOther ? data.currentHostingOther : formatHosting(data.currentHosting)) : 'host not specified'})`
-            : (data.hasDomain === 'no' ? 'No domain yet (placeholder / register later)' : 'Not specified');
-        html += `<div class="summary-item"><span class="summary-item-label">Domain</span><span class="summary-item-value">${domainSummary}</span></div>`;
-        html += `<div class="summary-item"><span class="summary-item-label">Pages</span><span class="summary-item-value">${data.pages === 'one' ? 'Single page' : data.pages === 'multi' ? `${data.pageCount || 'N/A'} pages` : 'Not provided'}</span></div>`;
-        html += `<div class="summary-item"><span class="summary-item-label">Timeline</span><span class="summary-item-value">${formatDeadline(data.deadline) || 'Not provided'}</span></div>`;
-        html += `<div class="summary-item"><span class="summary-item-label">Hosting & maintenance</span><span class="summary-item-value">${data.hosting_maintenance ? 'Yes ($250/year)' : 'No'}</span></div>`;
-        html += `<div class="summary-item"><span class="summary-item-label">Primary Goal</span><span class="summary-item-value">${formatGoal(data.primaryGoal, data.primaryGoalOther) || 'Not provided'}</span></div>`;
-        summaryCard.innerHTML = html;
-    }
-    const prompt = generateCursorPrompt();
-    if (promptPreview) {
-        promptPreview.value = prompt;
-    }
+    if (!summaryCard) return;
+
+    const domain = data.hasDomain === 'yes' && data.domain
+        ? data.domain
+        : (data.hasDomain === 'no' ? 'Needs help getting one' : '');
+    const pages = data.pages === 'one' ? 'Single page' : (data.pages === 'multi' ? `${data.pageCount || 'Several'} pages` : '');
+    const count = (arr, word) => (arr && arr.length ? `${arr.length} ${word}${arr.length === 1 ? '' : 's'}` : '');
+    // Show the label the client clicked ("Light/dark mode switch"), not the stored value ("themeToggle").
+    const labels = (name, values) => (values || []).map(v => {
+        const input = document.querySelector(`input[name="${CSS.escape(name)}"][value="${CSS.escape(v)}"]`);
+        const text = input && input.closest('label') ? input.closest('label').textContent.trim() : v;
+        return text;
+    }).join(', ');
+
+    const groups = [
+        { step: 1, title: 'About you', rows: [
+            ['Business', data.businessName], ['Contact', data.contactName], ['Email', data.email],
+            ['Phone', data.phone], ['Location', [data.city, data.state].filter(Boolean).join(', ')],
+            ['What you do', data.businessDescription] ] },
+        { step: 2, title: 'Your website', rows: [
+            ['Domain', domain], ['Pages', pages], ['Timeline', formatDeadline(data.deadline)],
+            ['Hosting and edits', data.hosting_maintenance ? 'Yes, $250 a year' : 'No'] ] },
+        { step: 3, title: 'Goals and audience', rows: [
+            ['Main goal', formatGoal(data.primaryGoal, data.primaryGoalOther)], ['Audience', data.targetAudience],
+            ['Tone', formatTone(data.toneOfVoice, data.toneOfVoiceOther)] ] },
+        { step: 4, title: 'Look and feel', rows: [
+            ['Brand words', labels('brandPersonality', data.brandPersonality)], ['Colors', [data.primaryColor, data.secondaryColor].filter(Boolean).join(', ')],
+            ['Logo', data.hasLogo === 'yes' ? 'Yes' : (data.hasLogo === 'no' ? 'Not yet' : '')],
+            ['Content', formatContentStatus(data.contentStatus)] ] },
+        { step: 5, title: 'Your content', rows: [
+            ['Services', count(data.services, 'service')], ['Testimonials', count(data.testimonials, 'testimonial')],
+            ['FAQ', count(data.faq, 'question')], ['Team', count(data.team, 'person')] ] },
+        { step: 6, title: 'Extras', rows: [
+            ['Sections', labels('sections', data.sections)], ['Features', labels('features', data.features)], ['Integrations', labels('integrations', data.integrations)] ] },
+    ];
+
+    summaryCard.innerHTML = groups.map(g => {
+        const rows = g.rows.filter(([, v]) => v).map(([k, v]) =>
+            `<div class="summary-item"><span class="summary-item-label">${escHtml(k)}</span><span class="summary-item-value">${escHtml(v)}</span></div>`).join('');
+        return `<section class="summary-group"><div class="summary-group-head"><h3>${escHtml(g.title)}</h3>` +
+            `<button type="button" class="summary-edit" data-edit-step="${g.step}">Edit</button></div>` +
+            (rows || '<p class="summary-empty">Nothing added. That is fine.</p>') + `</section>`;
+    }).join('');
+
+    summaryCard.querySelectorAll('[data-edit-step]').forEach(btn => btn.addEventListener('click', () => {
+        currentStep = Number(btn.dataset.editStep);
+        showStep(currentStep);
+    }));
 }
 
 function formatDeadline(value) {
@@ -1385,7 +1440,7 @@ function generateCursorPrompt() {
     if (data.services && data.services.length > 0) {
         prompt += `Services / offerings (use these for Services section or pricing tiers)\n\n`;
         data.services.forEach(s => {
-            prompt += `\t•\t${s.title || 'Service'}: ${s.description || '—'}\n`;
+            prompt += `\t•\t${s.title || 'Service'}: ${s.description || '(no description)'}\n`;
         });
         prompt += `\n`;
     }
@@ -1394,7 +1449,7 @@ function generateCursorPrompt() {
     if (data.team && data.team.length > 0) {
         prompt += `Team (use for Team or About section)\n\n`;
         data.team.forEach(t => {
-            prompt += `\t•\t${t.name || 'Name'} — ${t.title || 'Title'}: ${t.bio || '—'}\n`;
+            prompt += `\t•\t${t.name || 'Name'}, ${t.title || 'Title'}: ${t.bio || '(no bio)'}\n`;
         });
         prompt += `\n`;
     }
@@ -1403,7 +1458,7 @@ function generateCursorPrompt() {
     if (data.testimonials && data.testimonials.length > 0) {
         prompt += `Testimonials (use for social proof section)\n\n`;
         data.testimonials.forEach(t => {
-            prompt += `\t•\t"${t.quote || ''}" — ${t.author || 'Author'}, ${t.titleCompany || ''}\n`;
+            prompt += `\t•\t"${t.quote || ''}" (${t.author || 'Author'}${t.titleCompany ? ', ' + t.titleCompany : ''})\n`;
         });
         prompt += `\n`;
     }
@@ -1462,7 +1517,7 @@ function generateCursorPrompt() {
     prompt += `\t•\tBuild with vanilla HTML, CSS, and JavaScript only\n`;
     prompt += `\t•\tNO ongoing SEO maintenance (ok to include SEO foundations during build)\n`;
     if (data.hosting_maintenance) {
-        prompt += `\t•\tClient wants hosting and maintenance ($250/year) — include in handoff notes\n`;
+        prompt += `\t•\tClient wants hosting and maintenance ($250/year); include in handoff notes\n`;
     }
     prompt += `\t•\tFocus on conversion optimization\n`;
     prompt += `\t•\tEnsure all code is clean, maintainable, and well-commented\n\n`;
@@ -1474,153 +1529,63 @@ function generateCursorPrompt() {
 // Submit Request
 // ============================================
 
+/**
+ * Build the client-facing reference for this intake: JAW-YYYYMMDD-XXXX, where XXXX is the
+ * first letters of the business name (padded with random letters). Short enough to read
+ * over the phone, unique enough for a one-person agency.
+ */
+function makeIntakeRef(businessName) {
+    const d = new Date();
+    const ymd = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+    const letters = (businessName || '').toUpperCase().replace(/[^A-Z]/g, '');
+    const rand = () => 'ABCDEFGHJKLMNPQRSTUVWXYZ'[Math.floor(Math.random() * 24)];
+    let tag = letters.slice(0, 4);
+    while (tag.length < 4) tag += rand();
+    return `JAW-${ymd}-${tag}`;
+}
+
+let submitting = false;
+
+/**
+ * Final submit. Fills the machine fields (see file header), remembers the reference for
+ * the thank-you page, then posts the real form to Netlify. The saved draft is cleared by
+ * the thank-you page, which only loads after Netlify accepted the submission, so a failed
+ * post never loses the client's answers.
+ */
 function submitRequest() {
-    if (!validateCurrentStep()) {
-        return;
-    }
+    if (submitting) return;
+    if (!validateCurrentStep()) return;
 
     saveCompetitorData();
     saveFormData();
 
     const data = getCompleteFormData();
-    sendEmailWithPrompt(data);
-}
+    const ref = formData.intake_ref || makeIntakeRef(data.businessName);
+    formData.intake_ref = ref;
+    saveFormData();
 
-function sendEmailWithPrompt(data) {
-    // Generate .txt content (Cursor prompt only) and put it in the hidden field
-    // so Netlify includes it in the form notification email to blake@justaweb.agency (no file for the user)
     const prompt = generateCursorPrompt();
-    const content = `WEBSITE BUILD INTAKE\n${'='.repeat(50)}\n\nGenerated: ${new Date().toISOString()}\n\n\nCURSOR PROMPT:\n${'-'.repeat(50)}\n\n${prompt}`;
-
-    const intakeFullDetails = document.getElementById('intake_full_details');
-    if (intakeFullDetails) {
-        intakeFullDetails.value = content;
-    }
-
-    const form = document.getElementById('intakeForm');
-    if (form) {
-        form.submit();
-    }
-}
-
-function generateShortSummaryEmail(data) {
-    let summary = `Website Build Request: ${data.businessName || 'New Client'}\n\n`;
-    summary += `Pages: ${data.pages === 'one' ? 'Single page' : data.pages === 'multi' ? `${data.pageCount || 'N/A'} pages` : 'Not specified'}\n`;
-    summary += `Timeline: ${formatDeadline(data.deadline) || 'Not specified'}\n`;
-    summary += `Hosting & maintenance: ${data.hosting_maintenance ? 'Yes ($250/yr)' : 'No'}\n`;
-    summary += `Primary Goal: ${formatGoal(data.primaryGoal, data.primaryGoalOther) || 'Not specified'}\n\n`;
-    summary += `Full details are in the intake_full_details field of the Netlify notification.`;
-    return summary;
-}
-
-// ============================================
-// Export Functions
-// ============================================
-
-function initExportHandlers() {
-    // Advanced section buttons
-    const copyPromptBtn = document.getElementById('copyPromptBtn');
-    const copyJsonBtn = document.getElementById('copyJsonBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    
-    if (copyPromptBtn) {
-        copyPromptBtn.addEventListener('click', () => {
-            const prompt = generateCursorPrompt();
-            copyToClipboard(prompt, 'Cursor Prompt copied to clipboard!');
-        });
-    }
-
-    if (copyJsonBtn) {
-        copyJsonBtn.addEventListener('click', () => {
-            const data = getCompleteFormData();
-            const json = JSON.stringify(data, null, 2);
-            copyToClipboard(json, 'JSON copied to clipboard!');
-        });
-    }
-
-    if (downloadBtn) {
-        downloadBtn.addEventListener('click', () => {
-            downloadFormData();
-        });
-    }
-
-    // Modal handlers
-    const modal = document.getElementById('emailModal');
-    if (modal) {
-        const closeModal = () => modal.classList.remove('active');
-        
-        const modalDownloadBtn = document.getElementById('modalDownloadBtn');
-        const modalCopySummaryBtn = document.getElementById('modalCopySummaryBtn');
-        const modalCloseBtn = document.getElementById('modalCloseBtn');
-        const modalClose = document.getElementById('modalClose');
-        
-        if (modalDownloadBtn) {
-            modalDownloadBtn.addEventListener('click', () => {
-                downloadFormData();
-                closeModal();
-            });
-        }
-        
-        if (modalCopySummaryBtn) {
-            modalCopySummaryBtn.addEventListener('click', () => {
-                const data = window._modalData || getCompleteFormData();
-                const summary = generateShortSummaryEmail(data);
-                copyToClipboard(summary, 'Short summary email copied to clipboard!');
-            });
-        }
-        
-        if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
-        if (modalClose) modalClose.addEventListener('click', closeModal);
-        if (modal.querySelector('.modal-overlay')) {
-            modal.querySelector('.modal-overlay').addEventListener('click', closeModal);
-        }
-    }
-}
-
-function copyToClipboard(text, successMessage) {
-    navigator.clipboard.writeText(text).then(() => {
-        showStatus(successMessage, 'success');
-    }).catch(() => {
-        // Fallback
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        showStatus(successMessage, 'success');
+    document.getElementById('intake_full_details').value =
+        `WEBSITE BUILD INTAKE ${ref}\n${'='.repeat(50)}\n\nGenerated: ${new Date().toISOString()}\n\n\nBUILD PROMPT:\n${'-'.repeat(50)}\n\n${prompt}`;
+    document.getElementById('intake_json').value = JSON.stringify({
+        schema: 'justaweb.intake/1',
+        ref,
+        submittedAt: new Date().toISOString(),
+        data,
     });
-}
+    document.getElementById('intake_ref').value = ref;
+    document.getElementById('intake_subject').value =
+        `New intake: ${data.businessName || 'Unnamed business'} (${ref})`;
 
-function downloadFormData() {
-    const data = getCompleteFormData();
-    const prompt = generateCursorPrompt();
-    const content = `WEBSITE BUILD INTAKE\n${'='.repeat(50)}\n\nGenerated: ${new Date().toISOString()}\n\n\nCURSOR PROMPT:\n${'-'.repeat(50)}\n\n${prompt}`;
-    
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `intake-${data.businessName ? data.businessName.replace(/\s+/g, '-').toLowerCase() : 'form'}-${Date.now()}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    showStatus('File downloaded successfully!', 'success');
-}
+    try {
+        sessionStorage.setItem('intake_last', JSON.stringify({ ref, business: data.businessName || '', email: data.email || '' }));
+    } catch (e) { /* thank-you page falls back to a generic message */ }
 
-function showStatus(message, type) {
-    const statusEl = document.getElementById('exportStatus');
-    if (statusEl) {
-        statusEl.textContent = message;
-        statusEl.className = `export-status ${type}`;
-        
-        setTimeout(() => {
-            statusEl.textContent = '';
-            statusEl.className = 'export-status';
-        }, 5000);
-    }
+    submitting = true;
+    const btn = document.getElementById('submitRequestBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+    showSubmitStatus('', '');
+    document.getElementById('intakeForm').submit();
 }
 
 function showSubmitStatus(message, type) {
@@ -1630,25 +1595,3 @@ function showSubmitStatus(message, type) {
         statusEl.className = `submit-status ${type}`;
     }
 }
-
-function resetForm() {
-    if (confirm('Are you sure you want to reset the form? All data will be lost.')) {
-        localStorage.removeItem(STORAGE_KEY);
-        formData = {};
-        document.getElementById('intakeForm').reset();
-        currentStep = 1;
-        showStep(1);
-        const summaryCard = document.getElementById('summaryCard');
-        if (summaryCard) summaryCard.innerHTML = '';
-    }
-}
-
-// ============================================
-// Initialize
-// ============================================
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Handlers are initialized in access gate or checkUnlockStatus
-    // This ensures they're only set up when form is unlocked
-});
-

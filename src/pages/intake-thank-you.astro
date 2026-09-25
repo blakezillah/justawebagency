@@ -1,0 +1,75 @@
+---
+/**
+ * /intake-thank-you: where Netlify sends a client after the intake form (public/intake.html)
+ * posts successfully.
+ *
+ * HOW: intake.js stores {ref, business, email} in sessionStorage just before submitting.
+ * This page shows that reference (the handle for the project in email and on the
+ * dashboard Clients board) and then clears the saved intake draft from localStorage.
+ * Clearing happens here, not at submit time, because this page only loads after Netlify
+ * accepted the post, so a failed submit never loses the client's answers.
+ */
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Confirmation from "../components/Confirmation.astro";
+import Icon from "../components/Icon.astro";
+import { CONTACT } from "../data/site.js";
+---
+<Base title="Intake received | JustAWeb" description="Your website intake reached JustAWeb." noindex>
+  <Header />
+  <Confirmation
+    eyebrow="Intake received"
+    title="Your answers are in."
+    lede="Thank you for taking the time. Everything you shared is with me now, and it is the best head start your website can get."
+    steps={[
+      { title: "I review everything", body: "Goals, audience, look and feel, and content, so we are aligned before we talk." },
+      { title: "I email you to set up a short kickoff call", body: "Within two business days. We clear up any questions and confirm scope and timing." },
+      { title: "You get the agreement and timeline", body: "A clear service agreement to sign, half to start and half before launch, and then I start building." },
+      { title: "Gather what you have", body: "Logo, photos, domain login, any copy. If something is missing, I will help. No need to send anything before the call." },
+    ]}
+  >
+    <div class="ref" data-ref-box hidden>
+      <p class="ref__label">Your reference</p>
+      <div class="ref__row">
+        <code class="ref__code" data-ref></code>
+        <button class="ref__copy" type="button" data-copy aria-label="Copy reference">
+          <Icon name="Copy" size={18} /> <span data-copy-label>Copy</span>
+        </button>
+      </div>
+      <p class="ref__hint">Mention it when you email <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> about this project.</p>
+    </div>
+  </Confirmation>
+  <Footer />
+</Base>
+
+<script>
+  // Show the reference saved by intake.js, then clear the intake draft (see header).
+  let last: { ref?: string } | null = null;
+  try { last = JSON.parse(sessionStorage.getItem("intake_last") || "null"); } catch {}
+  const box = document.querySelector<HTMLElement>("[data-ref-box]");
+  if (last?.ref && box) {
+    box.querySelector("[data-ref]")!.textContent = last.ref;
+    box.hidden = false;
+    box.querySelector("[data-copy]")?.addEventListener("click", async () => {
+      const label = box.querySelector("[data-copy-label]")!;
+      try { await navigator.clipboard.writeText(last!.ref!); label.textContent = "Copied"; }
+      catch { label.textContent = "Select and copy"; }
+    });
+  }
+  try { localStorage.removeItem("intake_form_data"); } catch {}
+</script>
+
+<style>
+  .ref { margin-top: 28px; padding: 20px 22px; border-radius: var(--radius); background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line)); }
+  .ref__label { font: 700 0.8125rem/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  .ref__row { margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .ref__code { font: 700 clamp(1.25rem, 1rem + 1.2vw, 1.625rem)/1.2 var(--mono); letter-spacing: 0.02em; color: var(--ink); }
+  .ref__copy {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 600 0.9375rem var(--font); cursor: pointer;
+  }
+  .ref__copy:hover { border-color: var(--ink); }
+  .ref__hint { margin-top: 10px; color: var(--ink-2); font-size: 0.9375rem; }
+  .ref__hint a { color: var(--accent); font-weight: 700; }
+</style>

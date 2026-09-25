@@ -21,127 +21,10 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     
-    <title>Website Build Intake — justaweb.agency</title>
-    <link rel="stylesheet" href="intake.css" id="intake-css">
-    <style>
-        /* Disable text selection */
-        body {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-        }
-        /* Re-enable selection for form inputs */
-        input, textarea, select {
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-        }
-    </style>
+    <title>Website Build Intake | JustAWeb</title>
+    <link rel="stylesheet" href="intake.css">
 </head>
 <body>
-    <!-- Source Code Protection Script -->
-    <script>
-        (function() {
-            'use strict';
-            
-            // Helper: Check if user is interacting with form elements
-            function isFormElement(e) {
-                const tag = e.target.tagName.toLowerCase();
-                return tag === 'input' || tag === 'textarea' || tag === 'select' || 
-                       tag === 'button' || e.target.closest('button') || 
-                       e.target.closest('form') || e.target.isContentEditable;
-            }
-            
-            // Disable right-click context menu (but allow on form elements)
-            document.addEventListener('contextmenu', function(e) {
-                if (!isFormElement(e)) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-            
-            // Disable common keyboard shortcuts (only when not in form)
-            document.addEventListener('keydown', function(e) {
-                // Allow all keyboard events in form elements
-                if (isFormElement(e)) {
-                    return true;
-                }
-                
-                // Disable F12 (DevTools)
-                if (e.key === 'F12') {
-                    e.preventDefault();
-                    return false;
-                }
-                
-                // Disable Ctrl+Shift+I (DevTools) - but allow Ctrl+I alone
-                if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-                    e.preventDefault();
-                    return false;
-                }
-                
-                // Disable Ctrl+Shift+J (Console)
-                if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-                    e.preventDefault();
-                    return false;
-                }
-                
-                // Disable Ctrl+U (View Source) - but allow Ctrl+U in inputs
-                if (e.ctrlKey && e.key === 'u' && !isFormElement(e)) {
-                    e.preventDefault();
-                    return false;
-                }
-                
-                // Disable Ctrl+S (Save Page) - but allow Ctrl+S in inputs
-                if (e.ctrlKey && e.key === 's' && !isFormElement(e)) {
-                    e.preventDefault();
-                    return false;
-                }
-                
-                // Disable Ctrl+Shift+C (Inspect Element)
-                if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-                    e.preventDefault();
-                    return false;
-                }
-                
-                // Disable Ctrl+P (Print) - but allow in form elements
-                if (e.ctrlKey && e.key === 'p' && !isFormElement(e)) {
-                    e.preventDefault();
-                    return false;
-                }
-            }, true); // Use capture phase to allow form handlers to work
-            
-            // Detect DevTools opening (less aggressive - only warn, don't break form)
-            let devtools = {open: false, orientation: null};
-            const threshold = 160;
-            setInterval(function() {
-                if (window.outerHeight - window.innerHeight > threshold || 
-                    window.outerWidth - window.innerWidth > threshold) {
-                    if (!devtools.open) {
-                        devtools.open = true;
-                        console.warn('%cDeveloper tools detected. This form is private.', 'color: red; font-size: 14px;');
-                    }
-                } else {
-                    devtools.open = false;
-                }
-            }, 1000); // Check less frequently
-            
-            // Disable drag and drop (but allow on form elements)
-            document.addEventListener('dragstart', function(e) {
-                if (!isFormElement(e)) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-            
-            // Clear console and show warning
-            console.clear();
-            console.log('%cStop!', 'color: red; font-size: 50px; font-weight: bold;');
-            console.log('%cThis is a private form. Unauthorized access is prohibited.', 'color: red; font-size: 16px;');
-        })();
-    </script>
     <!-- Access Gate -->
     <div class="access-gate" id="accessGate">
         <div class="gate-content">
@@ -170,17 +53,23 @@
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <p class="progress-text" id="progressText">Step 1 of 7</p>
+            <p class="progress-text"><span id="progressText">Step 1 of 7</span> <span class="save-status" id="saveStatus" aria-live="polite"></span></p>
         </div>
 
         <!-- Form Steps -->
         <form class="intake-form" id="intakeForm" name="website-intake" method="POST" action="/intake-thank-you" data-netlify="true" data-netlify-honeypot="bot-field" novalidate>
             <input type="hidden" name="form-name" value="website-intake">
             <p class="hidden" aria-hidden="true">
-                <label>Don’t fill this out: <input name="bot-field"></label>
+                <label>Don’t fill this out: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
             </p>
-            <!-- Full intake .txt (Cursor prompt + JSON) — included in Netlify notification to blake@justaweb.agency only -->
-            <textarea name="intake_full_details" id="intake_full_details" class="hidden" aria-hidden="true" rows="1"></textarea>
+            <!-- Filled by intake.js on submit and included in the Netlify notification to Blake only:
+                 intake_full_details = the build prompt; intake_json = every answer as versioned JSON
+                 (schema justaweb.intake/1) for the dashboard Clients board; intake_ref = the reference
+                 shown to the client; subject = the notification email subject. -->
+            <textarea name="intake_full_details" id="intake_full_details" class="hidden" aria-hidden="true" tabindex="-1" rows="1"></textarea>
+            <textarea name="intake_json" id="intake_json" class="hidden" aria-hidden="true" tabindex="-1" rows="1"></textarea>
+            <input type="hidden" name="intake_ref" id="intake_ref">
+            <input type="hidden" name="subject" id="intake_subject" value="New website intake">
             <!-- Step 1: Basics -->
             <div class="form-step active" id="step1" data-step="1">
                 <h2>About you</h2>
@@ -192,15 +81,15 @@
                 </div>
                 <div class="form-group">
                     <label>Do you already have a website address (domain)? *</label>
-                    <p class="helper-text">A domain is what people type to find you — like yourbusiness.com.</p>
+                    <p class="helper-text">A domain is what people type to find you, like yourbusiness.com.</p>
                     <div class="radio-group">
                         <label class="radio-label">
                             <input type="radio" name="hasDomain" value="yes" required>
-                            <span>Yes — I have one</span>
+                            <span>Yes, I have one</span>
                         </label>
                         <label class="radio-label">
                             <input type="radio" name="hasDomain" value="no" required>
-                            <span>No — I need help with this</span>
+                            <span>No, I need help with this</span>
                         </label>
                     </div>
                     <span class="form-error" id="hasDomainError"></span>
@@ -232,7 +121,7 @@
                     <input type="text" id="currentHostingOther" name="currentHostingOther" placeholder="e.g. Bluehost, HostGator">
                 </div>
                 <div class="form-group no-domain-note" id="noDomainNote" style="display: none;">
-                    <p class="helper-text">No problem — we can help you get one or use a placeholder for now and connect the real address later.</p>
+                    <p class="helper-text">No problem. We can help you get one or use a placeholder for now and connect the real address later.</p>
                 </div>
                 <div class="form-group">
                     <label for="contactName">Your name (or main contact) *</label>
@@ -264,7 +153,7 @@
                 </div>
                 <div class="form-group">
                     <label for="tagline">Tagline (optional)</label>
-                    <input type="text" id="tagline" name="tagline" placeholder="A short line that sums you up — often on the home page">
+                    <input type="text" id="tagline" name="tagline" placeholder="A short line that sums you up, often on the home page">
                 </div>
                 <div class="form-group">
                     <label for="businessDescription">In one sentence, what do you do? *</label>
@@ -277,7 +166,7 @@
                 </div>
                 <div class="form-group">
                     <label for="fullAddress">Business address (optional)</label>
-                    <textarea id="fullAddress" name="fullAddress" rows="2" placeholder="If you want it on the site — street, city, state, zip"></textarea>
+                    <textarea id="fullAddress" name="fullAddress" rows="2" placeholder="If you want it on the site: street, city, state, zip"></textarea>
                 </div>
                 <div class="form-group">
                     <label>Social or other links (optional)</label>
@@ -332,7 +221,7 @@
                     <label for="deadline">When do you need it? *</label>
                     <select id="deadline" name="deadline" required>
                         <option value="">Choose a timeline</option>
-                        <option value="flexible">No rush — flexible</option>
+                        <option value="flexible">No rush, flexible</option>
                         <option value="2weeks">Within 2 weeks</option>
                         <option value="1month">Within 1 month</option>
                         <option value="asap">As soon as possible</option>
@@ -342,7 +231,7 @@
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="hostingMaintenance" name="hostingMaintenance">
-                        <span>Yes — include hosting and maintenance ($250/year)</span>
+                        <span>Yes, include hosting and maintenance ($250/year)</span>
                     </label>
                     <p class="helper-text">We host your site and handle updates, backups, and small content changes so you don’t have to.</p>
                 </div>
@@ -370,19 +259,19 @@
                 </div>
                 <div class="form-group">
                     <label for="targetAudience">Who is your website for? *</label>
-                    <p class="helper-text">Describe your ideal visitor — e.g. small business owners, local families, tech-savvy buyers.</p>
+                    <p class="helper-text">Describe your ideal visitor, e.g. small business owners, local families, tech-savvy buyers.</p>
                     <textarea id="targetAudience" name="targetAudience" rows="3" required placeholder="e.g. Small business owners who need bookkeeping help"></textarea>
                     <span class="form-error" id="targetAudienceError"></span>
                 </div>
                 <div class="form-group">
                     <label for="topActions">What should visitors do when they visit? *</label>
-                    <p class="helper-text">List the top 2–3 actions — e.g. book a call, download a guide, contact you.</p>
+                    <p class="helper-text">List the top 2 or 3 actions, e.g. book a call, download a guide, contact you.</p>
                     <textarea id="topActions" name="topActions" rows="3" placeholder="1. Book a free consultation&#10;2. Download our pricing guide&#10;3. Contact us" required></textarea>
                     <span class="form-error" id="topActionsError"></span>
                 </div>
                 <div class="form-group">
                     <label for="toneOfVoice">How should the site sound? *</label>
-                    <p class="helper-text">The overall feel of the writing — formal, friendly, etc.</p>
+                    <p class="helper-text">The overall feel of the writing: formal, friendly, and so on.</p>
                     <select id="toneOfVoice" name="toneOfVoice" required>
                         <option value="">Choose one</option>
                         <option value="professional">Professional and polished</option>
@@ -401,15 +290,15 @@
                 </div>
                 <div class="form-group">
                     <label for="keyDifferentiators">What makes you different? (optional)</label>
-                    <textarea id="keyDifferentiators" name="keyDifferentiators" rows="3" placeholder="A few points that set you apart — we’ll use this in the copy."></textarea>
+                    <textarea id="keyDifferentiators" name="keyDifferentiators" rows="3" placeholder="A few points that set you apart. We’ll use this in the copy."></textarea>
                 </div>
                 <div class="form-group">
                     <label for="painPoints">What worries or objections should the site address? (optional)</label>
-                    <textarea id="painPoints" name="painPoints" rows="3" placeholder="e.g. Price, trust, complexity — we’ll speak to these in the content."></textarea>
+                    <textarea id="painPoints" name="painPoints" rows="3" placeholder="e.g. Price, trust, complexity. We’ll speak to these in the content."></textarea>
                 </div>
                 <div class="form-group">
                     <label>Any websites you like the look of? (optional)</label>
-                    <p class="helper-text">Add links to sites whose style you like. We use them for inspiration only — we won’t copy them.</p>
+                    <p class="helper-text">Add links to sites whose style you like. We use them for inspiration only and won’t copy them.</p>
                     <div id="competitorsContainer">
                         <!-- Competitor fields will be added here dynamically -->
                     </div>
@@ -423,7 +312,7 @@
                 <p class="step-intro">How should your site look? Pick words that fit your brand.</p>
                 <div class="form-group">
                     <label>Which words describe your brand? *</label>
-                    <p class="helper-text">Check all that apply — we’ll use this to guide the design.</p>
+                    <p class="helper-text">Check all that apply. We’ll use this to guide the design.</p>
                     <div class="checkbox-group">
                         <label class="checkbox-label">
                             <input type="checkbox" name="brandPersonality" value="modern">
@@ -504,7 +393,7 @@
                         </label>
                         <label class="radio-label">
                             <input type="radio" name="hasLogo" value="no" required>
-                            <span>No — I need one or will add later</span>
+                            <span>No, I need one or will add later</span>
                         </label>
                     </div>
                     <span class="form-error" id="hasLogoError"></span>
@@ -512,7 +401,7 @@
                 <div class="form-group" id="logoUrlGroup" style="display: none;">
                     <label for="logoUrl">Link to your logo</label>
                     <input type="url" id="logoUrl" name="logoUrl" placeholder="Paste a link to your logo image (must be publicly viewable)">
-                    <p class="helper-text">Use a link that opens to the image — e.g. from your current site or a shared folder.</p>
+                    <p class="helper-text">Use a link that opens to the image, e.g. from your current site or a shared folder.</p>
                 </div>
                 <div class="form-group">
                     <label>Do you have brand assets (images, guidelines)? *</label>
@@ -540,7 +429,7 @@
                     <select id="contentStatus" name="contentStatus" required>
                         <option value="">Choose one</option>
                         <option value="ready">I have it ready (or most of it)</option>
-                        <option value="partial">I have some — need to finish</option>
+                        <option value="partial">I have some, need to finish</option>
                         <option value="needHelp">I need help writing it</option>
                     </select>
                     <span class="form-error" id="contentStatusError"></span>
@@ -606,7 +495,7 @@
                 </div>
                 <div class="form-group">
                     <label for="fontPreference">Font preference (optional)</label>
-                    <input type="text" id="fontPreference" name="fontPreference" placeholder="e.g. Inter — or leave blank and we’ll choose">
+                    <input type="text" id="fontPreference" name="fontPreference" placeholder="e.g. Inter, or leave blank and we’ll choose">
                 </div>
                 <div class="form-group">
                     <label for="imageStyle">What kind of images?</label>
@@ -625,7 +514,7 @@
             <!-- Step 5: Content & Assets -->
             <div class="form-step" id="step5" data-step="5">
                 <h2>Your content</h2>
-                <p class="step-intro">Paste or write the text you want on the site. All fields are optional — the more you add, the closer we get to your final site.</p>
+                <p class="step-intro">Paste or write the text you want on the site. All fields are optional. The more you add, the closer we get to your final site.</p>
                 <div class="form-group">
                     <label for="aboutCopy">About us (full paragraph)</label>
                     <textarea id="aboutCopy" name="aboutCopy" rows="5" placeholder="Paste or write the main About section. We’ll use this on the About page or section."></textarea>
@@ -680,7 +569,7 @@
                     <div class="checkbox-group">
                         <label class="checkbox-label">
                             <input type="checkbox" name="features" value="themeToggle">
-                            <span>Light/dark mode switch — visitors can choose</span>
+                            <span>Light/dark mode switch (visitors can choose)</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" name="features" value="commandPalette">
@@ -773,10 +662,11 @@
             <!-- Step 7: Confirmation -->
             <div class="form-step" id="step7" data-step="7">
                 <div class="confirmation-content">
-                    <h2>You're all set</h2>
-                    <p class="confirmation-message">Submit below to send your request to us.</p>
+                    <h2>Check your answers</h2>
+                    <p class="confirmation-message">Here is what you told us. Use Edit to change anything, then send it. You will get a reference number on the next screen.</p>
+                    <div class="summary-card" id="summaryCard"></div>
                     <div class="submit-section">
-                        <button type="submit" class="btn btn-primary btn-large" id="submitRequestBtn">Submit request</button>
+                        <button type="submit" class="btn btn-primary btn-large" id="submitRequestBtn">Send my answers</button>
                         <div class="submit-status" id="submitStatus"></div>
                     </div>
                 </div>
@@ -791,67 +681,8 @@
         </form>
     </div>
 
-    <!-- Modal when email body would be too long -->
-    <div class="modal" id="emailModal" role="dialog" aria-label="Email content too long" aria-hidden="true">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <button class="modal-close" aria-label="Close modal" id="modalClose">×</button>
-            <h2>Attach your intake file</h2>
-            <p>Your full request has been saved as intake.txt. Please attach that file to the email that opened and click Send to complete your submission.</p>
-            <div class="modal-actions">
-                <button type="button" class="btn btn-primary" id="modalDownloadBtn">Download intake.txt again</button>
-                <button type="button" class="btn btn-secondary" id="modalCopySummaryBtn">Copy short summary for email</button>
-                <button type="button" class="btn btn-secondary" id="modalCloseBtn">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="intake.js" id="intake-js"></script>
+    <script src="intake.js"></script>
     
-    <!-- Force cache clear on page load -->
-    <script>
-        (function() {
-            'use strict';
-            
-            // Add cache-busting timestamp to CSS and JS files
-            const timestamp = new Date().getTime();
-            const cssLink = document.getElementById('intake-css');
-            const jsScript = document.getElementById('intake-js');
-            
-            if (cssLink) {
-                cssLink.href = cssLink.href.split('?')[0] + '?v=' + timestamp;
-            }
-            if (jsScript) {
-                jsScript.src = jsScript.src.split('?')[0] + '?v=' + timestamp;
-            }
-            
-            // Clear browser cache (Service Worker cache)
-            if ('caches' in window) {
-                caches.keys().then(function(names) {
-                    names.forEach(function(name) {
-                        caches.delete(name);
-                    });
-                });
-            }
-            
-            // Prevent back/forward cache (bfcache)
-            window.addEventListener('pageshow', function(event) {
-                if (event.persisted) {
-                    // Page was loaded from cache, force reload
-                    window.location.reload();
-                }
-            });
-            
-            // Clear any stored cache data on load
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                    registrations.forEach(function(registration) {
-                        registration.unregister();
-                    });
-                });
-            }
-        })();
-    </script>
 </body>
 </html>
 

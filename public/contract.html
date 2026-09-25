@@ -19,7 +19,7 @@
     <meta name="description" content="Website Development Contract - justaweb.agency">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     
-    <title>Website Development Contract — justaweb.agency</title>
+    <title>Website Development Contract | JustAWeb</title>
     
     <!-- EmailJS for sending emails -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -283,11 +283,27 @@
         </form>
 
         <!-- Hidden Netlify Form for Backup Submission -->
-        <form name="contract" netlify netlify-honeypot="bot-field" hidden>
+        <!-- Netlify form definition. Netlify stores ONLY the fields declared here, so this
+             list must match submitToNetlify() in contract.js exactly. contract_pdf is a file
+             upload (the signed PDF). -->
+        <form name="contract" netlify netlify-honeypot="bot-field" enctype="multipart/form-data" hidden>
             <input type="hidden" name="form-name" value="contract">
             <input type="text" name="bot-field">
-            <input type="hidden" name="contract-data">
-            <input type="hidden" name="contract-pdf">
+            <input type="hidden" name="client_name">
+            <input type="email" name="client_email">
+            <input type="hidden" name="client_business">
+            <input type="hidden" name="package">
+            <input type="hidden" name="timeline">
+            <input type="hidden" name="total_cost">
+            <input type="hidden" name="deposit">
+            <input type="hidden" name="final_payment">
+            <input type="hidden" name="payment_method">
+            <input type="hidden" name="start_date">
+            <input type="hidden" name="completion_date">
+            <input type="hidden" name="contract_date">
+            <textarea name="contract_summary"></textarea>
+            <input type="hidden" name="subject">
+            <input type="file" name="contract_pdf" accept="application/pdf">
         </form>
 
         <!-- PDF Preview Section (hidden, used for PDF generation) -->

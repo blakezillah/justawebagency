@@ -61,24 +61,24 @@ export const WORK = [
   },
 ];
 
-/** The owner problems the page speaks to, in the owner's own words. */
+/** The owner problems the page speaks to, in the owner's own words. `icon` is a Lucide export name (see components/Icon.astro). */
 export const PAINS = [
-  { title: "Just a Facebook page", body: "Customers search Google, find nothing official, and call the shop down the street." },
-  { title: "A site from years ago", body: "It is slow, it breaks on phones, and the hours on it are wrong." },
-  { title: "A builder you never touch", body: "You pay every month for a template you have not had time to finish." },
-  { title: "Agency quotes that sting", body: "Thousands of dollars, long timelines, and a monthly retainer on top." },
+  { icon: "SearchX", title: "Just a Facebook page", body: "Customers search Google, find nothing official, and call the shop down the street." },
+  { icon: "History", title: "A site from years ago", body: "It is slow, it breaks on phones, and the hours on it are wrong." },
+  { icon: "CreditCard", title: "A builder you never touch", body: "You pay every month for a template you have not had time to finish." },
+  { icon: "ReceiptText", title: "Agency quotes that sting", body: "Thousands of dollars, long timelines, and a monthly retainer on top." },
 ];
 
-/** What every site includes. Each line must stay true for the $1,000 build. */
+/** What every site includes. Each line must stay true for the $1,000 build. `icon` is a Lucide export name. */
 export const INCLUDED = [
-  { title: "Custom design", body: "Made for your business, not a template with your logo dropped in." },
-  { title: "Built for phones first", body: "Most of your visitors are on a phone. It looks right there first." },
-  { title: "Loads fast", body: "Hand-written code with no plugin pile, so pages open quickly." },
-  { title: "Found on Google", body: "Titles, descriptions, sitemap and local business markup set up from day one." },
-  { title: "Easy to contact", body: "Tap-to-call, a contact form, your hours and a map, right where people look." },
-  { title: "Accessible", body: "Built to WCAG 2.1 AA guidelines so everyone can use it." },
-  { title: "You own it", body: "Your code, your content, your domain. No contract, no lock-in." },
-  { title: "A real person", body: "You work with the person who builds it, start to finish." },
+  { icon: "Palette", title: "Custom design", body: "Made for your business, not a template with your logo dropped in." },
+  { icon: "Smartphone", title: "Built for phones first", body: "Most of your visitors are on a phone. It looks right there first." },
+  { icon: "Zap", title: "Loads fast", body: "Hand-written code with no plugin pile, so pages open quickly." },
+  { icon: "Search", title: "Found on Google", body: "Titles, descriptions, sitemap and local business markup set up from day one." },
+  { icon: "PhoneCall", title: "Easy to contact", body: "Tap-to-call, a contact form, your hours and a map, right where people look." },
+  { icon: "Accessibility", title: "Accessible", body: "Built to WCAG 2.1 AA guidelines so everyone can use it." },
+  { icon: "KeyRound", title: "You own it", body: "Your code, your content, your domain. No contract, no lock-in." },
+  { icon: "Handshake", title: "A real person", body: "You work with the person who builds it, start to finish." },
 ];
 
 /** Qualitative comparison. No competitor prices: they vary and we cannot keep them true. */

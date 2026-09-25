@@ -11,6 +11,8 @@
  * Escape, and flip the theme (persisted to localStorage "theme", same key as the legacy
  * pages).
  */
+import Icon from "./Icon.astro";
+
 const links = [
   { href: "#work", label: "Work" },
   { href: "#included", label: "What you get" },
@@ -34,14 +36,14 @@ const links = [
 
     <div class="header__actions">
       <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark theme">
-        <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        <Icon name="Sun" size={20} class="i-sun" />
+        <Icon name="Moon" size={20} class="i-moon" />
       </button>
       <a class="btn btn--sm header__cta" href="#start">Start my website</a>
 
       <details class="menu">
         <summary class="icon-btn" aria-label="Open menu">
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <Icon name="Menu" size={22} />
         </summary>
         <div class="menu__panel">
           <ul>
@@ -105,9 +107,9 @@ const links = [
   }
   .icon-btn:hover { background: var(--surface-2); }
   .icon-btn::-webkit-details-marker { display: none; }
-  .i-moon { display: none; }
-  :global([data-theme="dark"]) .i-sun { display: none; }
-  :global([data-theme="dark"]) .i-moon { display: block; }
+  .icon-btn :global(.i-moon) { display: none; }
+  :global([data-theme="dark"]) .icon-btn :global(.i-sun) { display: none; }
+  :global([data-theme="dark"]) .icon-btn :global(.i-moon) { display: block; }
 
   .menu { position: relative; display: none; }
   .menu__panel {

@@ -17,6 +17,7 @@
  *    still happens if tracking is blocked. With JavaScript off, the form posts normally.
  */
 import { CONTACT, PRICING } from "../data/site.js";
+import Icon from "./Icon.astro";
 ---
 <section class="section contact" id="start">
   <div class="wrap contact__grid">
@@ -32,6 +33,7 @@ import { CONTACT, PRICING } from "../data/site.js";
       </ol>
 
       <p class="contact__alt">
+        <Icon name="Mail" size={18} />
         Rather email?{" "}
         <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
       </p>
@@ -123,7 +125,8 @@ import { CONTACT, PRICING } from "../data/site.js";
     background: var(--surface); border: 1px solid var(--line); font-weight: 800; color: var(--ink);
   }
   .next strong { color: var(--ink); }
-  .contact__alt { margin-top: 28px; color: var(--ink-2); }
+  .contact__alt { margin-top: 28px; color: var(--ink-2); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+  .contact__alt :global(.icon) { color: var(--accent); }
   .contact__alt a { font-weight: 700; color: var(--accent); word-break: break-all; }
 
   .form { display: grid; gap: 18px; padding: clamp(20px, 3.5vw, 36px); box-shadow: var(--shadow-sm); }

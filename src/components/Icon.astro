@@ -1,0 +1,47 @@
+---
+/**
+ * Inline Lucide icon, rendered at build time.
+ *
+ * WHY: icons help an owner scan the page, but an icon font or client-side icon library
+ * would cost the speed we sell. lucide-static exports each icon as an SVG string, so we
+ * inline only the icons actually used, as plain markup, with zero JavaScript shipped.
+ * Lucide is ISC licensed.
+ *
+ * HOW: `name` is the PascalCase Lucide export (e.g. "Zap", "KeyRound"). The inner shapes
+ * are lifted out of the library's <svg> and wrapped in our own, so size, stroke width and
+ * class are ours; stroke uses currentColor so icons follow the theme. Icons are
+ * decorative (aria-hidden) unless `label` is given. An unknown name fails the build, so
+ * a typo can never ship an empty box.
+ */
+import * as lucide from "lucide-static";
+
+interface Props {
+  name: string;
+  size?: number;
+  strokeWidth?: number;
+  class?: string;
+  label?: string;
+}
+const { name, size = 24, strokeWidth = 2, class: className, label } = Astro.props;
+
+const raw = (lucide as Record<string, unknown>)[name];
+if (typeof raw !== "string") throw new Error(`Icon: unknown Lucide icon "${name}"`);
+const inner = raw.slice(raw.indexOf(">") + 1, raw.lastIndexOf("</svg>")).trim();
+---
+<svg
+  class:list={["icon", className]}
+  xmlns="http://www.w3.org/2000/svg"
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden={label ? undefined : "true"}
+  role={label ? "img" : undefined}
+  aria-label={label}
+  focusable="false"
+  set:html={inner}
+/>

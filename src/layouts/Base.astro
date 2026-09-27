@@ -73,6 +73,21 @@ const jsonLd = {
         if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         document.documentElement.setAttribute("data-theme", t);
       })();
+      /**
+       * Motion opt-in, also before first paint. Adds html.motion only when the visitor
+       * allows motion and IntersectionObserver exists; every hide-then-reveal style in
+       * global.css hangs off that class, so without it the page is simply static.
+       * Failsafe: if the reveal script at the end of <body> has not reported in within
+       * 3s of DOMContentLoaded, drop the class so no section can stay invisible.
+       */
+      (function () {
+        var root = document.documentElement;
+        if (!("IntersectionObserver" in window) || !matchMedia("(prefers-reduced-motion: no-preference)").matches) return;
+        root.classList.add("motion");
+        document.addEventListener("DOMContentLoaded", function () {
+          setTimeout(function () { if (!window.__jawReveal) root.classList.remove("motion"); }, 3000);
+        });
+      })();
     </script>
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <!-- Google tag: GA4 + Google Ads, loaded once, async so it never blocks rendering. -->
@@ -103,5 +118,40 @@ const jsonLd = {
   <body>
     <a class="skip" href="#main">Skip to content</a>
     <slot />
+    <script is:inline>
+      /**
+       * Scroll reveals. Inline (not bundled) so it runs as soon as the HTML is parsed,
+       * with no extra request that could be slow or blocked.
+       *
+       * HOW: every .reveal is observed. Items that enter the viewport in the same batch
+       * get a growing --reveal-delay (80ms apart, capped) so a row of cards cascades
+       * instead of arriving as one slab. Items already above the viewport (deep links,
+       * restored scroll) are shown immediately. Each item reveals once, then is
+       * unobserved. If the visitor switches on reduced motion mid-visit, everything is
+       * shown and html.motion is dropped.
+       */
+      (function () {
+        var root = document.documentElement;
+        window.__jawReveal = true;
+        if (!root.classList.contains("motion")) return;
+        var items = document.querySelectorAll(".reveal");
+        var io = new IntersectionObserver(function (entries) {
+          var n = 0;
+          entries.forEach(function (e) {
+            var above = e.boundingClientRect.bottom < 0;
+            if (!e.isIntersecting && !above) return;
+            var el = e.target;
+            el.style.setProperty("--reveal-delay", above ? "0ms" : Math.min(n++, 5) * 80 + "ms");
+            if (above) el.style.animation = "none";
+            el.classList.add("is-in");
+            io.unobserve(el);
+          });
+        }, { rootMargin: "0px 0px -8% 0px" });
+        items.forEach(function (el) { io.observe(el); });
+        matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", function (m) {
+          if (m.matches) { root.classList.remove("motion"); io.disconnect(); }
+        });
+      })();
+    </script>
   </body>
 </html>

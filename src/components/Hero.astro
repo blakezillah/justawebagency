@@ -10,6 +10,14 @@
  * HOW: screenshots come through astro:assets <Picture>, which emits AVIF/WebP at several
  * widths with explicit dimensions (no layout shift). The browser shot is the LCP image,
  * so it is loaded eagerly with fetchpriority high; the phone is lazy.
+ *
+ * MOTION (CSS only, see the block at the end of the styles): on load the headline and
+ * copy settle up into place, the browser frame tips into its tilt, the phone slides in,
+ * and the domain types itself into the address bar followed by a quick load bar: the
+ * whole offer in one second ("your name, your site"). Every animation uses "backwards"
+ * fill, so the resting page (and the reduced-motion page) is exactly the static design.
+ * The LCP image and the headline never fade from zero opacity, so first paint and LCP
+ * are not delayed; they only move.
  */
 import { Picture } from "astro:assets";
 import desk from "../assets/work/tidland-desk.jpg";
@@ -46,7 +54,7 @@ import { PRICING } from "../data/site.js";
       <figure class="browser">
         <div class="browser__bar" aria-hidden="true">
           <span></span><span></span><span></span>
-          <div class="browser__url">tidlandaudio.com</div>
+          <div class="browser__url"><span class="browser__type"><span class="browser__text">tidlandaudio.com</span></span></div>
         </div>
         <Picture
           src={desk}
@@ -123,8 +131,62 @@ import { PRICING } from "../data/site.js";
   }
   .phone :global(img) { width: 100%; aspect-ratio: 9 / 18.5; object-fit: cover; object-position: top; border-radius: 20px; }
 
+  /* Pieces of the typing moment. At rest (no animation, or reduced motion) the domain
+     is fully shown and the caret and load bar are invisible. */
+  .browser { position: relative; }
+  .browser__bar { position: relative; }
+  .browser__type { position: relative; display: inline-block; }
+  .browser__type::after {
+    /* The caret: a 1px bar that steps right one character at a time with the text. */
+    content: ""; position: absolute; left: 0; top: 0.15em; bottom: 0.15em; width: 1.5px;
+    background: var(--accent); opacity: 0;
+  }
+  .browser__bar::after {
+    /* The page-load bar along the bottom edge of the address bar. */
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+    background: var(--accent); transform-origin: left; transform: scaleX(0); opacity: 0;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
-    .phone { animation: bob 6s ease-in-out infinite; }
+    /* Hero settle. Timings are staggered so the eye reads headline, then copy, then
+       proof. Everything lands within about 1.2s; the typing moment finishes by 2.4s. */
+    .hero__head .eyebrow { animation: h-fade 0.6s var(--ease-out) backwards; }
+    .hero__title .sl, .hero__price { animation: h-settle 0.8s var(--ease-out) backwards; }
+    .hero__price { animation-delay: 90ms; }
+    .hero__lede { animation: h-fade 0.7s var(--ease-out) 180ms backwards; }
+    .hero__ctas { animation: h-fade 0.7s var(--ease-out) 260ms backwards; }
+    .checks { animation: h-fade 0.7s var(--ease-out) 340ms backwards; }
+    .browser {
+      animation: h-tilt 1s var(--ease-out) 120ms backwards;
+      transition: transform 0.5s var(--ease-out);
+    }
+    .phone { animation: h-phone 0.9s var(--ease-out) 450ms backwards, bob 6s ease-in-out 1.6s infinite; }
+    .browser :global(img) { transform-origin: top; animation: h-load 0.9s var(--ease-out) 1.4s backwards; }
+
+    /* The considered moment: the domain types in, then a load bar sweeps across. */
+    .browser__text { animation: h-type 0.8s steps(16, end) 0.6s backwards; }
+    .browser__type::after { animation: h-caret 0.8s steps(16, end) 0.6s both, h-caret-show 1.5s step-end 0.6s; }
+    .browser__bar::after { animation: h-bar 1s var(--ease-out) 1.4s; }
+
+    /* Pointer over the proof: the browser straightens up a touch, as if picked up. */
+    .hero__visual:hover .browser { transform: rotate(0deg) translateY(-4px); }
+
+    @keyframes h-fade { from { opacity: 0; transform: translateY(14px); } }
+    /* Headline: transform only, never opacity, so it paints at once and LCP is not held back. */
+    @keyframes h-settle { from { transform: translateY(0.35em); } }
+    @keyframes h-tilt { from { transform: translateY(24px) rotate(0.5deg) scale(0.97); } }
+    @keyframes h-phone { from { opacity: 0; transform: translateY(48px) rotate(9deg); } }
+    /* The screenshot "finishes loading": a barely-there zoom out as the load bar runs. */
+    @keyframes h-load { from { transform: scale(1.025); } }
+    @keyframes h-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+    @keyframes h-caret { from { transform: translateX(0); } to { transform: translateX(16ch); } }
+    /* Caret visible while typing (first 0.8s of 1.5s), blinks twice, then gone. */
+    @keyframes h-caret-show { 0% { opacity: 1; } 60% { opacity: 0; } 70% { opacity: 1; } 80% { opacity: 0; } 90% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes h-bar {
+      0% { opacity: 1; transform: scaleX(0); }
+      70% { opacity: 1; transform: scaleX(1); }
+      100% { opacity: 0; transform: scaleX(1); }
+    }
     @keyframes bob { 50% { transform: rotate(3deg) translateY(-8px); } }
   }
 </style>

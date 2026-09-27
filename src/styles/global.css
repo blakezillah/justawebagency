@@ -11,9 +11,10 @@
  *    paint by the inline script in Base.astro).
  *  - Contrast: --accent (#c2410c) on white is 5.2:1 and --muted on --bg is above 4.5:1,
  *    so both pass WCAG AA for body text. Dark theme uses a lighter accent with dark ink.
- *  - Scroll reveals are pure CSS (animation-timeline: view()). Content is ALWAYS visible
- *    by default; the animation only runs where supported and motion is allowed, so bots,
- *    screenshots and no-JS visitors never see blank sections (the old page's bug).
+ *  - Motion (reveals, hero settle, hovers) is progressive enhancement: content is ALWAYS
+ *    visible by default and only hides behind the html.motion class that Base.astro adds
+ *    when motion is allowed, so bots, screenshots, no-JS and reduced-motion visitors never
+ *    see blank sections (the old page's bug). See the Motion block at the end.
  */
 
 :root {
@@ -42,6 +43,7 @@
   --max: 1180px;
   --section: clamp(72px, 10vw, 128px);
   --header-h: 64px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* fast start, soft landing: used by all motion */
 
   color-scheme: light;
 }
@@ -157,11 +159,46 @@ p { margin: 0; text-wrap: pretty; }
 }
 .icon-tile--sm { width: 40px; height: 40px; border-radius: 10px; }
 
-/* ---- Scroll reveal (progressive enhancement, never hides content) ---------- */
+/* ---- Motion ----------------------------------------------------------------
+   WHY: a little movement makes the page feel alive and guides the eye down the story,
+   but the pitch is "fast and simple", so motion stays short, soft and quiet.
 
-@keyframes rise { from { opacity: 0; transform: translateY(28px); } }
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .reveal { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
-  }
+   HOW (the safety rules this block is built around):
+    - Content is visible at rest. Nothing is hidden unless <html> carries the class
+      "motion", which the inline head script in Base.astro adds ONLY when the visitor
+      allows motion and IntersectionObserver exists. No JS, reduced motion, bots and
+      print all get the plain, fully visible page.
+    - The reveal script (end of <body> in Base.astro) adds "is-in" to each .reveal as it
+      enters the viewport and sets --reveal-delay so items that arrive together are
+      staggered instead of sliding in as one block.
+    - Reveals play once. Anything already scrolled past (a deep link to #pricing, say)
+      is shown at once rather than animating behind the visitor.
+    - Only opacity and transform move, so reveals never cause layout shift (CLS).
+    - A head-script failsafe removes "motion" if the reveal script never reports in,
+      so a broken script can never leave sections blank. */
+
+@keyframes rise { from { opacity: 0; transform: translateY(22px); } }
+@media (prefers-reduced-motion: no-preference) {
+  /* An animation (not a transition) so it cannot fight the hover transition on cards
+     that are both .reveal and .lift: "backwards" holds the start frame during the
+     stagger delay, and with no forwards fill the card is plain again once it lands. */
+  .motion .reveal:not(.is-in) { opacity: 0; }
+  .motion .reveal.is-in { animation: rise 0.7s var(--ease-out) var(--reveal-delay, 0ms) backwards; }
 }
+@media print { .motion .reveal { opacity: 1 !important; transform: none !important; } }
+
+/* Card hover and keyboard focus: a small lift so the thing under the pointer (or the
+   focus ring) feels touchable. The lift is transform only; the focus outline is never
+   transitioned, so it appears instantly and stays put. :focus-within covers cards
+   whose focusable element is a link inside them. */
+.lift { transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out), border-color 0.25s ease; }
+.lift:hover, .lift:focus-within {
+  border-color: color-mix(in srgb, var(--ink) 22%, var(--line));
+  box-shadow: var(--shadow-sm);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lift:hover, .lift:focus-within { transform: translateY(-3px); }
+  .lift .icon-tile { transition: transform 0.3s var(--ease-out); }
+  .lift:hover .icon-tile { transform: rotate(-6deg) scale(1.06); }
+}
+@media (prefers-reduced-motion: reduce) { .lift { transition: none; } }

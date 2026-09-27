@@ -81,8 +81,11 @@ const img = (key: string, kind: "desk" | "phone") => shots[`../assets/work/${key
     background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
-  .work__card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: color-mix(in srgb, var(--ink) 25%, var(--line)); }
-  @media (prefers-reduced-motion: reduce) { .work__card { transition: none; } .work__card:hover { transform: none; } }
+  /* Hover and keyboard focus get the same lift, so tabbing through the work feels as
+     alive as pointing at it. The focus outline itself comes from global :focus-visible
+     and is never transitioned. */
+  .work__card:hover, .work__card:focus-visible { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: color-mix(in srgb, var(--ink) 25%, var(--line)); }
+  @media (prefers-reduced-motion: reduce) { .work__card { transition: none; } .work__card:hover, .work__card:focus-visible { transform: none; } }
 
   .work__media { position: relative; background: var(--surface-2); padding: clamp(16px, 3vw, 28px) clamp(16px, 3vw, 28px) 0; overflow: hidden; }
   .work__media :global(.work__desk) {
@@ -95,8 +98,16 @@ const img = (key: string, kind: "desk" | "phone") => shots[`../assets/work/${key
     object-fit: cover; object-position: top; border-radius: 16px; border: 5px solid #0d0e11; box-shadow: var(--shadow-lg);
     transition: transform 0.4s ease;
   }
-  .work__card:hover :global(.work__phone) { transform: translateY(-10px); }
-  @media (prefers-reduced-motion: reduce) { .work__media :global(img) { transition: none; } }
+  /* On hover the desktop shot eases back a touch while the phone rises in front of it:
+     a small depth shift that says "this works on both". */
+  .work__card:hover :global(.work__phone), .work__card:focus-visible :global(.work__phone) { transform: translateY(-10px) rotate(-2deg); }
+  .work__card:hover :global(.work__desk), .work__card:focus-visible :global(.work__desk) { transform: scale(0.985); }
+  .work__link svg { transition: transform 0.2s var(--ease-out); }
+  .work__card:hover .work__link svg, .work__card:focus-visible .work__link svg { transform: translate(2px, -2px); }
+  @media (prefers-reduced-motion: reduce) {
+    .work__media :global(img), .work__link svg { transition: none; }
+    .work__card:hover :global(img), .work__card:focus-visible :global(img), .work__card:hover .work__link svg, .work__card:focus-visible .work__link svg { transform: none; }
+  }
 
   .work__body { padding: clamp(20px, 3vw, 28px); display: flex; flex-direction: column; gap: 10px; flex: 1; }
   .work__kind { font: 700 0.75rem/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ok); }

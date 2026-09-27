@@ -15,8 +15,9 @@
  *   FAQ         The last objections.
  *   Contact     Do it.
  *
- * Only three tiny scripts ship to the browser (theme toggle, menu close, form conversion);
- * everything else is static HTML and CSS.
+ * Only a few tiny scripts ship to the browser (theme toggle, menu close, form conversion,
+ * and the scroll-reveal observer in Base.astro); everything else is static HTML and CSS.
+ * Motion is progressive enhancement throughout: see the Motion block in global.css.
  */
 import Base from "../layouts/Base.astro";
 import Header from "../components/Header.astro";
@@ -51,7 +52,7 @@ const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
         </div>
         <ul class="pains">
           {PAINS.map((p, i) => (
-            <li class="card pain reveal">
+            <li class="card pain lift reveal">
               <span class="icon-tile"><Icon name={p.icon} /></span>
               <h3>{p.title}</h3>
               <p>{p.body}</p>
@@ -123,7 +124,7 @@ const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
         </div>
         <ol class="steps">
           {STEPS.map((s, i) => (
-            <li class="step reveal">
+            <li class="step lift reveal">
               <span class="step__n" aria-hidden="true">{i + 1}</span>
               <h3>{s.title}</h3>
               <p>{s.body}</p>
@@ -150,7 +151,7 @@ const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
           <p class="lede">Half to start, half before launch. Venmo or Zelle.</p>
         </div>
         <div class="prices">
-          <article class="price price--main reveal" aria-labelledby="p1">
+          <article class="price price--main lift reveal" aria-labelledby="p1">
             <p class="price__tag"><Icon name="Globe" size={16} strokeWidth={2.4} /> Your website</p>
             <h3 id="p1" class="price__amt">{usd(PRICING.site)}<span> one time</span></h3>
             <p class="price__desc">A custom site, designed and built for your business, and yours to keep.</p>
@@ -164,7 +165,7 @@ const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
             </ul>
             <a class="btn" href="#start">Start my website <span class="arrow" aria-hidden="true">→</span></a>
           </article>
-          <article class="price reveal" aria-labelledby="p2">
+          <article class="price lift reveal" aria-labelledby="p2">
             <p class="price__tag"><Icon name="Server" size={16} strokeWidth={2.4} /> Optional add-on</p>
             <h3 id="p2" class="price__amt">{usd(PRICING.hosting)}<span> per year</span></h3>
             <p class="price__desc">Fast hosting plus changes whenever you need them. No monthly bills.</p>
@@ -287,6 +288,12 @@ const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
   }
   .step h3 { font-size: 1.1875rem; }
   .step p { margin-top: 10px; color: var(--ink-2); }
+  /* As each step card arrives, its number pops in just after the card lands, so the
+     three steps read as a sequence (1, then 2, then 3) rather than a block of text. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.motion) .step:global(.is-in) .step__n { animation: step-pop 0.55s var(--ease-out) calc(var(--reveal-delay, 0ms) + 220ms) backwards; }
+    @keyframes step-pop { from { opacity: 0; transform: scale(0.4); } 60% { transform: scale(1.12); } }
+  }
 
   .preview {
     margin-top: clamp(28px, 4vw, 40px); display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start;
@@ -341,9 +348,16 @@ const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
   .qa summary::after {
     content: ""; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2)
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 6v12M6 12h12' stroke='%23888' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") center/14px no-repeat;
-    transition: transform 0.2s ease;
+    transition: transform 0.25s var(--ease-out);
   }
   .qa[open] summary::after { transform: rotate(45deg); }
+  /* Opening a question: the answer fades up a few pixels instead of snapping in. The
+     height change itself is instant (user-initiated, so it does not count toward CLS). */
+  @media (prefers-reduced-motion: no-preference) {
+    .qa[open] p { animation: qa-in 0.35s var(--ease-out); }
+    @keyframes qa-in { from { opacity: 0; transform: translateY(-6px); } }
+  }
+  @media (prefers-reduced-motion: reduce) { .qa summary::after { transition: none; } }
   .qa summary:hover { color: var(--accent); }
   .qa p { padding: 0 44px 22px 0; color: var(--ink-2); }
 

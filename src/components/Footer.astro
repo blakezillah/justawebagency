@@ -4,6 +4,8 @@
  *
  * WHY a component: the privacy page needs the same footer, and links here use
  * "/#section" so they work from any page, not only the homepage.
+ * The location line is the visible match for the address in the JSON-LD (Base.astro):
+ * city and ZIP only, no street address, as Blake asked. Keep the two in step.
  */
 import Icon from "./Icon.astro";
 import { CONTACT } from "../data/site.js";
@@ -15,7 +17,7 @@ const year = new Date().getFullYear();
     <div>
       <a class="footer__brand" href="/">justaweb<span>.agency</span></a>
       <p>Simple, fast websites for small businesses.</p>
-      <p class="footer__meta"><Icon name="MapPin" size={16} /> Serving Vancouver, WA, Portland, OR and beyond</p>
+      <p class="footer__meta"><Icon name="MapPin" size={16} /> Based in Vancouver, WA 98683. Serving Vancouver, Portland, OR and beyond.</p>
     </div>
     <nav aria-label="Footer">
       <ul>

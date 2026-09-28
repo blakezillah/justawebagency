@@ -5,6 +5,7 @@
  * Story order, each section answering the owner's next question:
  *   Hero        What is this and what does it cost?
  *   Pains       Is this for someone like me?
+ *   AI search   Why does this matter more now? (customers ask AI; be citable)
  *   Work        Have you actually done this?
  *   Included    What exactly do I get?
  *   Compare     Why not Wix, or a big agency?
@@ -26,16 +27,34 @@ import Work from "../components/Work.astro";
 import Contact from "../components/Contact.astro";
 import Footer from "../components/Footer.astro";
 import Testimonials from "../components/Testimonials.astro";
+import AiSearch from "../components/AiSearch.astro";
 import { Picture } from "astro:assets";
 import Icon from "../components/Icon.astro";
 import blakePhoto from "../assets/blake.jpg";
 import { PAINS, INCLUDED, COMPARE, STEPS, FAQ, PRICING, CONTACT } from "../data/site.js";
 
 const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
+
+/**
+ * FAQPage structured data, built from the same FAQ array the page renders, so the
+ * markup always matches the visible questions and answers word for word (Google's rule
+ * for structured data, and what lets AI search quote the answers accurately).
+ * scripts/check-seo.mjs fails the build if the two ever drift apart.
+ */
+const faqSchema = {
+  "@type": "FAQPage",
+  "@id": "https://justaweb.agency/#faq",
+  mainEntity: FAQ.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
 ---
 <Base
   title="Small Business Websites, $1,000 Flat | JustAWeb"
-  description="Fast, custom websites for small businesses in Vancouver, WA, Portland and beyond. $1,000 flat, you own everything, no monthly fees. Optional $250 a year hosting and edits."
+  description="Fast, custom websites for small businesses in Vancouver, WA, Portland and beyond, built to be found on Google and in AI search. $1,000 flat, you own everything, no monthly fees."
+  schema={[faqSchema]}
 >
   <Header />
 
@@ -61,6 +80,8 @@ const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
         </ul>
       </div>
     </section>
+
+    <AiSearch />
 
     <Work />
     <Testimonials />
@@ -160,6 +181,7 @@ const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
               <li>Mobile-first and fast loading</li>
               <li>Contact form, tap-to-call, map and hours</li>
               <li>Google-ready SEO basics</li>
+              <li>Built to be found in AI search</li>
               <li>Help with your domain</li>
               <li>You own all code and files</li>
             </ul>

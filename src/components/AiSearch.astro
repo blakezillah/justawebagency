@@ -1,0 +1,185 @@
+---
+/**
+ * AI search: why a small business needs a site that AI tools can read, and what every
+ * JustAWeb build does about it.
+ *
+ * WHY: more customers now ask ChatGPT, Google's AI Overviews and AI Mode, Perplexity or
+ * Claude for a local recommendation instead of scanning a list of links. Those tools can
+ * only mention a business they can read about. That is a real, current reason for an
+ * owner with no site (or a thin one) to act, so it gets its own section. Copy rules:
+ * never promise rankings or a spot in an AI answer; "built to be found and cited" only.
+ * All copy and the sourced stat live in AI_SEARCH in src/data/site.js.
+ *
+ * LAYOUT: it continues the Pains chapter on the same alt background (the same pattern
+ * Testimonials uses after Work), so the story reads "customers look for you online, and
+ * more of them now ask AI". Header, then copy beside an illustrative answer card, then the
+ * four built-in features as cards, then an honest note on what nobody can promise.
+ *
+ * THE CARD is a made-up example (fictional shop, 555-01xx phone number, labelled as an
+ * illustration) drawn in the site's own tokens. It deliberately looks like no real AI
+ * product and carries no AI company logos.
+ *
+ * MOTION: the whole card rises with the shared .reveal system; once it is in (.is-in),
+ * the answer "writes" itself: label, then each paragraph, then the source chip pops with
+ * a single accent ring, telling the story "your site is the source" in about 1.6s. Only
+ * opacity and transform move ("backwards" fill), so the resting and reduced-motion page
+ * is the static design and nothing shifts layout.
+ */
+import Icon from "./Icon.astro";
+import { AI_SEARCH } from "../data/site.js";
+
+const { stat, features } = AI_SEARCH;
+---
+<section class="section section--alt ai" id="ai-search" aria-labelledby="ai-h">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">AI search</p>
+      <h2 class="h2" id="ai-h"><span class="sl">People ask AI who to call now.</span> <span class="sl">Is your business in the answer?</span></h2>
+      <p class="lede">More customers skip the list of links and ask ChatGPT, Google's AI Mode or Perplexity for a recommendation. Those tools can only mention a business they can read about. With no website, or a thin one, you are easy to leave out.</p>
+    </div>
+
+    <div class="ai__grid">
+      <div class="ai__copy">
+        <figure class="ai__stat reveal">
+          <p class="ai__num">{stat.value}</p>
+          <div>
+            <p class="ai__stat-text">{stat.text}</p>
+            <figcaption class="ai__cite">Source: <a href={stat.url} rel="noopener" target="_blank">{stat.source}</a></figcaption>
+          </div>
+        </figure>
+
+        <div class="ai__point reveal">
+          <h3>Every site I build is made to be cited.</h3>
+          <p>Your business facts go in the format Google and AI tools read, your common questions get straight answers, and the site is open to the crawlers that feed AI search. It is the groundwork Google itself recommends for its AI features, done on day one.</p>
+        </div>
+        <div class="ai__point reveal">
+          <h3>What that means for you.</h3>
+          <p>When a neighbor asks an AI for a good mechanic, a plumber or a place to eat, it has a real site to read, with your hours, services and phone number right there. That gives it a reason to mention you, and a link to send people to.</p>
+        </div>
+      </div>
+
+      <figure class="answer reveal" aria-labelledby="answer-cap">
+        <div class="answer__q">
+          <span class="answer__who" aria-hidden="true"><Icon name="User" size={16} strokeWidth={2.4} /></span>
+          <p>Who's a good auto repair shop near Hazel Dell?</p>
+        </div>
+        <div class="answer__a">
+          <p class="answer__label"><Icon name="Sparkles" size={16} strokeWidth={2.4} /> AI answer</p>
+          <p class="answer__line"><strong>Alder Creek Auto</strong> is a family-owned repair shop in Vancouver, WA, open Monday to Saturday, 8 to 6.</p>
+          <p class="answer__line">Customers often mention honest quotes and same-day brake work. You can call them at (360) 555-0142.</p>
+          <div class="answer__src">
+            <span class="answer__src-label">Sources</span>
+            <span class="chip chip--hit"><Icon name="Globe" size={14} strokeWidth={2.4} /> aldercreekauto.com</span>
+            <span class="chip"><Icon name="Star" size={14} strokeWidth={2.4} /> Customer reviews</span>
+          </div>
+        </div>
+        <figcaption id="answer-cap" class="answer__cap">Illustration only: a made-up shop, not a real AI answer. The point is the source: the shop's own website.</figcaption>
+      </figure>
+    </div>
+
+    <ul class="ai__features">
+      {features.map((f) => (
+        <li class="card ai__feature lift reveal">
+          <span class="icon-tile icon-tile--sm"><Icon name={f.icon} size={20} /></span>
+          <h3>{f.title}</h3>
+          <p>{f.body}</p>
+        </li>
+      ))}
+    </ul>
+
+    <p class="ai__honest reveal">
+      <Icon name="Info" size={20} />
+      <span>No one can guarantee a spot in an AI answer, and anyone who promises one is guessing. What I can do is make sure your site hands these tools clear, accurate facts about you. That part is in your control.</span>
+    </p>
+  </div>
+</section>
+
+<style>
+  /* Continues the Pains section on the same background, so no top padding. */
+  .ai { padding-top: 0; }
+
+  .ai__grid { display: grid; gap: clamp(28px, 4vw, 56px); align-items: center; }
+  @media (min-width: 960px) { .ai__grid { grid-template-columns: 1fr 1fr; } }
+
+  .ai__copy { display: grid; gap: 28px; }
+
+  /* The sourced stat: big accent number, the claim, and its source right underneath. */
+  .ai__stat {
+    margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center;
+    padding: clamp(18px, 2.5vw, 24px); border-radius: var(--radius-lg);
+    background: var(--surface); border: 1px solid var(--line);
+  }
+  .ai__num { font-size: clamp(2.75rem, 2rem + 3vw, 3.75rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: var(--accent); }
+  .ai__stat-text { font-weight: 700; line-height: 1.4; }
+  .ai__cite { margin-top: 6px; font-size: 0.8125rem; color: var(--muted); }
+  .ai__cite a { color: inherit; }
+  .ai__cite a:hover { color: var(--accent); }
+  @media (max-width: 420px) { .ai__stat { grid-template-columns: 1fr; gap: 8px; } }
+
+  .ai__point h3 { font-size: 1.25rem; }
+  .ai__point p { margin-top: 8px; color: var(--ink-2); }
+
+  /* ---- The illustrative answer card ---- */
+  .answer {
+    margin: 0; padding: clamp(18px, 2.5vw, 26px); border-radius: var(--radius-lg);
+    background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-lg);
+    display: grid; gap: 18px;
+  }
+  .answer__q { display: flex; align-items: center; gap: 12px; justify-self: end; max-width: 92%; }
+  .answer__q p {
+    padding: 10px 16px; border-radius: 18px 18px 4px 18px;
+    background: var(--surface-2); font-weight: 600;
+  }
+  .answer__who {
+    order: 2; display: grid; place-items: center; width: 30px; height: 30px; flex: none;
+    border-radius: 50%; background: var(--ink); color: var(--bg);
+  }
+  .answer__a { display: grid; gap: 10px; padding-left: 2px; }
+  .answer__label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font: 700 0.8125rem/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
+  }
+  .answer__line { color: var(--ink-2); }
+  .answer__line strong { color: var(--ink); }
+  .answer__src { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .answer__src-label { font-size: 0.8125rem; font-weight: 700; color: var(--muted); margin-right: 2px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+    font: 600 0.8125rem/1.2 var(--mono); background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--line);
+  }
+  .chip--hit { background: var(--accent-soft); color: var(--ink); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+  .chip--hit :global(.icon) { color: var(--accent); }
+  .answer__cap { font-size: 0.8125rem; color: var(--muted); padding-top: 2px; }
+
+  /* ---- Built-in features ---- */
+  .ai__features { list-style: none; margin: clamp(40px, 6vw, 64px) 0 0; padding: 0; display: grid; gap: 16px; }
+  @media (min-width: 640px) { .ai__features { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1200px) { .ai__features { grid-template-columns: repeat(4, 1fr); } }
+  .ai__feature { display: grid; gap: 10px; align-content: start; }
+  .ai__feature h3 { font-size: 1.0625rem; letter-spacing: -0.015em; }
+  .ai__feature p { color: var(--ink-2); font-size: 1rem; }
+
+  .ai__honest {
+    margin-top: 28px; display: flex; gap: 12px; align-items: flex-start; max-width: 62em;
+    color: var(--ink-2); font-size: 1rem;
+  }
+  .ai__honest :global(.icon) { flex: none; margin-top: 3px; color: var(--accent); }
+
+  /* The answer writes itself once the card is in view. Delays start after the card's
+     own rise (0.7s) so the eye lands on the card first. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.motion) .answer:global(.is-in) .answer__q { animation: ans-in 0.5s var(--ease-out) calc(var(--reveal-delay, 0ms) + 250ms) backwards; }
+    :global(.motion) .answer:global(.is-in) .answer__label { animation: ans-in 0.5s var(--ease-out) calc(var(--reveal-delay, 0ms) + 600ms) backwards; }
+    :global(.motion) .answer:global(.is-in) .answer__line:nth-of-type(2) { animation: ans-in 0.5s var(--ease-out) calc(var(--reveal-delay, 0ms) + 800ms) backwards; }
+    :global(.motion) .answer:global(.is-in) .answer__line:nth-of-type(3) { animation: ans-in 0.5s var(--ease-out) calc(var(--reveal-delay, 0ms) + 1000ms) backwards; }
+    :global(.motion) .answer:global(.is-in) .answer__src { animation: ans-in 0.5s var(--ease-out) calc(var(--reveal-delay, 0ms) + 1200ms) backwards; }
+    :global(.motion) .answer:global(.is-in) .chip--hit { animation: chip-hit 0.9s var(--ease-out) calc(var(--reveal-delay, 0ms) + 1450ms) backwards; }
+    @keyframes ans-in { from { opacity: 0; transform: translateY(8px); } }
+    /* One accent ring that swells and fades: box-shadow does not affect layout. */
+    @keyframes chip-hit {
+      0% { transform: scale(0.85); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent); }
+      40% { transform: scale(1.06); }
+      100% { transform: scale(1); box-shadow: 0 0 0 12px transparent; }
+    }
+  }
+</style>

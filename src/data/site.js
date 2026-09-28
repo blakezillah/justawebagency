@@ -74,12 +74,41 @@ export const INCLUDED = [
   { icon: "Palette", title: "Custom design", body: "Made for your business, not a template with your logo dropped in." },
   { icon: "Smartphone", title: "Built for phones first", body: "Most of your visitors are on a phone. It looks right there first." },
   { icon: "Zap", title: "Loads fast", body: "Hand-written code with no plugin pile, so pages open quickly." },
-  { icon: "Search", title: "Found on Google", body: "Titles, descriptions, sitemap and local business markup set up from day one." },
+  { icon: "Search", title: "Found by Google and AI", body: "Local business markup, a plain-answer FAQ, a sitemap and open doors for AI search crawlers, set up from day one." },
   { icon: "PhoneCall", title: "Easy to contact", body: "Tap-to-call, a contact form, your hours and a map, right where people look." },
   { icon: "Accessibility", title: "Accessible", body: "Built to WCAG 2.1 AA guidelines so everyone can use it." },
   { icon: "KeyRound", title: "You own it", body: "Your code, your content, your domain. No contract, no lock-in." },
   { icon: "Handshake", title: "A real person", body: "You work with the person who builds it, start to finish." },
 ];
+
+/**
+ * AI search section (homepage, right after Pains).
+ *
+ * WHY: more customers now ask an AI tool (ChatGPT, Google's AI Overviews and AI Mode,
+ * Perplexity, Claude, Copilot) for a local recommendation instead of scrolling links, and
+ * those tools can only mention a business they can read about. This is a real, current
+ * reason for an owner to want a proper site, so the page says it plainly.
+ *
+ * HONESTY: never promise rankings or a guaranteed spot in an AI answer (nobody controls
+ * that). Say "built to be found and cited". The stat below is sourced; if it is ever
+ * replaced, keep the source and date next to it. Every item in `features` must be true
+ * of every $1,000 build (the webgen engine ships these on its GEO branch; hand builds
+ * follow the same checklist).
+ */
+export const AI_SEARCH = {
+  stat: {
+    value: "45%",
+    text: "of U.S. consumers now use AI tools like ChatGPT to find local businesses, up from 6% a year earlier.",
+    source: "BrightLocal Local Consumer Review Survey, February 2026 (1,002 U.S. adults)",
+    url: "https://www.brightlocal.com/research/local-consumer-review-survey/",
+  },
+  features: [
+    { icon: "Braces", title: "Business facts machines can read", body: "Your name, services, hours, service area and phone in structured data (schema.org), matching exactly what the page says." },
+    { icon: "MessageCircleQuestion", title: "Straight answers to real questions", body: "An FAQ that answers what customers actually ask, in plain words an AI answer can quote." },
+    { icon: "MapPinCheck", title: "The same details everywhere", body: "Name, address and phone written the same way on every page and in the site's data, so the facts about you never contradict each other." },
+    { icon: "DoorOpen", title: "Open to AI search crawlers", body: "Google, ChatGPT, Claude and Perplexity search crawlers are welcome, with a sitemap and an llms.txt summary to guide them." },
+  ],
+};
 
 /** Qualitative comparison. No competitor prices: they vary and we cannot keep them true. */
 export const COMPARE = {
@@ -110,6 +139,8 @@ export const FAQ = [
   { q: "I don't have a domain yet. Can you help?", a: "Yes. I will help you pick and register one as part of setup, and it is registered in your name." },
   { q: "Can I make changes myself later?", a: "Yes. I will show you how to update text and images. Or send changes my way; they are included with the $250 a year hosting." },
   { q: "Do you do WordPress or online stores?", a: "Yes, when a project needs them. Tell me what you have in mind and I will send a custom quote." },
+  { q: "What is AI search, and why does it matter to a small business?", a: "It is when someone asks ChatGPT, Google's AI Mode, Perplexity or a similar tool something like \u201cwho's a good plumber near me\u201d and gets a written answer instead of a list of links. Those answers come from websites the tool can read. In BrightLocal's 2026 consumer survey, 45% of people said they use AI tools for local business recommendations, up from 6% a year earlier. A business with no website, or a thin one, gives those tools very little to go on." },
+  { q: "Can you guarantee my business shows up in AI answers?", a: "No, and be wary of anyone who says they can. Each AI tool decides for itself what to mention. What I can do is give it the best possible material: structured business data, a plain-language FAQ, the same name, address and phone everywhere, and a site that lets the AI search crawlers in. That is the same groundwork Google recommends for its own AI features." },
   { q: "Do you offer ongoing SEO?", a: "Every site ships with solid SEO foundations. I do not sell monthly SEO packages myself, but I work with trusted partners who do, and I am happy to connect you with one so you are never left in the dark." },
 ];
 

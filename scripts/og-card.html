@@ -1,0 +1,35 @@
+<!doctype html>
+<!--
+  Source for public/og/justaweb-card.png, the share image (Open Graph + Twitter card)
+  on every page of justaweb.agency. Blake asked for the share image to be the logo.
+
+  WHY an HTML source: the logo IS the header brand (the "j." mark with the orange dot and
+  the "justaweb.agency" wordmark), drawn in CSS with the site's own tokens, so the card
+  is rendered from the same recipe rather than redrawn by hand.
+
+  HOW: `npx -y -p playwright node scripts/make-og-card.mjs` renders this at 1200x630 and
+  writes the PNG. Solid paper background (--bg), ink mark, muted TLD, the one orange dot from the header mark. Nothing else.
+  The logo sits centred with generous padding so it survives the square and circular
+  crops some apps apply.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  :root { --bg: #fbfaf7; --ink: #15171c; --muted: #62666f; --dot: #ff8a5c; --accent: #c2410c;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  html, body { margin: 0; width: 1200px; height: 630px; background: var(--bg); }
+  body { display: grid; place-items: center; font-family: var(--font); -webkit-font-smoothing: antialiased; }
+  .brand { display: flex; align-items: center; gap: 36px; }
+  /* Same proportions as .brand__mark in Header.astro (32px box, 9px radius, 6px dot), x4.5. */
+  .mark { position: relative; display: grid; place-items: center; width: 144px; height: 144px; border-radius: 40px;
+    background: var(--ink); color: var(--bg); font-size: 90px; font-weight: 800; line-height: 1; padding-bottom: 14px; box-sizing: border-box; }
+  .mark::after { content: ""; position: absolute; right: 22px; bottom: 27px; width: 27px; height: 27px; border-radius: 50%; background: var(--dot); }
+  .name { font-size: 92px; font-weight: 800; letter-spacing: -0.035em; color: var(--ink); }
+  .name span { color: var(--muted); font-weight: 600; }
+</style>
+</head>
+<body>
+  <div class="brand"><span class="mark">j</span><span class="name">justaweb<span>.agency</span></span></div>
+</body>
+</html>

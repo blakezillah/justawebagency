@@ -16,35 +16,129 @@
  */
 import "../styles/global.css";
 
+import { CONTACT, PRICING } from "../data/site.js";
+
 interface Props {
   title: string;
   description: string;
   /** Keep utility pages (thank-you screens) out of search results. */
   noindex?: boolean;
+  /** Extra JSON-LD nodes for this page (e.g. the homepage FAQPage), merged into @graph. */
+  schema?: Record<string, unknown>[];
 }
-const { title, description, noindex = false } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const { title, description, noindex = false, schema = [] } = Astro.props;
 
-/** Structured data: describes the agency itself. No street address is claimed. */
+/**
+ * Canonical URL. Astro builds with format "file", so Astro.url.pathname can end in
+ * ".html" (and the homepage in "/index.html"). Netlify serves every page at its clean
+ * URL, which is also what our links, sitemap and llms.txt use, so the canonical is the
+ * clean form: "/" for the homepage, "/privacy" for privacy.html.
+ */
+const cleanPath = Astro.url.pathname.replace(/index\.html$/, "").replace(/\.html$/, "") || "/";
+const canonical = new URL(cleanPath, Astro.site).href;
+
+/**
+ * Structured data (schema.org JSON-LD) describing the agency, for Google and AI search.
+ *
+ * WHY: AI answers and Google's local results lean on clear, machine-readable facts about
+ * a business. This is the same groundwork JustAWeb sells, so the agency's own site shows
+ * it. Every value here must match what the page visibly says (Google's structured data
+ * rule): name, email, city and ZIP (no street address is claimed, per Blake), service
+ * area, founder and the two real prices from site.js.
+ *
+ * HOW: one @graph with stable @ids so the nodes reference each other: the WebSite, the
+ * business (ProfessionalService, a LocalBusiness subtype), and its founder. Pages add
+ * their own nodes through the `schema` prop (the homepage adds FAQPage). sameAs is left
+ * out on purpose: JustAWeb has no real social profiles yet, and an invented one would be
+ * worse than none. scripts/check-seo.mjs validates the output after every build.
+ */
+const SITE = "https://justaweb.agency";
+
+/** Share image (absolute URL, as Open Graph requires) and its alt text. */
+const OG_IMAGE = `${SITE}/og/justaweb-card.png`;
+const OG_ALT = "JustAWeb logo: the j. mark and the justaweb.agency wordmark";
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  name: "JustAWeb",
-  url: "https://justaweb.agency",
-  email: "blake@justaweb.agency",
-  description,
-  priceRange: "$$",
-  areaServed: [
-    { "@type": "City", name: "Vancouver, WA" },
-    { "@type": "City", name: "Portland, OR" },
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE}/#website`,
+      url: `${SITE}/`,
+      name: "JustAWeb",
+      alternateName: "justaweb.agency",
+      inLanguage: "en-US",
+      publisher: { "@id": `${SITE}/#business` },
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": `${SITE}/#business`,
+      name: "JustAWeb",
+      url: `${SITE}/`,
+      email: CONTACT.email,
+      logo: `${SITE}/logos/justaweb-logo-full.png`,
+      image: `${SITE}/logos/justaweb-logo-full.png`,
+      description:
+        "Fast, custom websites for small businesses in Vancouver, WA, Portland, OR and beyond, built to be found on Google and in AI search. $1,000 flat, the owner keeps every file, and hosting with edits is an optional $250 a year.",
+      slogan: "A real website for your business. Yours to keep.",
+      priceRange: "$$",
+      currenciesAccepted: "USD",
+      paymentAccepted: "Venmo, Zelle",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Vancouver",
+        addressRegion: "WA",
+        postalCode: "98683",
+        addressCountry: "US",
+      },
+      areaServed: [
+        { "@type": "City", name: "Vancouver", containedInPlace: { "@type": "State", name: "Washington" } },
+        { "@type": "City", name: "Portland", containedInPlace: { "@type": "State", name: "Oregon" } },
+      ],
+      founder: { "@id": `${SITE}/#blake` },
+      knowsAbout: [
+        "Small business websites",
+        "Local SEO",
+        "Generative engine optimization (AI search)",
+        "Structured data",
+        "Web accessibility",
+      ],
+      makesOffer: [
+        {
+          "@type": "Offer",
+          name: "Custom small business website",
+          description: "Custom design and build, mobile first, contact form, tap-to-call, map and hours, Google-ready SEO basics, built to be found in AI search. The owner keeps all code and files.",
+          price: String(PRICING.site),
+          priceCurrency: "USD",
+          url: `${SITE}/#pricing`,
+          availability: "https://schema.org/InStock",
+        },
+        {
+          "@type": "Offer",
+          name: "Hosting and edits (optional)",
+          description: "Fast hosting plus text, photo and page updates on request. Billed once a year, cancel anytime.",
+          price: String(PRICING.hosting),
+          priceCurrency: "USD",
+          url: `${SITE}/#pricing`,
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: String(PRICING.hosting),
+            priceCurrency: "USD",
+            unitText: "year",
+            referenceQuantity: { "@type": "QuantitativeValue", value: 1, unitCode: "ANN" },
+          },
+        },
+      ],
+    },
+    {
+      "@type": "Person",
+      "@id": `${SITE}/#blake`,
+      name: "Blake Goble",
+      jobTitle: "Founder, web designer and developer",
+      worksFor: { "@id": `${SITE}/#business` },
+      email: CONTACT.email,
+    },
+    ...schema,
   ],
-  founder: { "@type": "Person", name: "Blake Goble" },
-  makesOffer: {
-    "@type": "Offer",
-    name: "Small business website",
-    price: "1000",
-    priceCurrency: "USD",
-  },
 };
 ---
 <!doctype html>
@@ -63,7 +157,20 @@ const jsonLd = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:site_name" content="JustAWeb" />
+    <!-- Share card: the JustAWeb logo on every page (Blake, 2026-09-28). One fixed image,
+         no per-page overrides. Source: scripts/og-card.html; check-seo.mjs verifies these
+         tags on every built page, including the private tools in public/. -->
+    <meta property="og:image" content={OG_IMAGE} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={OG_ALT} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={OG_IMAGE} />
+    <meta name="twitter:image:alt" content={OG_ALT} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script is:inline>
       // Set the theme before first paint. Same storage key as legacy public/script.js.

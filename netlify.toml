@@ -20,6 +20,18 @@
     Cache-Control = "no-cache"
     X-Robots-Tag = "noindex, nofollow"
 
+[[headers]]
+  for = "/audit-results*"
+  [headers.values]
+    Cache-Control = "no-cache"
+    X-Robots-Tag = "noindex, nofollow"
+
+# llms.txt is plain Markdown for AI tools; say so explicitly (UTF-8 for the quotes).
+[[headers]]
+  for = "/llms.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+
 # Long-cache Astro's fingerprinted assets (file names change when content changes).
 [[headers]]
   for = "/_astro/*"

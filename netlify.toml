@@ -79,3 +79,10 @@
   to = "/index.html"
   status = 200
 
+
+# Browsers ask for /favicon.ico even though every page links the SVG icon; answer with it
+# instead of a 404 (seen on /intake and /contract in the 2026-09-28 walkthrough).
+[[redirects]]
+  from = "/favicon.ico"
+  to = "/favicon.svg"
+  status = 200

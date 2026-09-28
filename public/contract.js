@@ -185,7 +185,9 @@
         let baseCost = 0;
         
         // Get base cost from package
-        if (selectedValue.includes('Essential')) baseCost = 2000;
+        // The outreach offer (justaweb.agency pricing, the preview emails): one page, $1,000.
+        if (selectedValue.includes('Launch site')) baseCost = 1000;
+        else if (selectedValue.includes('Essential')) baseCost = 2000;
         else if (selectedValue.includes('Professional')) baseCost = 5000;
         else if (selectedValue.includes('Complete')) baseCost = 8000;
         else if (selectedValue === 'Custom') {
@@ -1106,6 +1108,8 @@ A PDF copy of the signed contract is attached.`;
             
             // Success
             showStatus('Signed and sent. A PDF copy has downloaded to your device, and Blake has received it.', 'success');
+            // The button said "Processing..." until the form reset 5 s later; say it is done.
+            submitBtn.querySelector('.btn-loader').textContent = 'Signed';
             
             // Reset form after delay
             setTimeout(() => {
@@ -1119,6 +1123,7 @@ A PDF copy of the signed contract is attached.`;
                 submitBtn.disabled = false;
                 submitBtn.querySelector('.btn-text').style.display = 'inline';
                 submitBtn.querySelector('.btn-loader').style.display = 'none';
+                submitBtn.querySelector('.btn-loader').textContent = 'Processing...';
             }, 5000);
             
         } catch (error) {

@@ -12,8 +12,15 @@
  *
  * LAYOUT: it continues the Pains chapter on the same alt background (the same pattern
  * Testimonials uses after Work), so the story reads "customers look for you online, and
- * more of them now ask AI". Header, then copy beside an illustrative answer card, then the
- * four built-in features as cards, then an honest note on what nobody can promise.
+ * more of them now ask AI". Rebalanced 2026-09-28 (Blake: "more visually balanced"):
+ *   Row 1  the opening (eyebrow, H2, lede, unchanged) beside the sourced stat, which
+ *          fills the empty right half the opening used to leave at desktop widths.
+ *   Row 2  the two short explanations beside the answer card; with the stat moved up,
+ *          the text column and the card are close to the same height, so the card no
+ *          longer floats alone in a pool of space.
+ *   Row 3  the four built-in features as cards whose titles and bodies line up (shared
+ *          .icon-card subgrid recipe in global.css), then the honest note.
+ * Phones and tablets stack the same order: opening, stat, explanations, card, features.
  *
  * THE CARD is a made-up example (fictional shop, 555-01xx phone number, labelled as an
  * illustration) drawn in the site's own tokens. It deliberately looks like no real AI
@@ -32,21 +39,24 @@ const { stat, features } = AI_SEARCH;
 ---
 <section class="section section--alt ai" id="ai-search" aria-labelledby="ai-h">
   <div class="wrap">
-    <div class="section-head reveal">
-      <p class="eyebrow">AI search</p>
-      <h2 class="h2" id="ai-h"><span class="sl">People ask AI who to call now.</span> <span class="sl">Is your business in the answer?</span></h2>
-      <p class="lede">More customers skip the list of links and ask ChatGPT, Google's AI Mode or Perplexity for a recommendation. Those tools can only mention a business they can read about. With no website, or a thin one, you are easy to leave out.</p>
+    <div class="ai__top">
+      <div class="section-head reveal">
+        <p class="eyebrow">AI search</p>
+        <h2 class="h2" id="ai-h"><span class="sl">People ask AI who to call now.</span> <span class="sl">Is your business in the answer?</span></h2>
+        <p class="lede">More customers skip the list of links and ask ChatGPT, Google's AI Mode or Perplexity for a recommendation. Those tools can only mention a business they can read about. With no website, or a thin one, you are easy to leave out.</p>
+      </div>
+
+      <figure class="ai__stat reveal">
+        <p class="ai__num">{stat.value}</p>
+        <div>
+          <p class="ai__stat-text">{stat.text}</p>
+          <figcaption class="ai__cite">Source: <a href={stat.url} rel="noopener" target="_blank">{stat.source}</a></figcaption>
+        </div>
+      </figure>
     </div>
 
     <div class="ai__grid">
       <div class="ai__copy">
-        <figure class="ai__stat reveal">
-          <p class="ai__num">{stat.value}</p>
-          <div>
-            <p class="ai__stat-text">{stat.text}</p>
-            <figcaption class="ai__cite">Source: <a href={stat.url} rel="noopener" target="_blank">{stat.source}</a></figcaption>
-          </div>
-        </figure>
 
         <div class="ai__point reveal">
           <h3>Every site I build is made to be cited.</h3>
@@ -77,9 +87,9 @@ const { stat, features } = AI_SEARCH;
       </figure>
     </div>
 
-    <ul class="ai__features">
+    <ul class="icon-cards ai__features">
       {features.map((f) => (
-        <li class="card ai__feature lift reveal">
+        <li class="card icon-card ai__feature lift reveal">
           <span class="icon-tile icon-tile--sm"><Icon name={f.icon} size={20} /></span>
           <h3>{f.title}</h3>
           <p>{f.body}</p>
@@ -98,10 +108,24 @@ const { stat, features } = AI_SEARCH;
   /* Continues the Pains section on the same background, so no top padding. */
   .ai { padding-top: 0; }
 
-  .ai__grid { display: grid; gap: clamp(28px, 4vw, 56px); align-items: center; }
-  @media (min-width: 960px) { .ai__grid { grid-template-columns: 1fr 1fr; } }
+  /* Row 1: the opening beside the stat. The heading column keeps enough width for each
+     H2 sentence to stay on one line (about 13.9em of the fluid .h2 size). */
+  .ai__top { display: grid; gap: 24px; margin-bottom: var(--head-gap); }
+  .ai__top .section-head { margin-bottom: 0; }
+  @media (min-width: 960px) {
+    .ai__top { grid-template-columns: minmax(0, 1fr) clamp(300px, 34vw, 400px); gap: clamp(40px, 5vw, 64px); align-items: center; }
+  }
 
-  .ai__copy { display: grid; gap: 28px; }
+  /* Row 2: explanations beside the answer card, centred on each other. The card gets
+     the wider share (1.1fr) so its chips stay on one row and its height lands close to
+     the text column's, instead of towering over it at 1024. */
+  .ai__grid { display: grid; gap: var(--stack); align-items: center; }
+  @media (min-width: 960px) { .ai__grid { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(40px, 5vw, 64px); } }
+
+  .ai__copy { display: grid; gap: 24px; }
+  /* Tablet: the two explanations sit side by side, so the single column is not a long
+     run of text between the stat and the card. */
+  @media (min-width: 640px) and (max-width: 959px) { .ai__copy { grid-template-columns: 1fr 1fr; gap: 28px; } }
 
   /* The sourced stat: big accent number, the claim, and its source right underneath. */
   .ai__stat {
@@ -114,7 +138,9 @@ const { stat, features } = AI_SEARCH;
   .ai__cite { margin-top: 6px; font-size: 0.8125rem; color: var(--muted); }
   .ai__cite a { color: inherit; }
   .ai__cite a:hover { color: var(--accent); }
-  @media (max-width: 420px) { .ai__stat { grid-template-columns: 1fr; gap: 8px; } }
+  /* Stacked (number over the claim) on small phones and in the narrow desktop column
+     beside the heading, where a side-by-side stat would squeeze the claim to six lines. */
+  @media (max-width: 420px), (min-width: 960px) { .ai__stat { grid-template-columns: 1fr; gap: 8px; } }
 
   .ai__point h3 { font-size: 1.25rem; }
   .ai__point p { margin-top: 8px; color: var(--ink-2); }
@@ -152,15 +178,13 @@ const { stat, features } = AI_SEARCH;
   .answer__cap { font-size: 0.8125rem; color: var(--muted); padding-top: 2px; }
 
   /* ---- Built-in features ---- */
-  .ai__features { list-style: none; margin: clamp(40px, 6vw, 64px) 0 0; padding: 0; display: grid; gap: 16px; }
-  @media (min-width: 640px) { .ai__features { grid-template-columns: 1fr 1fr; } }
-  @media (min-width: 1200px) { .ai__features { grid-template-columns: repeat(4, 1fr); } }
-  .ai__feature { display: grid; gap: 10px; align-content: start; }
+  /* Grid, gaps and title/body alignment come from .icon-cards / .icon-card (global.css). */
+  .ai__features { margin-top: var(--head-gap); }
   .ai__feature h3 { font-size: 1.0625rem; letter-spacing: -0.015em; }
-  .ai__feature p { color: var(--ink-2); font-size: 1rem; }
+  .ai__feature p { font-size: 1rem; }
 
   .ai__honest {
-    margin-top: 28px; display: flex; gap: 12px; align-items: flex-start; max-width: 62em;
+    margin-top: 24px; display: flex; gap: 12px; align-items: flex-start; max-width: 62em;
     color: var(--ink-2); font-size: 1rem;
   }
   .ai__honest :global(.icon) { flex: none; margin-top: 3px; color: var(--accent); }

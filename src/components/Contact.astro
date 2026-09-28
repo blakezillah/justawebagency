@@ -118,19 +118,19 @@ import Icon from "./Icon.astro";
   .contact__grid { display: grid; gap: clamp(32px, 5vw, 64px); align-items: start; }
   @media (min-width: 960px) { .contact__grid { grid-template-columns: 0.9fr 1.1fr; } }
 
-  .next { margin: 32px 0 0; padding: 0; list-style: none; counter-reset: n; display: grid; gap: 16px; }
+  .next { margin: 28px 0 0; padding: 0; list-style: none; counter-reset: n; display: grid; gap: 16px; }
   .next li { counter-increment: n; display: grid; grid-template-columns: 36px 1fr; gap: 14px; align-items: center; color: var(--ink-2); }
   .next li::before {
     content: counter(n); display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%;
     background: var(--surface); border: 1px solid var(--line); font-weight: 800; color: var(--ink);
   }
   .next strong { color: var(--ink); }
-  .contact__alt { margin-top: 28px; color: var(--ink-2); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+  .contact__alt { margin-top: 24px; color: var(--ink-2); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
   .contact__alt :global(.icon) { color: var(--accent); }
   .contact__alt a { font-weight: 700; color: var(--accent); word-break: break-all; }
 
-  .form { display: grid; gap: 18px; padding: clamp(20px, 3.5vw, 36px); box-shadow: var(--shadow-sm); }
-  .form__row { display: grid; gap: 18px; }
+  .form { display: grid; gap: 16px; padding: clamp(20px, 3vw, 32px); box-shadow: var(--shadow-sm); }
+  .form__row { display: grid; gap: 16px; }
   @media (min-width: 640px) { .form__row { grid-template-columns: 1fr 1fr; } }
   .field { display: grid; gap: 8px; min-width: 0; }
   .field label { font-weight: 700; font-size: 0.9375rem; }
@@ -140,7 +140,7 @@ import Icon from "./Icon.astro";
     background: var(--bg); border: 1.5px solid var(--line); border-radius: var(--radius-sm);
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
-  .field textarea { resize: vertical; min-height: 140px; line-height: 1.5; }
+  .field textarea { resize: vertical; min-height: 128px; line-height: 1.5; }
   .field input::placeholder, .field textarea::placeholder { color: var(--muted); opacity: 1; }
   .field input:focus, .field select:focus, .field textarea:focus {
     outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);

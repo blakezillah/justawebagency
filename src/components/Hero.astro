@@ -80,7 +80,9 @@ import { PRICING } from "../data/site.js";
 </section>
 
 <style>
-  .hero { position: relative; padding-block: clamp(40px, 7vw, 96px) clamp(56px, 8vw, 112px); overflow: clip; }
+  /* Hero padding follows the section rhythm: a little less on top (the header is right
+     above) and the standard --section below. */
+  .hero { position: relative; padding-block: clamp(28px, 5vw, 64px) var(--section); overflow: clip; }
   .hero::before {
     /* Soft warm glow behind the visual; decorative only. */
     content: ""; position: absolute; inset: -20% -10% auto 40%; height: 120%;
@@ -93,16 +95,16 @@ import { PRICING } from "../data/site.js";
   /* Desktop: the headline spans both columns so each sentence sits on one line; the
      copy and CTAs sit left of the visual underneath. */
   @media (min-width: 960px) {
-    .hero__grid { grid-template-columns: 1.02fr 1fr; row-gap: 40px; }
+    .hero__grid { grid-template-columns: 1.08fr 0.92fr; row-gap: 24px; } /* slightly narrower visual: shorter hero, less air between headline and lede */
     .hero__head { grid-column: 1 / -1; }
   }
 
   .hero__title { font-size: clamp(2.375rem, 5.2vw, 4.25rem); letter-spacing: -0.035em; line-height: 1.04; }
   .hero__price { display: block; color: var(--accent); }
   .hero__lede { margin-top: 0; max-width: 34em; font-size: clamp(1.0625rem, 1rem + 0.45vw, 1.3125rem); color: var(--ink-2); }
-  .hero__ctas { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .hero__ctas { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; }
 
-  .checks { margin: 28px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 10px 22px; }
+  .checks { margin: 24px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 10px 22px; }
   .checks li { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9375rem; color: var(--ink-2); }
   .checks li::before {
     content: ""; width: 18px; height: 18px; border-radius: 50%; flex: none;

@@ -37,7 +37,7 @@ const img = (key: string, kind: "desk" | "phone") => shots[`../assets/work/${key
                   src={img(w.key, "desk")!}
                   formats={["avif", "webp"]}
                   widths={[400, 640, 880]}
-                  sizes="(min-width: 900px) 540px, 92vw"
+                  sizes="(min-width: 1180px) 540px, (min-width: 640px) 46vw, 92vw"
                   alt={`${w.name} website on a desktop screen`}
                 />
               )}
@@ -73,8 +73,10 @@ const img = (key: string, kind: "desk" | "phone") => shots[`../assets/work/${key
 </section>
 
 <style>
-  .work { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(20px, 3vw, 32px); }
-  @media (min-width: 900px) { .work { grid-template-columns: 1fr 1fr; } }
+  /* Two columns from 640px (was 900px): at tablet width four full-width cards made this
+     the tallest section on the page (2,900px at 768). */
+  .work { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(16px, 2.5vw, 28px); }
+  @media (min-width: 640px) { .work { grid-template-columns: 1fr 1fr; } }
 
   .work__card {
     display: flex; flex-direction: column; height: 100%; text-decoration: none;
@@ -87,9 +89,11 @@ const img = (key: string, kind: "desk" | "phone") => shots[`../assets/work/${key
   .work__card:hover, .work__card:focus-visible { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: color-mix(in srgb, var(--ink) 25%, var(--line)); }
   @media (prefers-reduced-motion: reduce) { .work__card { transition: none; } .work__card:hover, .work__card:focus-visible { transform: none; } }
 
-  .work__media { position: relative; background: var(--surface-2); padding: clamp(16px, 3vw, 28px) clamp(16px, 3vw, 28px) 0; overflow: hidden; }
+  .work__media { position: relative; background: var(--surface-2); padding: clamp(14px, 2.4vw, 24px) clamp(14px, 2.4vw, 24px) 0; overflow: hidden; }
   .work__media :global(.work__desk) {
-    width: 86%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top;
+    /* 16:9 (was 16:10): the crop keeps the top of each site (object-position top) and
+       trims about 20px of screenshot per card, so the grid reads denser. */
+    width: 86%; aspect-ratio: 16 / 9; object-fit: cover; object-position: top;
     border-radius: 10px 10px 0 0; box-shadow: var(--shadow-sm);
     transition: transform 0.4s ease;
   }
@@ -109,12 +113,12 @@ const img = (key: string, kind: "desk" | "phone") => shots[`../assets/work/${key
     .work__card:hover :global(img), .work__card:focus-visible :global(img), .work__card:hover .work__link svg, .work__card:focus-visible .work__link svg { transform: none; }
   }
 
-  .work__body { padding: clamp(20px, 3vw, 28px); display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .work__body { padding: var(--pad-card); display: flex; flex-direction: column; gap: 8px; flex: 1; }
   .work__kind { font: 700 0.75rem/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ok); }
   .work__kind[data-own] { color: var(--muted); }
   .work__name { font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.625rem); }
   .work__blurb { color: var(--ink-2); }
   .work__tags { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
   .work__tags li { font-size: 0.8125rem; font-weight: 600; padding: 5px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); }
-  .work__link { margin-top: auto; padding-top: 10px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--accent); }
+  .work__link { margin-top: auto; padding-top: 8px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--accent); }
 </style>

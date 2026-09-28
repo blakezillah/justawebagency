@@ -41,7 +41,19 @@
   --radius-lg: 22px;
   --gutter: clamp(16px, 4vw, 32px);
   --max: 1180px;
-  --section: clamp(72px, 10vw, 128px);
+  /* Vertical rhythm (2026-09-28 spacing pass). One scale drives every section so the
+     page tightens consistently instead of per-element hacks:
+       --section     padding above and below every .section (40px phone, 80px desktop)
+       --head-gap    heading block to its content
+       --stack       space between stacked blocks inside a section (a grid, then a note)
+       --pad-card    inner padding of every content card (pains, features, steps, quotes)
+     The old --section (72 to 128px) left a quarter of the desktop page as bare
+     background; these values cut total page height by roughly a fifth without
+     crowding headings or tap targets. */
+  --section: clamp(40px, 6vw, 80px);
+  --head-gap: clamp(24px, 3.2vw, 40px);
+  --stack: clamp(24px, 3vw, 36px);
+  --pad-card: clamp(20px, 2.4vw, 28px);
   --header-h: 64px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* fast start, soft landing: used by all motion */
 
@@ -75,7 +87,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 400 1.0625rem/1.6 var(--font);
+  font: 400 1.0625rem/1.55 var(--font); /* 1.55 (was 1.6): still airy at 17px, trims every paragraph a little */
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: clip;
@@ -107,19 +119,19 @@ p { margin: 0; text-wrap: pretty; }
 .section { padding-block: var(--section); }
 .section--alt { background: var(--surface-2); }
 
-.section-head { margin-bottom: clamp(36px, 5vw, 56px); }
+.section-head { margin-bottom: var(--head-gap); }
 .section-head .lede { max-width: 720px; }
-.section-head--center .lede { margin-inline: auto; }
+.section-head--center .lede { margin-inline: auto; text-wrap: balance; } /* balance: no one-word orphan line under a centered heading */
 .section-head--center { margin-inline: auto; text-align: center; }
 .eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
   font: 700 0.8125rem/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 16px;
+  color: var(--accent); margin-bottom: 12px;
 }
 .eyebrow::before { content: ""; width: 18px; height: 2px; background: currentColor; border-radius: 2px; }
 .section-head--center .eyebrow::before { display: none; }
 .h2 { font-size: clamp(1.875rem, 3.6vw, 2.875rem); } /* fluid so one sentence fits one line from 768px up */
-.lede { margin-top: 16px; font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem); color: var(--ink-2); }
+.lede { margin-top: 14px; font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem); color: var(--ink-2); }
 
 /* ---- Buttons --------------------------------------------------------------- */
 
@@ -145,7 +157,25 @@ p { margin: 0; text-wrap: pretty; }
 
 .card {
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: clamp(20px, 3vw, 28px);
+  padding: var(--pad-card);
+}
+
+/* Icon cards (pains, AI features): icon, title, body.
+   Up to 1199px the icon sits beside the title instead of above it, which saves a
+   48px row per card without shrinking anything. From 640px each card is a subgrid of
+   the list's rows, so when one title wraps to two lines, the titles and bodies of every
+   card in that row still line up (no ragged body text across a row). From 1200px, four
+   across, the icon goes back on top (the columns are too narrow for icon + title). */
+.icon-cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.icon-card { display: grid; grid-template-columns: auto 1fr; column-gap: 14px; row-gap: 10px; align-items: center; }
+.icon-card > p { grid-column: 1 / -1; align-self: start; color: var(--ink-2); }
+@media (min-width: 640px) {
+  .icon-cards { grid-template-columns: 1fr 1fr; }
+  .icon-card { grid-template-rows: subgrid; grid-row: span 2; }
+}
+@media (min-width: 1200px) {
+  .icon-cards { grid-template-columns: repeat(4, 1fr); }
+  .icon-card { grid-template-columns: 1fr; grid-row: span 3; row-gap: 12px; align-items: start; }
 }
 
 /* ---- Icon tiles --------------------------------------------------------------

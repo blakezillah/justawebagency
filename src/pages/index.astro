@@ -69,9 +69,9 @@ const faqSchema = {
           <h2 class="h2" id="pains-h">Your customers are looking for you online.</h2>
           <p class="lede">If any of these is you, you are exactly who I build for.</p>
         </div>
-        <ul class="pains">
+        <ul class="icon-cards">
           {PAINS.map((p, i) => (
-            <li class="card pain lift reveal">
+            <li class="card icon-card pain lift reveal">
               <span class="icon-tile"><Icon name={p.icon} /></span>
               <h3>{p.title}</h3>
               <p>{p.body}</p>
@@ -260,25 +260,21 @@ const faqSchema = {
 
 <style>
   /* ---- Pains ---- */
-  .pains { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
-  @media (min-width: 640px) { .pains { grid-template-columns: 1fr 1fr; } }
-  @media (min-width: 1200px) { .pains { grid-template-columns: repeat(4, 1fr); } }
-  .pain { display: grid; gap: 10px; align-content: start; }
+  /* Layout comes from the shared .icon-cards / .icon-card recipe in global.css. */
   .pain h3 { font-size: 1.25rem; }
-  .pain p { color: var(--ink-2); }
 
   /* ---- Included ---- */
-  .included { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px 32px; }
+  .included { list-style: none; margin: 0; padding: 0; display: grid; gap: 24px 32px; }
   @media (min-width: 640px) { .included { grid-template-columns: 1fr 1fr; } }
   @media (min-width: 1280px) { .included { grid-template-columns: repeat(4, 1fr); } }
   .included li { display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start; }
   .included h3 { font-size: 1.0625rem; letter-spacing: -0.015em; }
-  .included p { margin-top: 6px; color: var(--ink-2); font-size: 1rem; }
+  .included p { margin-top: 4px; color: var(--ink-2); font-size: 1rem; }
 
   /* ---- Compare ---- */
   .compare { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
   .compare table { width: 100%; min-width: 620px; border-collapse: collapse; }
-  .compare th, .compare td { padding: 16px 20px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .compare th, .compare td { padding: 14px 20px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
   .compare tbody tr:last-child > * { border-bottom: 0; }
   .compare thead th { font-size: 0.8125rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
   .compare tbody th { font-weight: 700; width: 24%; }
@@ -291,25 +287,31 @@ const faqSchema = {
     .compare { overflow: visible; border: 0; background: none; display: grid; }
     .compare table, .compare tbody, .compare tr, .compare th, .compare td { display: block; min-width: 0; }
     .compare thead { display: none; }
-    .compare tbody { display: grid; gap: 12px; }
+    .compare tbody { display: grid; gap: 10px; }
     .compare tr { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
     .compare tbody th { width: auto; padding: 14px 16px 6px; border: 0; font-size: 1.0625rem; }
-    .compare td { display: flex; justify-content: space-between; gap: 16px; padding: 8px 16px; border: 0; text-align: right; }
+    .compare td { display: flex; justify-content: space-between; gap: 16px; padding: 6px 16px; border: 0; text-align: right; }
     .compare td::before { content: attr(data-label); color: var(--muted); font-weight: 500; text-align: left; }
-    .compare td.is-us { margin-top: 6px; padding-block: 12px; }
+    .compare td.is-us { margin-top: 6px; padding-block: 10px; }
     .compare td.is-us::before { color: var(--accent); font-weight: 700; }
   }
 
   /* ---- Steps ---- */
+  /* Three columns from 900px (was 1100px, which stacked the steps into a tall single
+     column at 1024). The number sits beside the title rather than on its own row above
+     it: same sequence cue, one row less per card. */
   .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; counter-reset: s; }
-  @media (min-width: 1100px) { .steps { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
-  .step { position: relative; padding: 28px; border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--line); }
+  @media (min-width: 900px) { .steps { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
+  .step {
+    position: relative; display: grid; grid-template-columns: 40px 1fr; column-gap: 14px; row-gap: 10px; align-items: center;
+    padding: var(--pad-card); border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--line);
+  }
   .step__n {
-    display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
-    background: var(--ink); color: var(--bg); font-weight: 800; font-size: 1.125rem; margin-bottom: 18px;
+    display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+    background: var(--ink); color: var(--bg); font-weight: 800; font-size: 1.0625rem;
   }
   .step h3 { font-size: 1.1875rem; }
-  .step p { margin-top: 10px; color: var(--ink-2); }
+  .step p { grid-column: 1 / -1; align-self: start; color: var(--ink-2); }
   /* As each step card arrives, its number pops in just after the card lands, so the
      three steps read as a sequence (1, then 2, then 3) rather than a block of text. */
   @media (prefers-reduced-motion: no-preference) {
@@ -318,53 +320,72 @@ const faqSchema = {
   }
 
   .preview {
-    margin-top: clamp(28px, 4vw, 40px); display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start;
-    padding: clamp(20px, 3vw, 32px); border-radius: var(--radius-lg);
+    margin-top: var(--stack); display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start;
+    padding: var(--pad-card); border-radius: var(--radius-lg);
     border: 2px dashed color-mix(in srgb, var(--accent) 45%, var(--line)); background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
   }
   .preview__icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: var(--accent); color: var(--accent-ink); }
   .preview h3 { font-size: 1.25rem; }
   .preview p { margin-top: 8px; color: var(--ink-2); max-width: 62em; }
-  @media (max-width: 560px) { .preview { grid-template-columns: 1fr; } }
+  /* Phones: a smaller icon beside the title keeps the aside compact instead of giving
+     the icon a row of its own. */
+  @media (max-width: 560px) {
+    .preview { grid-template-columns: 40px 1fr; gap: 14px; }
+    .preview__icon { width: 40px; height: 40px; border-radius: 11px; }
+    .preview__icon :global(.icon) { width: 22px; height: 22px; }
+  }
 
   /* ---- Pricing ---- */
   .prices { display: grid; gap: 20px; max-width: 920px; margin-inline: auto; }
   @media (min-width: 800px) { .prices { grid-template-columns: 1.15fr 1fr; align-items: stretch; } }
-  .price { display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 3.5vw, 36px); border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--line); }
+  .price { display: flex; flex-direction: column; gap: 12px; padding: clamp(22px, 3vw, 32px); border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--line); }
   .price--main { border: 2px solid var(--ink); box-shadow: var(--shadow-lg); }
   .price__tag { display: inline-flex; align-items: center; gap: 8px; font: 700 0.8125rem/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
   .price__amt { font-size: clamp(2.75rem, 2rem + 3vw, 3.75rem); letter-spacing: -0.04em; }
   .price__amt span { font-size: 1rem; font-weight: 600; letter-spacing: 0; color: var(--muted); }
   .price__desc { color: var(--ink-2); }
-  .price__list { list-style: none; margin: 6px 0 10px; padding: 0; display: grid; gap: 10px; }
+  .price__list { list-style: none; margin: 4px 0 8px; padding: 0; display: grid; gap: 8px; }
   .price__list li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; }
   .price__list li::before {
     content: ""; width: 18px; height: 18px; margin-top: 4px; border-radius: 50%;
     background: var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 12.5 4 4 8-9' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat;
   }
   .price .btn { margin-top: auto; }
-  .prices__note { margin-top: 28px; text-align: center; color: var(--ink-2); }
+  /* Side by side, the shorter add-on card is centred against the featured card rather
+     than stretched to its height, which used to leave a 130px hole above its button.
+     A taller featured tier is the familiar pricing pattern, so it reads as intended. */
+  @media (min-width: 800px) { .price:not(.price--main) { align-self: center; } }
+  .prices__note { margin-top: 24px; text-align: center; color: var(--ink-2); }
   .prices__note a, .faq a { color: var(--accent); font-weight: 700; }
 
   /* ---- About ---- */
   .about { display: grid; gap: clamp(24px, 4vw, 48px); align-items: center; max-width: 920px; }
+  /* Phones: a smaller portrait, so the photo does not fill a whole screen on its own. */
   @media (min-width: 720px) { .about { grid-template-columns: auto 1fr; } }
   .about__photo {
     width: clamp(220px, 26vw, 280px); aspect-ratio: 3 / 4; object-fit: cover; object-position: 50% 30%;
     border-radius: var(--radius-lg); box-shadow: 0 0 0 6px var(--surface), 0 0 0 7px var(--line), var(--shadow-lg);
     transform: rotate(-2deg);
   }
-  @media (max-width: 719px) { .about__photo { width: min(280px, 72vw); transform: none; } }
-  .about__sign { margin-top: 20px; font-weight: 700; }
+  @media (max-width: 719px) { .about__photo { width: min(220px, 60vw); transform: none; } }
+  .about__sign { margin-top: 16px; font-weight: 700; }
 
   /* ---- FAQ ---- */
-  .faq { display: grid; gap: 32px; }
-  @media (min-width: 960px) { .faq { grid-template-columns: 0.8fr 1.2fr; gap: 64px; align-items: start; } }
-  .faq__list { border-top: 1px solid var(--line); }
+  .faq { display: grid; gap: 0; }
+  /* Desktop: the heading column stays in view while the list scrolls (sticky), so the
+     tall empty column beside eleven questions reads as intentional. The list's top rule
+     is dropped so the first question lines up with the eyebrow instead of floating 18px
+     above it. */
+  @media (min-width: 960px) {
+    .faq { grid-template-columns: 0.8fr 1.2fr; gap: 64px; align-items: start; }
+    .faq .section-head { position: sticky; top: calc(var(--header-h) + 32px); margin-bottom: 0; }
+    .faq__list .qa:first-child summary { padding-top: 0; }
+  }
+  @media (max-width: 959px) { .faq__list { border-top: 1px solid var(--line); } }
   .qa { border-bottom: 1px solid var(--line); }
   .qa summary {
     list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px;
-    padding: 20px 0; font-weight: 700; font-size: 1.0625rem;
+    min-height: 44px; padding: 16px 0; font-weight: 700; font-size: 1.0625rem;
   }
   .qa summary::-webkit-details-marker { display: none; }
   .qa summary::after {
@@ -381,7 +402,7 @@ const faqSchema = {
   }
   @media (prefers-reduced-motion: reduce) { .qa summary::after { transition: none; } }
   .qa summary:hover { color: var(--accent); }
-  .qa p { padding: 0 44px 22px 0; color: var(--ink-2); }
+  .qa p { padding: 0 44px 18px 0; color: var(--ink-2); }
 
   /* ---- Sticky CTA (phones) ---- */
   .sticky-cta { display: none; }

@@ -94,13 +94,49 @@
                     <label for="selectedPackage">Selected Package *</label>
                     <select id="selectedPackage" name="selectedPackage" required>
                         <option value="">Select package</option>
-                        <option value="Launch site - $1,000">Launch site - $1,000 (the one-page site from your preview, hosting optional at $250 a year)</option>
+                        <!-- The real JustAWeb offer (src/data/site.js PRICING, INCLUDED, FAQ). First and
+                             pre-selected because nearly every signing is this package. The value is what
+                             the signed record stores; contract.js keys its price off PACKAGES. -->
+                        <option value="Website build - $1,000" selected>Website build - $1,000 one time</option>
                         <option value="Essential - $2,000">Essential Package - $2,000 (1-3 pages, HTML, 1 month support)</option>
                         <option value="Professional - $5,000">Professional Package - $5,000 (WordPress, up to 8 pages, 3 months support)</option>
                         <option value="Complete - $8,000">Complete Package - $8,000 (WordPress or Shopify, up to 15 pages, 6 months support)</option>
                         <option value="Custom">Custom Package (see details below)</option>
                     </select>
                     <span class="form-error" id="selectedPackageError"></span>
+                </div>
+
+                <!-- $1,000 package details and options. Shown only while "Website build - $1,000" is
+                     selected (contract.js toggles it). Every line in the list mirrors INCLUDED and the
+                     FAQ in src/data/site.js, so the contract never promises more than the homepage. -->
+                <div class="package-details" id="launchPackageDetails">
+                    <p class="package-details-title"><strong>Website build: $1,000 one time.</strong> What it includes:</p>
+                    <ul class="package-includes">
+                        <li>Custom design made for your business, not a template</li>
+                        <li>Built for phones first, and loads fast</li>
+                        <li>Found by Google and AI: local business markup, a plain-answer FAQ, a sitemap and open doors for AI search crawlers</li>
+                        <li>Easy to contact: tap-to-call, a contact form, your hours and a map</li>
+                        <li>Accessible, built to WCAG 2.1 AA guidelines</li>
+                        <li>Basic Google setup and launch on your domain</li>
+                        <li>You own it: your code, your content, your domain</li>
+                        <li>You work with Blake directly, start to finish</li>
+                    </ul>
+
+                    <div class="package-option">
+                        <label class="checkbox-label" for="addHosting">
+                            <input type="checkbox" id="addHosting" name="addHosting" value="yes">
+                            <span><strong>Add hosting with unlimited small updates: $250 a year</strong> (optional).
+                                Billed once a year, the first year at launch. It is separate from the $1,000 build and the
+                                50/50 payments below. You can also host the site anywhere you like.</span>
+                        </label>
+                    </div>
+
+                    <div class="package-option package-option-note">
+                        <p><strong>Testimonial discount: $100 off.</strong> Send a short written testimonial after launch
+                            that JustAWeb may publish, and $100 of the build price comes back to you. It is never tied to a
+                            Google review: a review is always a plain ask with no discount, because Google does not allow
+                            incentives for reviews.</p>
+                    </div>
                 </div>
                 
                 <div class="form-group" id="customPackageGroup" style="display: none;">
@@ -308,6 +344,8 @@
             <input type="email" name="client_email">
             <input type="hidden" name="client_business">
             <input type="hidden" name="package">
+            <input type="hidden" name="hosting">
+            <input type="hidden" name="testimonial_discount">
             <input type="hidden" name="timeline">
             <input type="hidden" name="total_cost">
             <input type="hidden" name="deposit">
@@ -367,8 +405,16 @@
                     <h2>2. Payment Terms</h2>
                     <table class="pdf-table">
                         <tr>
-                            <td><strong>Total Project Cost:</strong></td>
+                            <td><strong>Total Project Cost (build):</strong></td>
                             <td id="pdfTotalCost"></td>
+                        </tr>
+                        <tr id="pdfHostingRow" style="display: none;">
+                            <td><strong>Hosting (optional):</strong></td>
+                            <td id="pdfHosting"></td>
+                        </tr>
+                        <tr id="pdfTestimonialRow" style="display: none;">
+                            <td><strong>Testimonial Discount:</strong></td>
+                            <td id="pdfTestimonial"></td>
                         </tr>
                         <tr id="pdfRushFeeRow" style="display: none;">
                             <td><strong>Rush Fee Included:</strong></td>

@@ -157,6 +157,39 @@
     margin-bottom: var(--space-xs);
 }
 
+/* $1,000 package details (shown only while that package is selected; see contract.js toggleLaunchDetails) */
+.package-details {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.package-details-title {
+    margin: 0 0 var(--space-sm);
+    color: var(--color-text);
+}
+
+.package-includes {
+    margin: 0 0 var(--space-md) var(--space-lg);
+    color: var(--color-text-alt);
+    line-height: var(--line-height-relaxed);
+}
+
+.package-option {
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--space-sm);
+}
+
+.package-option-note p {
+    margin: 0;
+    color: var(--color-text);
+    line-height: var(--line-height-relaxed);
+}
+
 /* Signature Section */
 .signature-section {
     margin-bottom: var(--space-xl);
@@ -468,3 +501,9 @@
     font-weight: var(--font-weight-medium);
 }
 
+
+/* The hosting checkbox sits inside .form-group-less markup but inherits label weight from
+   .checkbox-label; keep the explanation regular so only the price line reads bold. */
+.package-option .checkbox-label {
+    font-weight: var(--font-weight-normal, 400);
+}

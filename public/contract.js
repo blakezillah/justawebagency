@@ -28,6 +28,76 @@
     };
 
     // ============================================
+    // Packages and the $1,000 offer
+    // ============================================
+
+    /**
+     * Fixed-price packages, keyed by the exact <option> value stored in the signed record.
+     *
+     * WHY a table: the price used to be sniffed from substrings of the label, so a label
+     * edit could silently change what a client is charged. The $1,000 build is the real
+     * JustAWeb offer (src/data/site.js PRICING.site); the older packages stay as they were.
+     * "Custom" is not here: its price is typed in by hand.
+     */
+    const PACKAGES = {
+        'Website build - $1,000': 1000,
+        'Essential - $2,000': 2000,
+        'Professional - $5,000': 5000,
+        'Complete - $8,000': 8000,
+    };
+
+    /** The $1,000 package: the only one that carries the hosting option and the testimonial discount. */
+    const LAUNCH_PACKAGE = 'Website build - $1,000';
+
+    /** Optional hosting with unlimited small updates (site.js PRICING.hosting), billed yearly, outside the 50/50 build payments. */
+    const HOSTING_PER_YEAR = 250;
+
+    /** Paid back after launch for a short written testimonial. Never tied to a Google review. */
+    const TESTIMONIAL_DISCOUNT = 100;
+
+    /**
+     * Older links and dashboard buttons may carry ?package=Launch site - $1,000 (the label
+     * used on 2026-09-28). Map any retired value to its current option so the link still
+     * pre-selects the right package instead of leaving the picker blank.
+     */
+    const LEGACY_PACKAGE_VALUES = {
+        'Launch site - $1,000': LAUNCH_PACKAGE,
+    };
+
+    /** True when the $1,000 package is the one selected. */
+    function isLaunchPackage(value) {
+        return value === LAUNCH_PACKAGE;
+    }
+
+    /** True when the client ticked the optional $250 a year hosting (only counts on the $1,000 package). */
+    function hostingSelected() {
+        const pkg = document.getElementById('selectedPackage')?.value || '';
+        return isLaunchPackage(pkg) && !!document.getElementById('addHosting')?.checked;
+    }
+
+    /** Human line for the hosting choice, used in the on-page breakdown, the PDF and the Netlify record. */
+    function hostingLine(value, checked) {
+        if (!isLaunchPackage(value)) return '';
+        return checked
+            ? `Yes: $${HOSTING_PER_YEAR.toFixed(2)} a year with unlimited small updates, billed once a year (first year at launch), separate from the build payments`
+            : 'No (client hosts the site elsewhere)';
+    }
+
+    /** Human line for the testimonial discount, the same wherever it is recorded. */
+    function testimonialLine(value, buildTotal) {
+        if (!isLaunchPackage(value)) return '';
+        const net = Math.max(0, buildTotal - TESTIMONIAL_DISCOUNT);
+        return `$${TESTIMONIAL_DISCOUNT.toFixed(2)} paid back after launch for a short written testimonial JustAWeb may publish (build net $${net.toFixed(2)}). Not tied to a Google review.`;
+    }
+
+    /** Show the $1,000 package details only while that package is selected. */
+    function toggleLaunchDetails() {
+        const details = document.getElementById('launchPackageDetails');
+        const pkg = document.getElementById('selectedPackage')?.value || '';
+        if (details) details.style.display = isLaunchPackage(pkg) ? 'block' : 'none';
+    }
+
+    // ============================================
     // Initialize Signature Pads
     // ============================================
     
@@ -128,9 +198,12 @@
     // Set Default Values
     // ============================================
     
-    function setDefaultValues() {
+    /** Fill today's date into the contract and signature date fields (also after a form reset). */
+    function setDefaultDates() {
+        // Today in the signer's own time zone (toISOString is UTC, which is already
+        // tomorrow on a US evening).
         const today = new Date();
-        const dateString = today.toISOString().split('T')[0];
+        const dateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         
         const contractDateInput = document.getElementById('contractDate');
         const clientSignatureDateInput = document.getElementById('clientSignatureDate');
@@ -139,6 +212,10 @@
         if (contractDateInput) contractDateInput.value = dateString;
         if (clientSignatureDateInput) clientSignatureDateInput.value = dateString;
         if (providerSignatureDateInput) providerSignatureDateInput.value = dateString;
+    }
+
+    function setDefaultValues() {
+        setDefaultDates();
         
         // Auto-select package based on URL parameter
         const urlParams = new URLSearchParams(window.location.search);
@@ -146,7 +223,7 @@
         if (packageParam) {
             const packageSelect = document.getElementById('selectedPackage');
             if (packageSelect) {
-                packageSelect.value = packageParam;
+                packageSelect.value = LEGACY_PACKAGE_VALUES[packageParam] || packageParam;
                 packageSelect.dispatchEvent(new Event('change'));
             }
         }
@@ -184,12 +261,17 @@
         const selectedValue = packageSelect.value;
         let baseCost = 0;
         
-        // Get base cost from package
-        // The outreach offer (justaweb.agency pricing, the preview emails): one page, $1,000.
-        if (selectedValue.includes('Launch site')) baseCost = 1000;
-        else if (selectedValue.includes('Essential')) baseCost = 2000;
-        else if (selectedValue.includes('Professional')) baseCost = 5000;
-        else if (selectedValue.includes('Complete')) baseCost = 8000;
+        // Base cost comes from the PACKAGES table (exact option value, never a substring).
+        toggleLaunchDetails();
+        if (!selectedValue) {
+            // Back to "Select package": clear the old total instead of leaving a stale price.
+            totalCostInput.readOnly = true;
+            totalCostInput.value = '';
+            if (costBreakdown) costBreakdown.textContent = 'Base cost will be calculated based on package and timeline.';
+            calculatePaymentAmounts();
+            return;
+        }
+        if (PACKAGES[selectedValue]) baseCost = PACKAGES[selectedValue];
         else if (selectedValue === 'Custom') {
             // For custom packages, allow manual entry
             const totalCostInput = document.getElementById('totalProjectCost');
@@ -233,17 +315,27 @@
             totalCostInput.readOnly = true; // Make readonly for standard packages
             totalCostInput.value = totalCost.toFixed(2);
             
-            // Update cost breakdown display
+            // Update cost breakdown display. For the $1,000 package the hosting choice and
+            // the testimonial discount are listed under the build total but never folded into
+            // it: hosting is billed yearly on its own, and the discount is paid back after
+            // launch, so the 50/50 build payments stay exactly half of the build price.
             if (costBreakdown) {
+                let extras = '';
+                if (isLaunchPackage(selectedValue)) {
+                    extras = hostingSelected()
+                        ? `<br>Hosting: $${HOSTING_PER_YEAR.toFixed(2)} a year, billed separately (first year at launch)`
+                        : '<br>Hosting: not added';
+                    extras += `<br>Testimonial discount: $${TESTIMONIAL_DISCOUNT.toFixed(2)} back after launch for a short written testimonial (build net $${(totalCost - TESTIMONIAL_DISCOUNT).toFixed(2)})`;
+                }
                 if (isRush && rushFee > 0) {
                     costBreakdown.innerHTML = `
                         <strong>Cost Breakdown:</strong><br>
                         Base Cost: $${baseCost.toFixed(2)}<br>
                         Rush Fee (25%): $${rushFee.toFixed(2)}<br>
-                        <strong>Total (Deposit: $${(totalCost * 0.5).toFixed(2)}): $${totalCost.toFixed(2)}</strong>
+                        <strong>Total (Deposit: $${(totalCost * 0.5).toFixed(2)}): $${totalCost.toFixed(2)}</strong>${extras}
                     `;
                 } else {
-                    costBreakdown.innerHTML = `Base cost: $${baseCost.toFixed(2)} (Deposit: $${(totalCost * 0.5).toFixed(2)})`;
+                    costBreakdown.innerHTML = `Base cost: $${baseCost.toFixed(2)} (Deposit: $${(totalCost * 0.5).toFixed(2)})${extras}`;
                 }
             }
             
@@ -446,6 +538,9 @@
         
         if (!packageSelect || !customPackageGroup) return;
         
+        // Hosting changes only the breakdown text (never the build total), so re-run it.
+        document.getElementById('addHosting')?.addEventListener('change', updateCostFromPackage);
+
         packageSelect.addEventListener('change', () => {
             if (packageSelect.value === 'Custom') {
                 customPackageGroup.style.display = 'block';
@@ -601,6 +696,15 @@
             document.getElementById('pdfRushFeeRow').style.display = 'none';
         }
         
+        // $1,000 package extras: hosting choice and the testimonial discount, recorded in
+        // the signed PDF so both sides have the same terms in writing.
+        const pkgValue = data.selectedPackage || '';
+        const showLaunchRows = isLaunchPackage(pkgValue);
+        document.getElementById('pdfHostingRow').style.display = showLaunchRows ? 'table-row' : 'none';
+        document.getElementById('pdfTestimonialRow').style.display = showLaunchRows ? 'table-row' : 'none';
+        document.getElementById('pdfHosting').textContent = hostingLine(pkgValue, data.addHosting === 'yes');
+        document.getElementById('pdfTestimonial').textContent = testimonialLine(pkgValue, totalCost);
+
         document.getElementById('pdfDeposit').textContent = `$${deposit.toFixed(2)}`;
         document.getElementById('pdfFinalPayment').textContent = `$${finalPayment.toFixed(2)}`;
         document.getElementById('pdfPaymentMethod').textContent = data.paymentMethod || 'Not specified';
@@ -779,6 +883,10 @@
                         filename: `website-development-contract-${Date.now()}.pdf`,
                         image: { type: 'jpeg', quality: 0.98 },
                         html2canvas: { 
+                            // The form is submitted from the bottom of a long page; pin the
+                            // capture to the top so the window scroll cannot shift it off the copy.
+                            scrollX: 0,
+                            scrollY: 0,
                             scale: 2,
                             useCORS: true,
                             logging: true,
@@ -798,11 +906,23 @@
                         scrollHeight: element.scrollHeight
                     });
                     
+                    /*
+                     * Render from an in-flow copy, not the live element. WHY: the live
+                     * element is made position:fixed above so it lays out, but html2pdf
+                     * clones it into its own container, and a fixed clone leaves that
+                     * container 0 px tall, so html2canvas drew a 720x0 canvas and every
+                     * signed PDF came out as a blank page (found 2026-09-29). The copy keeps
+                     * the #contractPDF id for its print styles but sits in normal flow.
+                     */
+                    const source = element.cloneNode(true);
+                    source.classList.remove('pdf-generating');
+                    source.style.cssText = 'display:block;position:static;width:8.5in;background:white;box-sizing:border-box;';
+
                     // Generate and save PDF
-                    html2pdf().set(opt).from(element).save().then(() => {
+                    html2pdf().set(opt).from(source).save().then(() => {
                         console.log('PDF saved successfully, generating blob...');
                         // Get PDF as blob for email attachment
-                        html2pdf().set(opt).from(element).outputPdf('blob').then((blob) => {
+                        html2pdf().set(opt).from(source).outputPdf('blob').then((blob) => {
                             console.log('PDF blob created, size:', blob.size, 'bytes');
                             // Restore original styles and remove class
                             element.classList.remove('pdf-generating');
@@ -889,7 +1009,9 @@ Total Cost: $${totalCost.toFixed(2)}
 Deposit (50%): $${deposit.toFixed(2)}
 Final Payment (50%): $${finalPayment.toFixed(2)}
 Payment Method: ${formData.paymentMethod || 'Not specified'}
-
+${isLaunchPackage(formData.selectedPackage) ? `Hosting: ${hostingLine(formData.selectedPackage, formData.addHosting === 'yes')}
+Testimonial Discount: ${testimonialLine(formData.selectedPackage, totalCost)}
+` : ''}
 CONTRACT INFORMATION:
 Contract Date: ${formatDate(formData.contractDate) || 'Not specified'}
 Client Signature Date: ${formatDate(formData.clientSignatureDate) || 'Not specified'}
@@ -962,6 +1084,9 @@ A PDF copy of the signed contract is attached.`;
             'client_email': formData.clientEmail || '',
             'client_business': formData.clientBusiness || '',
             'package': formData.selectedPackage || '',
+            // Declared in the hidden Netlify form in contract.html; blank for other packages.
+            'hosting': hostingLine(formData.selectedPackage || '', formData.addHosting === 'yes'),
+            'testimonial_discount': testimonialLine(formData.selectedPackage || '', total),
             'timeline': formData.projectTimeline || '',
             'total_cost': `$${total.toFixed(2)}`,
             'deposit': `$${(total * 0.5).toFixed(2)}`,
@@ -975,6 +1100,10 @@ A PDF copy of the signed contract is attached.`;
                 `Client: ${formData.clientName || ''} <${formData.clientEmail || ''}>, ${formData.clientBusiness || ''}`,
                 `Package: ${formData.selectedPackage || ''}; timeline: ${formData.projectTimeline || ''}`,
                 `Total: $${total.toFixed(2)} (deposit $${(total * 0.5).toFixed(2)}, final $${(total * 0.5).toFixed(2)}), via ${formData.paymentMethod || 'not specified'}`,
+                ...(isLaunchPackage(formData.selectedPackage)
+                    ? [`Hosting: ${hostingLine(formData.selectedPackage, formData.addHosting === 'yes')}`,
+                       `Testimonial discount: ${testimonialLine(formData.selectedPackage, total)}`]
+                    : []),
                 `Signed: ${formatDate(formData.clientSignatureDate) || ''} by ${formData.clientSignatureName || ''}`,
             ].join('\n'),
             'subject': `Contract signed: ${formData.clientBusiness || formData.clientName || 'client'}`,
@@ -999,7 +1128,11 @@ A PDF copy of the signed contract is attached.`;
     function formatDate(dateString) {
         if (!dateString) return '';
         try {
-            const date = new Date(dateString);
+            // A bare YYYY-MM-DD (every date input here) parses as UTC midnight, which
+            // prints as the day before anywhere west of UTC: a start date of Oct 5 showed as
+            // Oct 4 in the signed PDF. Build it as a local date instead.
+            const ymd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
+            const date = ymd ? new Date(+ymd[1], +ymd[2] - 1, +ymd[3]) : new Date(dateString);
             if (isNaN(date.getTime())) return dateString; // Return original if invalid
             return date.toLocaleDateString('en-US', { 
                 year: 'numeric', 
@@ -1114,6 +1247,10 @@ A PDF copy of the signed contract is attached.`;
             // Reset form after delay
             setTimeout(() => {
                 document.getElementById('contractForm').reset();
+                // reset() puts the $1,000 package back (it is the selected option) but fires no
+                // change event, so recompute the totals, dates and the package details panel.
+                setDefaultDates();
+                updateCostFromPackage();
                 if (clientSignaturePad) clientSignaturePad.clear();
                 // Provider signature is auto-generated, so regenerate it after reset
                 const providerCanvas = document.getElementById('providerSignature');
@@ -1155,6 +1292,7 @@ A PDF copy of the signed contract is attached.`;
         initEmailJS();
         setDefaultValues();
         handlePackageSelection();
+        toggleLaunchDetails();
         calculatePaymentAmounts();
         
         // Form submit handler

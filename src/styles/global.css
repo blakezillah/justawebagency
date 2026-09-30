@@ -121,6 +121,10 @@ p { margin: 0; text-wrap: pretty; }
 
 .section-head { margin-bottom: var(--head-gap); }
 .section-head .lede { max-width: 720px; }
+/* One-sentence section intros stay on one line wherever the container allows (Blake,
+   2026-09-30: "don't let the 'Every one of these' content sections wrap lines"). They drop
+   the 720px reading cap; long multi-sentence ledes keep it for readability. */
+.section-head .lede--line { max-width: none; }
 .section-head--center .lede { margin-inline: auto; text-wrap: balance; } /* balance: no one-word orphan line under a centered heading */
 .section-head--center { margin-inline: auto; text-align: center; }
 .eyebrow {

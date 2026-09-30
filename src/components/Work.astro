@@ -1,8 +1,8 @@
 ---
 /**
  * Recent work: one card per live site with a desktop screenshot, an overlapping phone
- * screenshot, honest labelling (client site vs our own product) and a link to the real
- * site.
+ * screenshot and a link to the real site. The "Client site" / "Our own product" kind
+ * label was removed at Blake's request (2026-09-30); `kind` stays in site.js as data.
  *
  * WHY: owners trust what they can click. Real screenshots of live sites replace the old
  * logo tiles and the invented "case study" modals.
@@ -53,7 +53,6 @@ const img = (key: string, kind: "desk" | "phone") => shots[`../assets/work/${key
               )}
             </div>
             <div class="work__body">
-              <p class="work__kind" data-own={w.kind !== "Client site" ? "" : undefined}>{w.kind}</p>
               <h3 class="work__name">{w.name}</h3>
               <p class="work__blurb">{w.blurb}</p>
               <ul class="work__tags" aria-label="Tags">
@@ -114,8 +113,6 @@ const img = (key: string, kind: "desk" | "phone") => shots[`../assets/work/${key
   }
 
   .work__body { padding: var(--pad-card); display: flex; flex-direction: column; gap: 8px; flex: 1; }
-  .work__kind { font: 700 0.75rem/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ok); }
-  .work__kind[data-own] { color: var(--muted); }
   .work__name { font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.625rem); }
   .work__blurb { color: var(--ink-2); }
   .work__tags { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }

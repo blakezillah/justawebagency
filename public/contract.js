@@ -52,7 +52,11 @@
     /** Optional hosting with unlimited small updates (site.js PRICING.hosting), billed yearly, outside the 50/50 build payments. */
     const HOSTING_PER_YEAR = 250;
 
-    /** Paid back after launch for a short written testimonial. Never tied to a Google review. */
+    /**
+     * A $100 credit off the final payment for a short written testimonial, sent when the client
+     * approves the finished site (Blake 2026-10-06: a credit, not a refund after launch). Never tied
+     * to a Google review.
+     */
     const TESTIMONIAL_DISCOUNT = 100;
 
     /**
@@ -87,7 +91,7 @@
     function testimonialLine(value, buildTotal) {
         if (!isLaunchPackage(value)) return '';
         const net = Math.max(0, buildTotal - TESTIMONIAL_DISCOUNT);
-        return `$${TESTIMONIAL_DISCOUNT.toFixed(2)} paid back after launch for a short written testimonial JustAWeb may publish (build net $${net.toFixed(2)}). Not tied to a Google review.`;
+        return `$${TESTIMONIAL_DISCOUNT.toFixed(2)} off the final payment for a short written testimonial JustAWeb may publish, sent when the finished site is approved (build net $${net.toFixed(2)}). Not tied to a Google review.`;
     }
 
     /** Show the $1,000 package details only while that package is selected. */
@@ -317,15 +321,16 @@
             
             // Update cost breakdown display. For the $1,000 package the hosting choice and
             // the testimonial discount are listed under the build total but never folded into
-            // it: hosting is billed yearly on its own, and the discount is paid back after
-            // launch, so the 50/50 build payments stay exactly half of the build price.
+            // it: hosting is billed yearly on its own, and the discount is a credit taken off the
+            // final payment only once the testimonial arrives, so the 50/50 build payments shown
+            // stay exactly half of the build price.
             if (costBreakdown) {
                 let extras = '';
                 if (isLaunchPackage(selectedValue)) {
                     extras = hostingSelected()
                         ? `<br>Hosting: $${HOSTING_PER_YEAR.toFixed(2)} a year, billed separately (first year at launch)`
                         : '<br>Hosting: not added';
-                    extras += `<br>Testimonial discount: $${TESTIMONIAL_DISCOUNT.toFixed(2)} back after launch for a short written testimonial (build net $${(totalCost - TESTIMONIAL_DISCOUNT).toFixed(2)})`;
+                    extras += `<br>Testimonial discount: $${TESTIMONIAL_DISCOUNT.toFixed(2)} off the final payment for a short written testimonial (build net $${(totalCost - TESTIMONIAL_DISCOUNT).toFixed(2)})`;
                 }
                 if (isRush && rushFee > 0) {
                     costBreakdown.innerHTML = `

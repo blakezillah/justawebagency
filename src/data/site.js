@@ -77,7 +77,7 @@ export const INCLUDED = [
   { icon: "Search", title: "Found by Google and AI", body: "Local business markup, a plain-answer FAQ, a sitemap and open doors for AI search crawlers, set up from day one." },
   { icon: "PhoneCall", title: "Easy to contact", body: "Tap-to-call, a contact form, your hours and a map, right where people look." },
   { icon: "Accessibility", title: "Accessible", body: "Built to WCAG 2.1 AA guidelines so everyone can use it." },
-  { icon: "KeyRound", title: "You own it", body: "Your code, your content, your domain. No contract, no lock-in." },
+  { icon: "KeyRound", title: "You own it", body: "Your code, your content, your domain. No long-term contract, no lock-in." },
   { icon: "Handshake", title: "A real person", body: "You work with the person who builds it, start to finish." },
 ];
 

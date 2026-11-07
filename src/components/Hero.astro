@@ -155,7 +155,9 @@ import { PRICING } from "../data/site.js";
     .hero__head .eyebrow { animation: h-fade 0.6s var(--ease-out) backwards; }
     .hero__title .sl, .hero__price { animation: h-settle 0.8s var(--ease-out) backwards; }
     .hero__price { animation-delay: 90ms; }
-    .hero__lede { animation: h-fade 0.7s var(--ease-out) 180ms backwards; }
+    /* The lede is the page's Largest Contentful Paint on phones, so it settles (moves
+       only) instead of fading in from invisible: an opacity fade held LCP back about 1s. */
+    .hero__lede { animation: h-settle 0.8s var(--ease-out) 180ms backwards; }
     .hero__ctas { animation: h-fade 0.7s var(--ease-out) 260ms backwards; }
     .checks { animation: h-fade 0.7s var(--ease-out) 340ms backwards; }
     .browser {

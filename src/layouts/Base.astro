@@ -197,9 +197,32 @@ const jsonLd = {
       })();
     </script>
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-    <!-- Google tag: GA4 + Google Ads, loaded once, async so it never blocks rendering. -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K58RVS4CZQ"></script>
+    <!-- Google tag: GA4 + Google Ads. gtag.js itself loads on the first interaction (below). -->
     <script is:inline>
+      /**
+       * Load gtag.js on the visitor's first interaction instead of during page load.
+       *
+       * WHY: gtag.js is about 150 KiB, and PageSpeed flagged roughly 60 KiB of it as unused
+       * during load (2026-11-06 site audit), which costs mobile score and main-thread time.
+       *
+       * HOW: the config and page_view calls below are queued in dataLayer right away, with
+       * the original timestamp, and gtag.js replays the queue when it arrives. Any mouse
+       * move, scroll, tap, touch or key press loads it once. A visitor who never interacts
+       * at all is not counted, which is the trade. The lead-form conversion is unaffected:
+       * submitting the form is an interaction, and the submit handler already waits for
+       * the conversion callback with a timeout.
+       */
+      (function () {
+        var events = ["mousemove", "scroll", "pointerdown", "touchstart", "keydown"];
+        function load() {
+          events.forEach(function (e) { removeEventListener(e, load, true); });
+          var s = document.createElement("script");
+          s.async = true;
+          s.src = "https://www.googletagmanager.com/gtag/js?id=G-K58RVS4CZQ";
+          document.head.appendChild(s);
+        }
+        events.forEach(function (e) { addEventListener(e, load, { capture: true, passive: true, once: true }); });
+      })();
       window.dataLayer = window.dataLayer || [];
       function gtag() { dataLayer.push(arguments); }
       gtag("js", new Date());

@@ -6,6 +6,26 @@
 [build.environment]
   NODE_VERSION = "24"
 
+# Security headers for every page (added after the 2026-11-06 site audit flagged 5 missing).
+# HSTS is already sent by Netlify. The CSP allowlist matches what the site really loads:
+#  - Google tag (GA4 + Google Ads): script, beacons, and the Ads conversion iframe, per
+#    Google's published CSP guidance for gtag.js.
+#  - contract.html: signature_pad (jsDelivr), EmailJS (jsDelivr script, api.emailjs.com
+#    calls) and html2pdf (cdnjs), which draws through canvas, data: and blob: URLs.
+#  - 'unsafe-inline' scripts and styles: Astro inlines the theme, reveal and gtag scripts
+#    and the legacy tools use inline handlers and style attributes. The policy still
+#    blocks scripts from any other host, plugins, <base> hijacks, off-site form posts
+#    and framing by other sites.
+# When adding a third-party script, add its host here or it will be blocked.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://*.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.doubleclick.net https://*.google.com https://pagead2.googlesyndication.com https://www.googleadservices.com https://api.emailjs.com; frame-src https://td.doubleclick.net https://www.googletagmanager.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
+
 # Private client tools: always fetch fresh (replaces the old in-page cache-busting
 # script) and keep them out of search engines even if a link leaks.
 [[headers]]

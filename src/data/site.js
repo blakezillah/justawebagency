@@ -52,6 +52,14 @@ export const WORK = [
     blurb: "Firearms and tactical training school established in 1990. Class schedules, private lessons and group training the staff can update themselves.",
   },
   {
+    key: "canby",
+    name: "Holy Trinity Church",
+    url: "https://canbyoldcatholic.org",
+    kind: "Client site",
+    tags: ["Church", "Canby, OR"],
+    blurb: "An Old Catholic parish in Canby, Oregon. Sunday worship time and address up front, the parish story, and an easy way to ask a question.",
+  },
+  {
     key: "makarios",
     name: "Makarios",
     url: "https://makarios.digital",
